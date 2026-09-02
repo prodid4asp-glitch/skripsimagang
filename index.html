@@ -19,6 +19,95 @@
 </style>
 </head>
 <body>
+<script>
+/*
+ * KONFIGURASI FRONTEND MANDIRI
+ * Ganti API_URL dengan URL deployment Web App Apps Script yang berakhiran /exec.
+ * CSV_URL sudah diisi dengan sumber CSV publik yang diberikan.
+ */
+window.PORTAL_CONFIG=Object.freeze({
+  API_URL:'https://script.google.com/macros/s/AKfycbzFKhewBQlWb296dTqiAwjChEvngNKgBmqEf3FSiAp-nQFyL9z61I_kHEnYppsQWL9j/exec',
+  CSV_URL:'https://docs.google.com/spreadsheets/d/e/2PACX-1vQsDcY7dlj3xzz7LdCeCkfIO6GxHls5TtdKB6u-p8vtKM69SINdz_e2URadoJR3d5_ChAtFr7RV5rPT/pub?output=csv',
+  VERSION:'6.1.0'
+});
+
+(function(){
+  'use strict';
+  var CHANNEL='skripsi-magang-bridge-v60';
+  var pending=new Map();
+  var csvSnapshot={headers:[],rows:[],fetchedAt:0,error:''};
+
+  function apiUrl(){
+    var q='';
+    try{q=new URLSearchParams(location.search).get('api')||'';}catch(_){ }
+    return String(q||window.PORTAL_CONFIG.API_URL||'').trim();
+  }
+  function validApiUrl(url){return /^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec(?:[?#].*)?$/i.test(url);}
+  function id(){return 'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,11);}
+  function hiddenInput(name,value){var el=document.createElement('input');el.type='hidden';el.name=name;el.value=String(value==null?'':value);return el;}
+  function cleanup(item){
+    if(!item)return;
+    clearTimeout(item.timer);
+    try{item.form.remove();}catch(_){ }
+    try{item.frame.remove();}catch(_){ }
+  }
+  window.addEventListener('message',function(ev){
+    var data=ev&&ev.data;
+    if(!data||data.channel!==CHANNEL||!data.requestId)return;
+    var item=pending.get(String(data.requestId));
+    if(!item)return;
+    pending.delete(String(data.requestId));cleanup(item);item.resolve(data.result||{ok:false,message:'Respons backend kosong.'});
+  });
+  function request(payload,timeout){
+    return new Promise(function(resolve,reject){
+      var endpoint=apiUrl();
+      if(!validApiUrl(endpoint))return reject(new Error('API_URL belum diisi. Tempel URL deployment Apps Script /exec pada PORTAL_CONFIG di index.html.'));
+      var requestId=id(),target='portal_rpc_'+requestId;
+      var frame=document.createElement('iframe');
+      frame.name=target;frame.title='Portal API';frame.setAttribute('aria-hidden','true');frame.style.cssText='display:none!important;width:0;height:0;border:0';
+      var form=document.createElement('form');
+      form.method='POST';form.action=endpoint;form.target=target;form.acceptCharset='UTF-8';form.style.display='none';
+      var origin='*';try{if(location.origin&&location.origin!=='null')origin=location.origin;}catch(_){ }
+      form.appendChild(hiddenInput('requestId',requestId));
+      form.appendChild(hiddenInput('origin',origin));
+      form.appendChild(hiddenInput('request',JSON.stringify(payload||{})));
+      var item={frame:frame,form:form,resolve:resolve,reject:reject,timer:null};
+      item.timer=setTimeout(function(){pending.delete(requestId);cleanup(item);reject(new Error('Server belum merespons. Periksa deployment API dan koneksi internet.'));},Number(timeout)||30000);
+      pending.set(requestId,item);document.body.appendChild(frame);document.body.appendChild(form);
+      try{form.submit();}catch(err){pending.delete(requestId);cleanup(item);reject(err);}
+    });
+  }
+  function parseCsv(text){
+    var rows=[],row=[],field='',quoted=false;
+    text=String(text||'').replace(/^\uFEFF/,'');
+    for(var i=0;i<text.length;i++){
+      var ch=text[i],next=text[i+1];
+      if(ch==='"'&&quoted&&next==='"'){field+='"';i++;continue;}
+      if(ch==='"'){quoted=!quoted;continue;}
+      if(ch===','&&!quoted){row.push(field);field='';continue;}
+      if((ch==='\n'||ch==='\r')&&!quoted){if(ch==='\r'&&next==='\n')i++;row.push(field);if(row.some(function(v){return v!=='';}))rows.push(row);row=[];field='';continue;}
+      field+=ch;
+    }
+    row.push(field);if(row.some(function(v){return v!=='';}))rows.push(row);
+    var headers=rows.shift()||[];
+    return {headers:headers,rows:rows.map(function(values){var out={};headers.forEach(function(h,j){out[h||('kolom_'+(j+1))]=values[j]||'';});return out;})};
+  }
+  async function refreshCsv(){
+    var url=String(window.PORTAL_CONFIG.CSV_URL||'').trim();
+    if(!url)return csvSnapshot;
+    try{
+      var response=await fetch(url,{method:'GET',cache:'no-store',credentials:'omit',redirect:'follow'});
+      if(!response.ok)throw new Error('HTTP '+response.status);
+      var parsed=parseCsv(await response.text());
+      csvSnapshot={headers:parsed.headers,rows:parsed.rows,fetchedAt:Date.now(),error:''};
+    }catch(err){csvSnapshot={headers:[],rows:[],fetchedAt:Date.now(),error:err&&err.message||String(err)};}
+    window.dispatchEvent(new CustomEvent('portal:csv',{detail:csvSnapshot}));
+    return csvSnapshot;
+  }
+  window.PortalBridge={request:request,refreshCsv:refreshCsv,getCsvSnapshot:function(){return csvSnapshot;},getApiUrl:apiUrl};
+  setTimeout(function(){refreshCsv();},0);
+})();
+</script>
 <section id="loginPage" class="login">
   <div class="login-card">
     <div class="logo"><div class="mark">TA</div><div><h1>Skripsi & Magang</h1><p>Administrasi akademik terintegrasi</p></div></div>
@@ -42,7 +131,7 @@
           <button type="button" class="btn primary full" data-action="reset-password">Reset password</button>
         </div>
       </details>
-      <div class="hint" style="margin-top:16px">Versi frontend 5.2.0 · Skripsi + Pengajuan Magang terintegrasi.</div>
+      <div class="hint" style="margin-top:16px">Versi frontend 6.1.0 · Sesi login 24 jam · <span id="csvStatus">memeriksa CSV…</span></div>
     </div>
   </div>
   <div class="login-visual"><div><small>PORTAL AKADEMIK</small><h2>Skripsi dan pengajuan magang dalam satu portal, satu akun, dan satu database terintegrasi.</h2></div></div>
@@ -84,13 +173,14 @@
       var content=document.getElementById('content');
       var nav=document.getElementById('nav');
       function setText(id,text){var el=document.getElementById(id);if(el)el.textContent=text||'';}
-      try{localStorage.setItem('portal_v52_token',String(result.token||''));localStorage.setItem('portal_v52_boot',JSON.stringify(boot));localStorage.setItem('portal_v52_page','dashboard');}catch(_){
-        try{sessionStorage.setItem('portal_v52_token',String(result.token||''));sessionStorage.setItem('portal_v52_boot',JSON.stringify(boot));sessionStorage.setItem('portal_v52_page','dashboard');}catch(__){}
+      var expiresAt=Number(result&&result.sessionExpiresAt)||Date.now()+24*60*60*1000;
+      try{localStorage.setItem('portal_v60_token',String(result.token||''));localStorage.setItem('portal_v60_boot',JSON.stringify(boot));localStorage.setItem('portal_v60_page','dashboard');localStorage.setItem('portal_v60_expires',String(expiresAt));}catch(_){
+        try{sessionStorage.setItem('portal_v60_token',String(result.token||''));sessionStorage.setItem('portal_v60_boot',JSON.stringify(boot));sessionStorage.setItem('portal_v60_page','dashboard');sessionStorage.setItem('portal_v60_expires',String(expiresAt));}catch(__){}
       }
       setText('brandTitle',(boot.config&&boot.config.APP_TITLE)||(boot.app&&boot.app.name)||'Skripsi & Magang');
       setText('brandOrg',(boot.config&&boot.config.INSTITUTION_NAME)||'');
       setText('academicYear',(boot.config&&boot.config.ACADEMIC_YEAR)?('Tahun akademik '+boot.config.ACADEMIC_YEAR):'');
-      setText('version','v'+((boot.app&&boot.app.version)||'5.2.0'));
+      setText('version','v'+((boot.app&&boot.app.version)||'6.1.0'));
       setText('userName',user.name||user.username||'Pengguna');
       var roles={admin:'Admin / Prodi',lecturer:'Dosen',student:'Mahasiswa',monitor:'Monitor / Rekap'};
       setText('userRole',roles[user.role_id]||user.role_id||'');
@@ -143,21 +233,13 @@
     showNotice('');
     if(!identifier||!password){showNotice('Username dan password wajib diisi.','error');return false;}
     setBusy(true);
-    if(typeof google!=='undefined' && google.script && google.script.run){
-      try{
-        google.script.run
-          .withSuccessHandler(function(raw){deliver(parse(raw));})
-          .withFailureHandler(fail)
-          .portalLoginV52(identifier,password);
-      }catch(e){fail(e);}
-    }else{
-      // Hanya untuk uji file HTML lokal. Deployment Apps Script selalu memakai cabang di atas.
-      setTimeout(function(){
-        if(identifier==='admin' && password==='admin123'){
-          deliver({ok:true,token:'preview-v52',boot:{app:{name:'Skripsi & Magang',version:'5.2.0-preview'},user:{name:'Preview Admin',username:'admin',role_id:'admin',email:'admin@example.ac.id'},config:{APP_TITLE:'Skripsi & Magang',INSTITUTION_NAME:'Preview',ACADEMIC_YEAR:'2026/2027'},nav:[{id:'dashboard',label:'Dashboard'},{id:'supervisor',label:'Pembimbing'},{id:'guidance',label:'Bimbingan'},{id:'documents',label:'Dokumen'},{id:'letters',label:'Surat Riset'},{id:'reviews',label:'Desk Review'},{id:'internship',label:'Magang'},{id:'profile',label:'Profil Saya'},{id:'admin',label:'Administrasi'}]}});
-        }else{deliver({ok:false,message:'Mode preview lokal: gunakan admin / admin123.'});}
-      },150);
+    if(!window.PortalBridge||typeof window.PortalBridge.request!=='function'){
+      fail(new Error('Jembatan API frontend belum siap. Muat ulang halaman.'));
+      return false;
     }
+    window.PortalBridge.request({action:'auth.login',identifier:identifier,password:password},30000)
+      .then(function(raw){deliver(parse(raw));})
+      .catch(fail);
     return false;
   }
 
@@ -166,6 +248,10 @@
   loginForm.addEventListener('submit',directLogin,true);
   loginPw.addEventListener('keydown',function(ev){if(ev.key==='Enter')directLogin(ev);},true);
   window.portalLoginV52=directLogin;
+  window.addEventListener('portal:csv',function(ev){
+    var el=document.getElementById('csvStatus'),d=ev&&ev.detail||{};
+    if(el)el.textContent=d.error?'CSV belum dapat dibaca':('CSV aktif · '+(d.rows||[]).length+' baris');
+  });
   // v4.7: INTERACTION BOOTSTRAP. Tidak memakai satu document-click router.
   // Setiap elemen interaktif mendapat onclick langsung. Jika modul utama belum
   // selesai, tombol inti (sidebar/logout/refresh) tetap mempunyai fallback.
@@ -177,7 +263,7 @@
     if(action==='sidebar-toggle'||action==='mobile-menu'){
       var app=document.getElementById('app'), side=document.getElementById('sidebar');
       if(window.matchMedia&&window.matchMedia('(max-width:760px)').matches){if(side)side.classList.toggle('mobile-open');return;}
-      if(app){app.classList.toggle('collapsed');try{localStorage.setItem('portal_v52_collapsed',app.classList.contains('collapsed')?'1':'0');}catch(_){}}
+      if(app){app.classList.toggle('collapsed');try{localStorage.setItem('portal_v60_collapsed',app.classList.contains('collapsed')?'1':'0');}catch(_){}}
       return;
     }
     if(action==='refresh'){
@@ -186,7 +272,7 @@
       return;
     }
     if(action==='logout'){
-      try{['portal_v52_token','portal_v52_boot','portal_v52_page','portal_v52_admin','portal_v52_collapsed'].forEach(function(k){localStorage.removeItem(k);sessionStorage.removeItem(k);});}catch(_){}
+      try{['portal_v60_token','portal_v60_boot','portal_v60_page','portal_v60_admin','portal_v60_collapsed','portal_v60_expires'].forEach(function(k){localStorage.removeItem(k);sessionStorage.removeItem(k);});}catch(_){}
       try{location.reload();}catch(_){}
       return;
     }
@@ -240,7 +326,8 @@
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id);
-const K={token:'portal_v52_token',boot:'portal_v52_boot',page:'portal_v52_page',admin:'portal_v52_admin',collapsed:'portal_v52_collapsed',lastView:'portal_v52_last_view'};
+const SESSION_TTL_MS=24*60*60*1000;
+const K={token:'portal_v60_token',boot:'portal_v60_boot',page:'portal_v60_page',admin:'portal_v60_admin',collapsed:'portal_v60_collapsed',lastView:'portal_v60_last_view',expires:'portal_v60_expires'};
 const MEM={};
 // v4.7: jangan pernah memakai window.name. Pada iframe Apps Script/Google Sites,
 // window.name dapat dikelola host/sandbox dan berpotensi mengganggu lifecycle frame.
@@ -251,12 +338,19 @@ function jsonGet(k){try{return JSON.parse(storeGet(k)||'null')}catch(e){return n
 function sessionJsonGet(k){try{return JSON.parse((window.sessionStorage&&sessionStorage.getItem(k))||'null')}catch(e){return null}}
 function sessionJsonSet(k,obj){try{const raw=JSON.stringify(obj);if(raw.length>1600000)return false;sessionStorage.setItem(k,raw);return true}catch(e){return false}}
 function sessionRemove(k){try{sessionStorage.removeItem(k)}catch(e){}}
-const S={token:storeGet(K.token)||'',boot:jsonGet(K.boot),page:storeGet(K.page)||'dashboard',adminTab:storeGet(K.admin)||'config',collapsed:storeGet(K.collapsed)==='1',pageSeq:0,adminData:null,adminRefs:{},cache:{},workspace:{pages:{},shared:{},admin:null,adminTabs:{},errors:{},syncedAt:0,pageSynced:{},adminSynced:0},lastView:sessionJsonGet(K.lastView)};
+const S={token:storeGet(K.token)||'',boot:jsonGet(K.boot),expiresAt:Number(storeGet(K.expires)||0),page:storeGet(K.page)||'dashboard',adminTab:storeGet(K.admin)||'config',collapsed:storeGet(K.collapsed)==='1',pageSeq:0,adminData:null,adminRefs:{},cache:{},workspace:{pages:{},shared:{},admin:null,adminTabs:{},errors:{},syncedAt:0,pageSynced:{},adminSynced:0},lastView:sessionJsonGet(K.lastView)};
+if(S.token&&!S.expiresAt)S.expiresAt=Date.now()+SESSION_TTL_MS;
 const LABEL={dashboard:'Dashboard',supervisor:'Pembimbing Skripsi',guidance:'Bimbingan',documents:'Dokumen Skripsi',letters:'Surat Riset',reviews:'Desk Review',internship:'Pengajuan Magang',profile:'Profil Saya',admin:'Administrasi'};
 const ROLE={admin:'Admin / Prodi',lecturer:'Dosen',student:'Mahasiswa',monitor:'Monitor / Rekap'};
 const ICO={dashboard:'⌂',supervisor:'♟',guidance:'▤',documents:'▱',letters:'✉',reviews:'☑',internship:'▣',profile:'◎',admin:'⚙'};
-function save(){storeSet(K.token,S.token||'');storeSet(K.boot,JSON.stringify(S.boot||null));storeSet(K.page,S.page||'dashboard');storeSet(K.admin,S.adminTab||'config');storeSet(K.collapsed,S.collapsed?'1':'0')}
-function clearSession(){S.token='';S.boot=null;S.cache={};S.workspace={pages:{},shared:{},admin:null,adminTabs:{},errors:{},syncedAt:0,pageSynced:{},adminSynced:0};S.lastView=null;[K.token,K.boot].forEach(storeRemove);sessionRemove(K.lastView)}
+function durableOpenV61(){return new Promise((resolve,reject)=>{try{if(!window.indexedDB)return reject(new Error('IndexedDB tidak tersedia'));const req=indexedDB.open('skripsi_magang_portal_v6',1);req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains('session'))req.result.createObjectStore('session')};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error||new Error('IndexedDB gagal dibuka'))}catch(e){reject(e)}})}
+async function durableReadV61(){try{const db=await durableOpenV61();return await new Promise((resolve,reject)=>{const tx=db.transaction('session','readonly'),req=tx.objectStore('session').get('active');req.onsuccess=()=>resolve(req.result||null);req.onerror=()=>reject(req.error)});}catch(e){return null}}
+async function durableWriteV61(payload){try{const db=await durableOpenV61();await new Promise((resolve,reject)=>{const tx=db.transaction('session','readwrite');tx.objectStore('session').put(payload,'active');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});return true}catch(e){return false}}
+async function durableDeleteV61(){try{const db=await durableOpenV61();await new Promise((resolve,reject)=>{const tx=db.transaction('session','readwrite');tx.objectStore('session').delete('active');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});}catch(e){}}
+function scheduleDurableSaveV61(){clearTimeout(scheduleDurableSaveV61._t);scheduleDurableSaveV61._t=setTimeout(()=>{if(!S.token)return;durableWriteV61({token:S.token,boot:S.boot,expiresAt:S.expiresAt,page:S.page,adminTab:S.adminTab,collapsed:S.collapsed,lastView:S.lastView,savedAt:Date.now()})},80)}
+async function restoreDurableSessionV61(){if(S.token&&S.boot?.user)return true;const rec=await durableReadV61();if(!rec||!rec.token||!rec.boot?.user||Number(rec.expiresAt||0)<=Date.now()){if(rec)durableDeleteV61();return false}S.token=String(rec.token);S.boot=rec.boot;S.expiresAt=Number(rec.expiresAt);S.page=rec.page||'dashboard';S.adminTab=rec.adminTab||'config';S.collapsed=!!rec.collapsed;S.lastView=rec.lastView||null;return true}
+function save(){storeSet(K.token,S.token||'');storeSet(K.boot,JSON.stringify(S.boot||null));storeSet(K.page,S.page||'dashboard');storeSet(K.admin,S.adminTab||'config');storeSet(K.collapsed,S.collapsed?'1':'0');storeSet(K.expires,S.expiresAt||'');scheduleDurableSaveV61()}
+function clearSession(){S.token='';S.boot=null;S.expiresAt=0;S.cache={};S.workspace={pages:{},shared:{},admin:null,adminTabs:{},errors:{},syncedAt:0,pageSynced:{},adminSynced:0};S.lastView=null;[K.token,K.boot,K.expires].forEach(storeRemove);sessionRemove(K.lastView);durableDeleteV61()}
 function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function attr(v){return esc(v)}function val(id){return ($(id)?.value||'').trim()}function truth(v){return v===true||['true','1','yes'].includes(String(v).toLowerCase())}
 function date(v){if(!v)return'-';let d=new Date(String(v).length===10?v+'T00:00:00':v);return isNaN(d)?esc(v):d.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'})}
@@ -265,33 +359,12 @@ function toast(m,bad=false){const t=$('toast');t.textContent=m;t.className='toas
 function busy(on){$('loader').classList.toggle('show',!!on)}
 function notice(m,type='error'){const n=$('authNotice');if(!m){n.className='notice';n.textContent='';return}n.textContent=m;n.className='notice show '+type}
 function rpc(req,timeout=18000){
-  if(typeof google==='undefined'||!google.script||!google.script.run)return Promise.resolve(mockRpc(req));
-  return new Promise((resolve,reject)=>{
-    let done=false;
-    const timer=setTimeout(()=>{if(!done){done=true;reject(new Error('Server belum merespons. Silakan coba lagi.'))}},timeout);
-    const ok=raw=>{
-      if(done)return;done=true;clearTimeout(timer);
-      try{
-        const parsed=typeof raw==='string'?JSON.parse(raw):raw;
-        if(!parsed||typeof parsed!=='object')throw new Error('Respons backend tidak valid.');
-        resolve(parsed);
-      }catch(e){reject(new Error('Respons backend tidak dapat dibaca: '+(e?.message||String(e))))}
-    };
-    const bad=e=>{if(done)return;done=true;clearTimeout(timer);reject(new Error(e?.message||String(e||'Backend error')))};
-    try{
-      const runner=google.script.run.withSuccessHandler(ok).withFailureHandler(bad);
-      const a=String(req?.action||'');
-      // v4.7: endpoint langsung. Tidak lagi melewati portalRpc -> portalRpcV30 -> route.
-      if(a==='page.load')return runner.portalPageV52(String(req.token||''),String(req.page||'dashboard'),!!req.fresh);
-      if(a==='admin.tab')return runner.portalAdminTabV52(String(req.token||''),String(req.tab||'config'),!!req.fresh);
-      if(a==='api')return runner.portalApiV52(String(req.token||''),String(req.name||''),JSON.stringify(Array.isArray(req.args)?req.args:[]));
-      if(a==='auth.resume')return runner.portalResumeV52(String(req.token||''));
-      if(a==='auth.logout')return runner.portalLogoutV52(String(req.token||''));
-      if(a==='auth.requestReset')return runner.portalRequestResetV52(String(req.identifier||''));
-      if(a==='auth.resetPassword')return runner.portalResetPasswordV52(String(req.identifier||''),String(req.code||''),String(req.newPassword||''));
-      throw new Error('Aksi frontend v4.7 tidak dikenal: '+a);
-    }catch(e){bad(e)}
-  })
+  if(!window.PortalBridge||typeof window.PortalBridge.request!=='function')return Promise.reject(new Error('Jembatan API belum siap.'));
+  return window.PortalBridge.request(req,timeout).then(raw=>{
+    const parsed=typeof raw==='string'?JSON.parse(raw):raw;
+    if(!parsed||typeof parsed!=='object')throw new Error('Respons backend tidak valid.');
+    return parsed;
+  });
 }
 
 async function api(name,...args){const r=await rpc({action:'api',name,args,token:S.token},25000);if(!r?.ok){if(r?.code==='SESSION_EXPIRED')return sessionExpired();throw new Error(r?.message||'Permintaan gagal.')}if(/^(save|update|delete|upload|respond|submit|create|directAssign|change|finalize)/i.test(String(name||'')))invalidateClientCacheV52();return r.data}
@@ -301,6 +374,7 @@ function hydrateBundleV52(page,bundle){return bundle?Object.assign({},bundle):nu
 function rememberViewV52(page,payload){
   S.lastView={page:page,adminTab:S.adminTab,payload:payload,savedAt:Date.now()};
   sessionJsonSet(K.lastView,S.lastView);
+  scheduleDurableSaveV61();
 }
 function renderRememberedViewV52(){
   const v=S.lastView;if(!v||v.page!==S.page)return false;
@@ -346,11 +420,12 @@ async function refreshBootV52(){
   try{
     const r=await rpc({action:'auth.resume',token:S.token},12000);
     if(!r?.ok){if(r?.code==='SESSION_EXPIRED')return sessionExpired();return;}
-    if(r.boot?.user){S.boot=r.boot;save();renderShell();}
+    if(r.boot?.user){S.boot=r.boot;S.expiresAt=Number(r.sessionExpiresAt)||S.expiresAt;save();renderShell();}
   }catch(e){console.warn('Boot refresh:',e?.message||e)}
 }
 function enter(r,restore=false){
   S.token=r?.token||S.token;S.boot=r?.boot||S.boot;
+  S.expiresAt=Number(r?.sessionExpiresAt)||S.expiresAt||Date.now()+SESSION_TTL_MS;
   if(!S.token)throw new Error('Token login tidak diterima dari backend.');
   if(!S.boot?.user)throw new Error('Data pengguna/menu tidak diterima dari backend.');
   if(!restore){S.page='dashboard';S.adminTab='config';S.lastView=null;sessionRemove(K.lastView);S.workspace.pages={};S.workspace.pageSynced={};S.workspace.adminTabs={};}
@@ -380,7 +455,7 @@ if(window.__pendingPortalLoginV52){
   setTimeout(()=>window.__portalAcceptLoginV52(pending),0);
 }
 function isPageAllowed(p){return p==='dashboard'||!!S.boot?.nav?.some(x=>x.id===p)}
-function renderShell(){const b=S.boot,u=b.user;document.body.querySelector('#app').classList.toggle('collapsed',S.collapsed);$('brandTitle').textContent='Skripsi & Magang';$('brandOrg').textContent=b.config?.INSTITUTION_NAME||'';$('academicYear').textContent='Tahun akademik '+(b.config?.ACADEMIC_YEAR||'');$('version').textContent='v'+(b.app?.version||'5.2.0');$('userName').textContent=u.name||u.username;$('userRole').textContent=ROLE[u.role_id]||u.role_id;$('avatar').textContent=(u.name||u.username||'U')[0].toUpperCase();const nav=S.boot.nav||[];$('nav').innerHTML=nav.map(n=>`<button type="button" data-page="${attr(n.id)}"><span class="ico">${ICO[n.id]||'•'}</span><span class="navlabel">${esc(n.label)}</span></button>`).join('');if(window.__bindPortalDomV52)window.__bindPortalDomV52($('nav'));const tg=$('sideToggle');if(tg){tg.textContent=S.collapsed?'☰':'☰';tg.title=S.collapsed?'Perbesar sidebar':'Minimize sidebar'}markNav()}
+function renderShell(){const b=S.boot,u=b.user;document.body.querySelector('#app').classList.toggle('collapsed',S.collapsed);$('brandTitle').textContent='Skripsi & Magang';$('brandOrg').textContent=b.config?.INSTITUTION_NAME||'';$('academicYear').textContent='Tahun akademik '+(b.config?.ACADEMIC_YEAR||'');$('version').textContent='v'+(b.app?.version||'6.1.0');$('userName').textContent=u.name||u.username;$('userRole').textContent=ROLE[u.role_id]||u.role_id;$('avatar').textContent=(u.name||u.username||'U')[0].toUpperCase();const nav=S.boot.nav||[];$('nav').innerHTML=nav.map(n=>`<button type="button" data-page="${attr(n.id)}"><span class="ico">${ICO[n.id]||'•'}</span><span class="navlabel">${esc(n.label)}</span></button>`).join('');if(window.__bindPortalDomV52)window.__bindPortalDomV52($('nav'));const tg=$('sideToggle');if(tg){tg.textContent=S.collapsed?'☰':'☰';tg.title=S.collapsed?'Perbesar sidebar':'Minimize sidebar'}markNav()}
 function markNav(){document.querySelectorAll('#nav [data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===S.page));$('pageTitle').textContent=LABEL[S.page]||'Portal'}
 async function login(e){
   // v4.7: satu-satunya jalur login adalah bootstrap kecil di atas.
@@ -394,7 +469,11 @@ async function resetPassword(){const id=val('resetIdentifier')||val('loginIdenti
 async function resume(){
   $('loginPage').classList.remove('hidden');$('app').classList.add('hidden');
   if(!S.token||!S.boot?.user)return;
+  if(S.expiresAt&&S.expiresAt<=Date.now())return showLogin('Sesi 24 jam telah berakhir. Silakan masuk kembali.');
   try{
+    const restored=await rpc({action:'auth.resume',token:S.token},30000);
+    if(!restored?.ok){if(restored?.code==='SESSION_EXPIRED')return showLogin('Sesi 24 jam telah berakhir. Silakan masuk kembali.');throw new Error(restored?.message||'Sesi tidak dapat dipulihkan.');}
+    S.token=restored.token||S.token;S.boot=restored.boot||S.boot;S.expiresAt=Number(restored.sessionExpiresAt)||S.expiresAt||Date.now()+SESSION_TTL_MS;save();
     if(!isPageAllowed(S.page))S.page='dashboard';
     renderShell();$('app').classList.remove('hidden');$('loginPage').classList.add('hidden');markNav();
     const hadCache=renderRememberedViewV52();
@@ -411,7 +490,7 @@ async function resume(){
   }
 }
 function forceLoginVisible(message){try{busy(false);$('app')?.classList.add('hidden');$('loginPage')?.classList.remove('hidden');if(message)notice(message,'error')}catch(_){}}
-async function safeStartV52(){try{$('loginPage').classList.remove('hidden');$('app').classList.add('hidden');await resume();}catch(e){console.error('Portal startup failed',e);if(!S.token){clearSession();forceLoginVisible('Portal dipulihkan ke halaman login karena terjadi kesalahan saat memuat sesi. Silakan login kembali.')}}}
+async function safeStartV52(){try{$('loginPage').classList.remove('hidden');$('app').classList.add('hidden');await restoreDurableSessionV61();await resume();}catch(e){console.error('Portal startup failed',e);if(!S.token){clearSession();forceLoginVisible('Portal dipulihkan ke halaman login karena terjadi kesalahan saat memuat sesi. Silakan login kembali.')}}}
 async function logout(){const t=S.token;S.prefetchGeneration=(S.prefetchGeneration||0)+1;clearSession();showLogin('Anda telah keluar.','success');try{await rpc({action:'auth.logout',token:t},5000)}catch(e){}}
 async function refreshPageV52(page,showError=true){
   try{
@@ -439,13 +518,15 @@ async function loadPage(page,force=false){
 window.__portalLoadPageV52=loadPage;
 async function refreshCurrentV52(){
   S.prefetchGeneration=(S.prefetchGeneration||0)+1;
+  if(window.PortalBridge?.refreshCsv)window.PortalBridge.refreshCsv().catch(()=>{});
   if(S.page==='admin')await loadAdminTab(S.adminTab,true);else await loadPage(S.page,true);
   schedulePrefetchV52();
 }
 function renderPage(p,b){if(p==='dashboard')return renderDashboard(b.dashboard||{});if(p==='supervisor')return renderSupervisor(b);if(p==='guidance')return renderGuidance(b);if(p==='documents')return renderDocuments(b);if(p==='letters')return renderLetters(b);if(p==='reviews')return renderReviews(b);if(p==='internship')return renderInternship(b);if(p==='profile')return renderProfile(b.profile||{})}
 function cards(rows=[]){return `<div class="grid stats">${rows.map(x=>`<div class="card stat"><small>${esc(x.label)}</small><b>${esc(x.value)}</b></div>`).join('')}</div>`}
 function table(rows,cols,actions){if(!rows?.length)return'<div class="card empty">Belum ada data.</div>';return `<div class="tablewrap"><table class="table"><thead><tr>${cols.map(c=>`<th>${esc(c[1])}</th>`).join('')}${actions?'<th>Aksi</th>':''}</tr></thead><tbody>${rows.map((r,i)=>`<tr>${cols.map(c=>`<td>${c[2]?c[2](r[c[0]],r):esc(r[c[0]]??'-')}</td>`).join('')}${actions?`<td>${actions(r,i)}</td>`:''}</tr>`).join('')}</tbody></table></div>`}
-function renderDashboard(d){let h=`<section class="hero"><h3>Selamat datang, ${esc(S.boot.user.name||S.boot.user.username)}</h3><p>Data portal diperbarui saat halaman dibuka atau tombol Perbarui ditekan.</p></section>${cards(d.cards||[])}`;(d.alerts||[]).forEach(a=>h+=`<div class="alert">${esc(a)}</div>`);h+=`<section class="section"><div class="sectionhead"><div><h3>Aktivitas terbaru</h3></div></div>${table(d.timeline||[],Object.keys((d.timeline||[])[0]||{}).slice(0,5).map(k=>[k,k]))}</section>`;$('content').innerHTML=h}
+function csvSourceCardV60(){const s=window.PortalBridge?.getCsvSnapshot?.()||{};const ok=!s.error&&s.fetchedAt;const label=ok?`${(s.rows||[]).length} baris publik terbaca`:s.error?'CSV publik belum terbaca':'CSV publik sedang dimuat';return `<div class="subtlebox" style="margin-top:14px"><b>Sumber CSV:</b> ${esc(label)}. Data transaksi tetap divalidasi dan ditulis ke Google Sheets melalui API.</div>`}
+function renderDashboard(d){let h=`<section class="hero"><h3>Selamat datang, ${esc(S.boot.user.name||S.boot.user.username)}</h3><p>Data portal diperbarui saat halaman dibuka atau tombol Perbarui ditekan.</p></section>${cards(d.cards||[])}${csvSourceCardV60()}`;(d.alerts||[]).forEach(a=>h+=`<div class="alert">${esc(a)}</div>`);h+=`<section class="section"><div class="sectionhead"><div><h3>Aktivitas terbaru</h3></div></div>${table(d.timeline||[],Object.keys((d.timeline||[])[0]||{}).slice(0,5).map(k=>[k,k]))}</section>`;$('content').innerHTML=h}
 
 function internshipStatus(v){const s=String(v||'Menunggu');const cls=s==='Ditolak'?'danger':(s==='Diterima'||s.startsWith('Diterima Pilihan'))?'success':'';return `<span class="badge ${cls}">${esc(s)}</span>`}
 function internshipAppType(a){return a?.type==='kemenkeu'?'Kemenkeu':'Non-Kemenkeu'}
@@ -569,8 +650,11 @@ function letterFormHtml(ctx,hidden){
 }
 function updateLetterTemplatePreview(){const type=val('lType'),box=$('letterTemplateBox');if(!box)return;const key=type==='INTERNAL'?'internal':type==='DJP'?'djp':'external';const url=box.dataset[key]||'';box.innerHTML=url?`<b>Contoh format ${esc(type)}</b><br><a href="${attr(url)}" target="_blank" rel="noopener">Unduh / buka file contoh format</a>`:`<b>Contoh format ${esc(type)}</b><br><span class="hint">Admin belum mengatur link contoh format untuk jenis surat ini.</span>`}
 function renderLetters(b){
- const rows=b.letters||[],role=S.boot.user.role_id,ctx=b.letterContext||{};S.cache.letters=rows;S.cache.letterContext=ctx;let h='';
- const monitor=`<section class="section"><div class="sectionhead"><div><h3>Monitoring Surat Riset</h3><p>Pantau status pengajuan dan surat yang telah diterbitkan.</p></div>${role==='student'&&rows.length?'<button class="btn primary" data-action="new-letter">+ Tambah Pengajuan Surat Riset Baru</button>':''}</div>${table(rows,[['submitted_at','Tanggal',(v)=>dt(v)],['student_name','Mahasiswa'],['research_title','Judul'],['salutation_official','Pejabat Tujuan'],['institution','Instansi/Unit'],['letter_type','Jenis'],['supporting_document_url','Kelengkapan',(v)=>v?`<a target="_blank" href="${attr(v)}">Buka</a>`:'-'],['status','Status',(v)=>`<span class="badge ${attr(v)}">${esc(v)}</span>`],['letter_number','Nomor'],['letter_file_url','Surat Jadi',(v)=>v?`<a target="_blank" href="${attr(v)}">Buka</a>`:'-']],role==='admin'?(r=>`<button class="btn secondary small" data-action="process-letter" data-id="${attr(r.letter_id)}">Lihat / Edit</button>`):null)}</section>`;
+ const rows=b.letters||[],role=S.boot.user.role_id,ctx=b.letterContext||{},permissions=S.boot.permissions||[];
+ const canAdmin=role==='admin'||permissions.includes('*')||permissions.includes('admin.research_letter');
+ S.cache.letters=rows;S.cache.letterContext=ctx;S.cache.letterFields=b.letterReferences?.fields||[];let h='';
+ const actions=canAdmin?(r=>`<div class="actions"><button class="btn secondary small" data-action="edit-letter-data" data-id="${attr(r.letter_id)}">Edit Data Mahasiswa</button><button class="btn primary small" data-action="process-letter" data-id="${attr(r.letter_id)}">Proses Surat</button></div>`):null;
+ const monitor=`<section class="section"><div class="sectionhead"><div><h3>Monitoring Surat Riset</h3><p>Pantau status pengajuan dan surat yang telah diterbitkan.</p></div>${role==='student'&&rows.length?'<button class="btn primary" data-action="new-letter">+ Tambah Pengajuan Surat Riset Baru</button>':''}</div>${table(rows,[['submitted_at','Tanggal',(v)=>dt(v)],['student_name','Mahasiswa'],['research_title','Judul'],['salutation_official','Pejabat Tujuan'],['institution','Instansi/Unit'],['letter_type','Jenis'],['supporting_document_url','Kelengkapan',(v)=>v?`<a target="_blank" href="${attr(v)}">Buka</a>`:'-'],['status','Status',(v)=>`<span class="badge ${attr(v)}">${esc(v)}</span>`],['letter_number','Nomor'],['letter_file_url','Surat Jadi',(v)=>v?`<a target="_blank" href="${attr(v)}">Buka</a>`:'-']],actions)}</section>`;
  if(role==='student'){
    if(rows.length) h+=monitor;
    h+=letterFormHtml(ctx,rows.length>0);
@@ -584,15 +668,31 @@ async function submitLetter(){
  if(!payload.research_title||!payload.salutation||!payload.salutation_official||!payload.institution||!payload.address)return toast('Judul, sapaan, pejabat, instansi/unit, dan alamat kantor wajib diisi.',true);
  busy(true);try{await api('createResearchLetter',payload);toast('Pengajuan surat riset berhasil dikirim.');await loadPage('letters',true)}catch(e){toast(e.message,true)}finally{busy(false)}
 }
+function letterFieldOptionsV61(current){
+ const fields=S.cache.letterFields||[],hasCurrent=fields.some(x=>String(x.field_id)===String(current));
+ let out='<option value="">Pilih bidang</option>';
+ if(current&&!hasCurrent)out+=`<option value="${attr(current)}" selected>${esc(current)} (data lama)</option>`;
+ return out+fields.map(x=>`<option value="${attr(x.field_id)}" ${String(x.field_id)===String(current)?'selected':''}>${esc(x.field_name||x.field_id)}</option>`).join('');
+}
+function editLetterData(id){
+ const r=(S.cache.letters||[]).find(x=>String(x.letter_id)===String(id))||{};
+ const body=`<div class="subtlebox" style="margin-bottom:14px"><b>Mahasiswa:</b> ${esc(r.student_name||r.student_id||'-')} · <b>ID Pengajuan:</b> ${esc(r.letter_id||id)}</div><div class="formgrid"><div class="field span2"><label>Judul Penelitian <span class="req">*</span></label><textarea id="leTitle" style="min-height:110px">${esc(r.research_title||'')}</textarea></div><div class="field"><label>Bidang</label><select id="leField">${letterFieldOptionsV61(r.field_id||'')}</select></div><div class="field"><label>Jenis Surat <span class="req">*</span></label><select id="leType">${['INTERNAL','EXTERNAL','DJP'].map(x=>`<option value="${x}" ${String(r.letter_type||'').toUpperCase()===x?'selected':''}>${x}</option>`).join('')}</select></div><div class="field"><label>Sapaan <span class="req">*</span></label><select id="leSalutation">${['Bapak','Ibu','Saudara','Saudari','Bapak/Ibu'].map(x=>`<option ${r.salutation===x?'selected':''}>${x}</option>`).join('')}</select></div><div class="field"><label>Pejabat Tujuan <span class="req">*</span></label><input id="leOfficial" value="${attr(r.salutation_official||'')}"></div><div class="field"><label>Tingkat Jabatan</label><input id="lePosition" value="${attr(r.position_level||'')}"></div><div class="field"><label>Unit Eselon II</label><input id="leOfficeII" value="${attr(r.office_eselon_ii||'')}"></div><div class="field"><label>Unit Eselon I</label><input id="leOfficeI" value="${attr(r.office_eselon_i||'')}"></div><div class="field span2"><label>Instansi / Unit Tujuan <span class="req">*</span></label><input id="leInst" value="${attr(r.institution||'')}"></div><div class="field span2"><label>Alamat Kantor <span class="req">*</span></label><textarea id="leAddress">${esc(r.address||'')}</textarea></div><div class="field span2"><label>Tembusan</label><textarea id="leCopies">${esc(r.copies_to||'')}</textarea></div><div class="field span2"><label>Tujuan / Keperluan</label><textarea id="lePurpose">${esc(r.purpose||'')}</textarea></div><div class="field span2"><label>Link Dokumen Kelengkapan</label><input id="leSupporting" type="url" value="${attr(r.supporting_document_url||'')}"></div><div class="field"><label>Contact Person</label><input id="leContact" value="${attr(r.contact_person||'')}"></div><div class="field"><label>Kontak</label><input id="leInfo" value="${attr(r.contact_info||'')}"></div></div>`;
+ openModal('Edit Data Pengajuan Surat Riset','Admin dapat memperbaiki seluruh data yang sebelumnya diinput mahasiswa.',body,`<span></span><div class="actions"><button class="btn ghost" data-action="close-modal">Batal</button><button class="btn primary" data-action="save-letter-data" data-id="${attr(id)}">Simpan Perubahan Data</button></div>`);
+}
+async function saveLetterData(id){
+ const payload={research_title:val('leTitle'),field_id:val('leField'),salutation:val('leSalutation'),salutation_official:val('leOfficial'),position_level:val('lePosition'),letter_type:val('leType'),office_eselon_ii:val('leOfficeII'),office_eselon_i:val('leOfficeI'),institution:val('leInst'),address:val('leAddress'),copies_to:val('leCopies'),purpose:val('lePurpose'),supporting_document_url:val('leSupporting'),contact_person:val('leContact'),contact_info:val('leInfo')};
+ if(!payload.research_title||!payload.salutation||!payload.salutation_official||!payload.institution||!payload.address)return toast('Judul, sapaan, pejabat, instansi/unit, dan alamat kantor wajib diisi.',true);
+ busy(true);try{await api('updateResearchLetterData',id,payload);closeModal();toast('Data pengajuan mahasiswa berhasil diperbarui.');await loadPage('letters',true)}catch(e){toast(e.message,true)}finally{busy(false)}
+}
 function processLetter(id){
  const r=(S.cache.letters||[]).find(x=>String(x.letter_id)===String(id))||{};
- const body=`<div class="formgrid"><div class="field span2"><label>Judul Penelitian</label><textarea id="lpTitle">${esc(r.research_title||'')}</textarea></div><div class="field"><label>Sapaan</label><select id="lpSalutation">${['Bapak','Ibu','Saudara','Saudari','Bapak/Ibu'].map(x=>`<option ${r.salutation===x?'selected':''}>${x}</option>`).join('')}</select></div><div class="field"><label>Pejabat</label><input id="lpOfficial" value="${attr(r.salutation_official||'')}"></div><div class="field"><label>Tingkat Jabatan</label><input id="lpPosition" value="${attr(r.position_level||'')}"></div><div class="field"><label>Jenis Surat</label><select id="lpType">${['INTERNAL','EXTERNAL','DJP'].map(x=>`<option value="${x}" ${String(r.letter_type||'').toUpperCase()===x?'selected':''}>${x}</option>`).join('')}</select></div><div class="field"><label>Unit Eselon II</label><input id="lpOfficeII" value="${attr(r.office_eselon_ii||'')}"></div><div class="field"><label>Unit Eselon I</label><input id="lpOfficeI" value="${attr(r.office_eselon_i||'')}"></div><div class="field span2"><label>Instansi / Unit Tujuan</label><input id="lpInst" value="${attr(r.institution||'')}"></div><div class="field span2"><label>Alamat</label><textarea id="lpAddress">${esc(r.address||'')}</textarea></div><div class="field span2"><label>Tembusan</label><textarea id="lpCopies">${esc(r.copies_to||'')}</textarea></div><div class="field span2"><label>Tujuan / Keperluan</label><textarea id="lpPurpose">${esc(r.purpose||'')}</textarea></div><div class="field span2"><label>Link Dokumen Kelengkapan</label><input id="lpSupporting" value="${attr(r.supporting_document_url||'')}"></div><div class="field"><label>Contact Person</label><input id="lpContact" value="${attr(r.contact_person||'')}"></div><div class="field"><label>Kontak</label><input id="lpInfo" value="${attr(r.contact_info||'')}"></div><div class="field"><label>Status</label><select id="lpStatus">${['SUBMITTED','PROCESS','APPROVED','REJECTED'].map(x=>`<option ${r.status===x?'selected':''}>${x}</option>`).join('')}</select></div><div class="field"><label>Nomor Surat</label><input id="lpNumber" value="${attr(r.letter_number||'')}"></div><div class="field span2"><label>URL Surat Jadi</label><input id="lpUrl" value="${attr(r.letter_file_url||'')}"><div class="hint">Boleh diisi manual atau gunakan upload file di bawah.</div></div><div class="field span2"><label>Upload File Surat yang Sudah Jadi</label><input id="lpFile" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">${r.letter_file_url?`<div class="hint">File saat ini: <a href="${attr(r.letter_file_url)}" target="_blank">buka surat</a></div>`:''}</div><div class="field span2"><label>Catatan Admin</label><textarea id="lpNote">${esc(r.admin_note||'')}</textarea></div></div>`;
- openModal('Edit & Proses Surat Riset',esc(r.student_name||r.student_id||''),body,`<div><button class="btn danger" data-action="delete-letter" data-id="${attr(id)}">Hapus Pengajuan</button></div><div class="actions"><button class="btn ghost" data-action="close-modal">Batal</button><button class="btn primary" data-action="save-letter" data-id="${attr(id)}">Simpan / Update</button></div>`)
+ const body=`<div class="subtlebox" style="margin-bottom:14px"><b>${esc(r.student_name||r.student_id||'-')}</b><br>${esc(r.research_title||'-')}<br><span class="hint">Gunakan tombol “Edit Data Mahasiswa” pada tabel jika isi pengajuan perlu diperbaiki.</span></div><div class="formgrid"><div class="field"><label>Status</label><select id="lpStatus">${['SUBMITTED','PROCESS','APPROVED','REJECTED'].map(x=>`<option ${r.status===x?'selected':''}>${x}</option>`).join('')}</select></div><div class="field"><label>Nomor Surat</label><input id="lpNumber" value="${attr(r.letter_number||'')}"></div><div class="field span2"><label>URL Surat Jadi</label><input id="lpUrl" type="url" value="${attr(r.letter_file_url||'')}"><div class="hint">Boleh diisi manual atau gunakan upload file di bawah.</div></div><div class="field span2"><label>Upload File Surat yang Sudah Jadi</label><input id="lpFile" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">${r.letter_file_url?`<div class="hint">File saat ini: <a href="${attr(r.letter_file_url)}" target="_blank">buka surat</a></div>`:''}</div><div class="field span2"><label>Catatan Admin</label><textarea id="lpNote">${esc(r.admin_note||'')}</textarea></div></div>`;
+ openModal('Proses Surat Riset',esc(r.student_name||r.student_id||''),body,`<div><button class="btn danger" data-action="delete-letter" data-id="${attr(id)}">Hapus Pengajuan</button></div><div class="actions"><button class="btn ghost" data-action="close-modal">Batal</button><button class="btn primary" data-action="save-letter" data-id="${attr(id)}">Simpan Proses Surat</button></div>`)
 }
 async function fileToDataUrl(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(new Error('File gagal dibaca.'));r.readAsDataURL(file)})}
 async function saveLetter(id){
- const patch={research_title:val('lpTitle'),salutation:val('lpSalutation'),salutation_official:val('lpOfficial'),position_level:val('lpPosition'),letter_type:val('lpType'),office_eselon_ii:val('lpOfficeII'),office_eselon_i:val('lpOfficeI'),institution:val('lpInst'),address:val('lpAddress'),copies_to:val('lpCopies'),purpose:val('lpPurpose'),supporting_document_url:val('lpSupporting'),contact_person:val('lpContact'),contact_info:val('lpInfo'),status:val('lpStatus'),letter_number:val('lpNumber'),letter_file_url:val('lpUrl'),admin_note:val('lpNote')};
- busy(true);try{await api('updateResearchLetter',id,patch);const file=$('lpFile')?.files?.[0];if(file){const data=await fileToDataUrl(file);await api('uploadResearchLetterFile',id,file.name,data)}closeModal();toast('Pengajuan surat diperbarui.');await loadPage('letters',true)}catch(e){toast(e.message,true)}finally{busy(false)}
+ const patch={status:val('lpStatus'),letter_number:val('lpNumber'),letter_file_url:val('lpUrl'),admin_note:val('lpNote')};
+ busy(true);try{await api('updateResearchLetter',id,patch);const file=$('lpFile')?.files?.[0];if(file){const data=await fileToDataUrl(file);await api('uploadResearchLetterFile',id,file.name,data)}closeModal();toast('Status dan dokumen surat berhasil diperbarui.');await loadPage('letters',true)}catch(e){toast(e.message,true)}finally{busy(false)}
 }
 async function deleteLetter(id){if(!confirm('Hapus pengajuan surat riset ini? Tindakan ini tidak dapat dibatalkan.'))return;busy(true);try{await api('deleteResearchLetter',id);closeModal();toast('Pengajuan surat dihapus.');await loadPage('letters',true)}catch(e){toast(e.message,true)}finally{busy(false)}}
 
@@ -680,7 +780,7 @@ function openModal(title,sub,body,foot){$('modalTitle').textContent=title;$('mod
 function closeModal(){$('modalBack').classList.remove('show');$('modalBody').innerHTML='';$('modalFoot').innerHTML=''}
 function toggleSidebar(){if(window.matchMedia('(max-width:760px)').matches){$('sidebar').classList.toggle('mobile-open');return}S.collapsed=!S.collapsed;save();$('app').classList.toggle('collapsed',S.collapsed);const t=$('sideToggle');if(t)t.title=S.collapsed?'Perbesar sidebar':'Minimize sidebar'}
 const HANDLERS={
- 'send-reset':()=>sendReset(),'reset-password':()=>resetPassword(),'sidebar-toggle':()=>toggleSidebar(),'mobile-menu':()=>toggleSidebar(),'refresh':()=>refreshCurrentV52(),'change-password':()=>openPassword(),'save-password':()=>savePassword(),'logout':()=>logout(),'close-modal':()=>closeModal(),'find-supervisors':()=>findSupervisors(),'submit-supervisor':el=>submitSupervisor(el.dataset.id),'supervisor-detail':el=>supervisorRequestDetail(el.dataset.id),'save-supervisor-response':el=>saveSupervisorResponse(el.dataset.id,el.dataset.decision),'direct-assign':()=>directAssign(),'save-guidance':()=>saveGuidance(),'guidance-feedback':el=>openGuidanceFeedback(el.dataset.id),'save-guidance-feedback':el=>saveGuidanceFeedback(el.dataset.id,el.dataset.student),'upload-document':()=>uploadDocument(),'submit-letter':()=>submitLetter(),'new-letter':()=>showNewLetterForm(),'process-letter':el=>processLetter(el.dataset.id),'save-letter':el=>saveLetter(el.dataset.id),'delete-letter':el=>deleteLetter(el.dataset.id),'assign-review':()=>assignReview(),'complete-review':el=>completeReview(el.dataset.id),'save-review':el=>saveReview(el.dataset.id),'admin-add':el=>adminForm(el.dataset.entity,-1),'admin-edit':el=>adminForm(el.dataset.entity,Number(el.dataset.index)),'admin-save':()=>adminSave(),'admin-delete':()=>adminDelete(),'admin-export':el=>adminExport(el.dataset.entity),'edit-config':()=>editConfig(),'save-config':()=>saveConfig(),'save-profile':()=>saveProfile(),'repeat-add':el=>addRepeatSelect(el.dataset.kind),'repeat-remove':el=>removeRepeatSelect(el),
+ 'send-reset':()=>sendReset(),'reset-password':()=>resetPassword(),'sidebar-toggle':()=>toggleSidebar(),'mobile-menu':()=>toggleSidebar(),'refresh':()=>refreshCurrentV52(),'change-password':()=>openPassword(),'save-password':()=>savePassword(),'logout':()=>logout(),'close-modal':()=>closeModal(),'find-supervisors':()=>findSupervisors(),'submit-supervisor':el=>submitSupervisor(el.dataset.id),'supervisor-detail':el=>supervisorRequestDetail(el.dataset.id),'save-supervisor-response':el=>saveSupervisorResponse(el.dataset.id,el.dataset.decision),'direct-assign':()=>directAssign(),'save-guidance':()=>saveGuidance(),'guidance-feedback':el=>openGuidanceFeedback(el.dataset.id),'save-guidance-feedback':el=>saveGuidanceFeedback(el.dataset.id,el.dataset.student),'upload-document':()=>uploadDocument(),'submit-letter':()=>submitLetter(),'new-letter':()=>showNewLetterForm(),'edit-letter-data':el=>editLetterData(el.dataset.id),'save-letter-data':el=>saveLetterData(el.dataset.id),'process-letter':el=>processLetter(el.dataset.id),'save-letter':el=>saveLetter(el.dataset.id),'delete-letter':el=>deleteLetter(el.dataset.id),'assign-review':()=>assignReview(),'complete-review':el=>completeReview(el.dataset.id),'save-review':el=>saveReview(el.dataset.id),'admin-add':el=>adminForm(el.dataset.entity,-1),'admin-edit':el=>adminForm(el.dataset.entity,Number(el.dataset.index)),'admin-save':()=>adminSave(),'admin-delete':()=>adminDelete(),'admin-export':el=>adminExport(el.dataset.entity),'edit-config':()=>editConfig(),'save-config':()=>saveConfig(),'save-profile':()=>saveProfile(),'repeat-add':el=>addRepeatSelect(el.dataset.kind),'repeat-remove':el=>removeRepeatSelect(el),
  'intern-new':el=>internshipStart(el.dataset.type),'intern-edit':el=>internshipEdit(el.dataset.id),'intern-cancel':()=>internshipCancel(),'intern-save-k':el=>internshipSaveK(el),'intern-save-nk':el=>internshipSaveNK(el),'intern-member-add':()=>internshipMemberAdd(),'intern-member-remove':el=>internshipMemberRemove(el),'intern-delete':el=>internshipDelete(el.dataset.id),'intern-finalize':el=>internshipFinalize(el),'intern-detail':el=>internshipDetail(el.dataset.id),'intern-office-detail':el=>internshipOfficeDetail(el),'intern-admin-status':el=>internshipAdminStatus(el),'intern-member-status':el=>internshipMemberStatus(el),'intern-upload':el=>internshipUpload(el),'intern-export':()=>internshipExport(),'intern-doc':el=>internshipDoc(el.dataset.id)
 };
 // v4.7 DIRECT DOM BINDING: setiap tombol punya handler sendiri.
@@ -717,12 +817,14 @@ if(window.__pendingPortalAdminTabV52){const t=window.__pendingPortalAdminTabV52;
 $('modalBack').addEventListener('click',e=>{if(e.target===$('modalBack'))closeModal()});
 document.addEventListener('change',e=>{if(e.target&&e.target.id==='svField')syncSupervisorCourse();if(e.target&&e.target.id==='lType')updateLetterTemplatePreview();if(e.target&&e.target.id==='imKind')internshipSyncKind();if(e.target?.matches?.('[data-intern-e1]'))internshipApplyUnitFilters();if(e.target&&e.target.id==='imPic'){const s=internshipStudents().find(x=>String(x.student_id)===String(e.target.value));if(s){if($('imPicEmail')&&!val('imPicEmail'))$('imPicEmail').value=s.email||'';if($('imPicProgram')&&!val('imPicProgram'))$('imPicProgram').value=s.program_name||''}}});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&S.token&&S.boot&&Date.now()-(S.cache.lastFocusRefresh||0)>60000){S.cache.lastFocusRefresh=Date.now();refreshCurrentV52().catch(e=>toast('Pembaruan data gagal: '+e.message,true))}});
+window.addEventListener('beforeunload',()=>{if(S.token)save()});
+window.addEventListener('portal:csv',()=>{if(S.token&&S.page==='dashboard'&&S.workspace.pages?.dashboard?.dashboard)renderDashboard(S.workspace.pages.dashboard.dashboard)});
 window.addEventListener('error',e=>{console.error(e.error||e.message);try{if($('loginPage')?.classList.contains('hidden')&&$('app')?.classList.contains('hidden'))forceLoginVisible('Terjadi kesalahan tampilan. Portal dikembalikan ke halaman login.');else toast('Terjadi kesalahan tampilan: '+(e.message||'unknown'),true)}catch(_){}});
 window.addEventListener('unhandledrejection',e=>{console.error(e.reason);try{if($('loginPage')?.classList.contains('hidden')&&$('app')?.classList.contains('hidden'))forceLoginVisible('Koneksi portal gagal dipulihkan. Silakan login kembali.')}catch(_){}});
 if(!window.__portalLoginBootstrapReadyV52){forceLoginVisible('Mesin Fast Login v4.7 belum terpasang lengkap.');} safeStartV52();
 
 function mockRpc(req){
- const boot={app:{name:'Skripsi & Magang',version:'5.2.0-preview'},user:{name:'Preview Admin',username:'admin',role_id:'admin',email:'admin@example.ac.id'},config:{APP_TITLE:'Skripsi & Magang',INSTITUTION_NAME:'Preview Prodi',ACADEMIC_YEAR:'2026/2027'},selectionWindow:{start:'2026-08-01',end:'2026-09-30',open:true},nav:[{id:'dashboard',label:'Dashboard'},{id:'supervisor',label:'Pembimbing'},{id:'guidance',label:'Bimbingan'},{id:'documents',label:'Dokumen'},{id:'letters',label:'Surat Riset'},{id:'reviews',label:'Desk Review'},{id:'internship',label:'Magang'},{id:'profile',label:'Profil Saya'},{id:'admin',label:'Administrasi'}]};
+ const boot={app:{name:'Skripsi & Magang',version:'6.1.0-preview'},user:{name:'Preview Admin',username:'admin',role_id:'admin',email:'admin@example.ac.id'},config:{APP_TITLE:'Skripsi & Magang',INSTITUTION_NAME:'Preview Prodi',ACADEMIC_YEAR:'2026/2027'},selectionWindow:{start:'2026-08-01',end:'2026-09-30',open:true},nav:[{id:'dashboard',label:'Dashboard'},{id:'supervisor',label:'Pembimbing'},{id:'guidance',label:'Bimbingan'},{id:'documents',label:'Dokumen'},{id:'letters',label:'Surat Riset'},{id:'reviews',label:'Desk Review'},{id:'internship',label:'Magang'},{id:'profile',label:'Profil Saya'},{id:'admin',label:'Administrasi'}]};
  if(req.action==='auth.login'){if(req.identifier!=='admin'||req.password!=='admin123')return{ok:false,message:'Username atau password salah.'};return{ok:true,token:'demo',boot}}
  if(req.action==='auth.resume')return req.token?{ok:true,token:req.token,boot}:{ok:false,message:'Sesi habis'};
  if(req.action==='auth.requestReset')return{ok:true,destination:'a***@example.ac.id'};if(req.action==='auth.resetPassword')return{ok:true,message:'Password berhasil direset.'};if(req.action==='auth.logout')return{ok:true};
