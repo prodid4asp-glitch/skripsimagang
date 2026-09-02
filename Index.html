@@ -1,0 +1,737 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0f4c5c">
+<title>Skripsi & Magang</title>
+<style>
+:root{--bg:#f5f7fb;--panel:#fff;--ink:#17212b;--muted:#667085;--line:#e5e9ef;--brand:#0f4c5c;--brand2:#177e89;--good:#117a58;--warn:#a86f12;--bad:#b4362c;--r:15px;--shadow:0 8px 26px rgba(15,23,42,.07)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+.login{min-height:100vh;display:grid;grid-template-columns:minmax(360px,500px) 1fr;background:#edf3f5}.login-card{background:#fff;padding:50px clamp(26px,6vw,66px);display:flex;flex-direction:column;justify-content:center}.login-visual{background:linear-gradient(135deg,#0f4c5c,#177e89);padding:60px;color:white;display:flex;align-items:center}.login-visual h2{font-size:40px;line-height:1.1;max-width:700px}.logo{display:flex;gap:12px;align-items:center;margin-bottom:34px}.mark{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#0f4c5c,#3bb2bf);color:#fff;display:grid;place-items:center;font-weight:900}.logo h1{font-size:18px;margin:0}.logo p{margin:3px 0;color:var(--muted);font-size:12px}.auth h2{font-size:28px;margin:0 0 8px}.auth>p{color:var(--muted);margin:0 0 22px}.field{margin-bottom:13px}.field label{display:block;font-size:12px;font-weight:700;margin:0 0 6px;color:#475467}.field input,.field select,.field textarea{width:100%;padding:11px 12px;border:1px solid #d9dee7;border-radius:10px;background:#fff;outline:0}.field textarea{min-height:90px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{border-color:#5aa9b3;box-shadow:0 0 0 3px rgba(23,126,137,.10)}
+.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:700;background:#fff}.btn.primary{background:var(--brand);color:#fff}.btn.secondary{background:#e7f2f4;color:var(--brand)}.btn.ghost{border:1px solid var(--line);color:var(--ink)}.btn.danger{background:#fde9e7;color:#a52b22}.btn.success{background:#e4f4ed;color:#0d6b4b}.btn.small{padding:7px 10px;font-size:12px}.btn:disabled{opacity:.55;cursor:wait}.full{width:100%}.notice{display:none;padding:11px 12px;border-radius:10px;margin:0 0 13px;font-size:13px}.notice.show{display:block}.notice.error{background:#fde9e7;color:#9d2f28}.notice.success{background:#e4f4ed;color:#0d6b4b}.forgot{margin-top:14px;border-top:1px solid var(--line);padding-top:14px}.forgot summary{font-weight:700;color:var(--brand);cursor:pointer}.resetbox{margin-top:13px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#fafcfd}.hint{font-size:12px;color:var(--muted);margin-top:5px}
+.app{min-height:100vh;display:grid;grid-template-columns:260px minmax(0,1fr);transition:grid-template-columns .18s ease}.app.collapsed{grid-template-columns:76px minmax(0,1fr)}.sidebar{height:100vh;position:sticky;top:0;background:#0c3540;color:#fff;padding:18px 13px;display:flex;flex-direction:column;overflow:hidden}.sidebrand{display:flex;gap:11px;align-items:center;padding:3px 7px 18px}.sidebrand .mark{min-width:40px;width:40px;height:40px}.brandtext{min-width:150px}.brandtext b{display:block;font-size:14px}.brandtext small{opacity:.72;font-size:11px}.nav{display:grid;gap:6px}.nav button{height:43px;border:0;border-radius:10px;background:transparent;color:#d7e8ec;display:flex;align-items:center;gap:11px;padding:0 12px;text-align:left;white-space:nowrap}.nav button:hover,.nav button.active{background:rgba(255,255,255,.12);color:#fff}.nav .ico{width:22px;min-width:22px;text-align:center;font-size:17px}.nav .navlabel{transition:opacity .12s}.collapse{border:1px solid rgba(255,255,255,.16)!important}.app.collapsed .brandtext,.app.collapsed .navlabel,.app.collapsed .sidefoot{display:none}.app.collapsed .nav button{justify-content:center;padding:0}.app.collapsed .sidebrand{justify-content:center}.sidefoot{padding:12px 8px 2px;font-size:11px;color:#b7d0d6}.main{min-width:0}.top{height:72px;background:rgba(255,255,255,.95);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:5}.side-toggle{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--brand);font-size:20px;display:grid;place-items:center;transition:.18s}.side-toggle:hover{background:#eef6f7}.top h2{margin:0;font-size:19px}.top small{color:var(--muted)}.topactions{display:flex;align-items:center;gap:8px}.user{display:flex;align-items:center;gap:9px;padding-left:5px}.avatar{width:36px;height:36px;border-radius:50%;background:#dceef1;color:var(--brand);display:grid;place-items:center;font-weight:800}.content{padding:24px;max-width:1500px;width:100%;margin:auto}.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:17px;box-shadow:0 2px 10px rgba(15,23,42,.025)}.hero{background:linear-gradient(120deg,#0f4c5c,#177e89);color:#fff;border-radius:18px;padding:22px}.hero h3{margin:0 0 7px}.hero p{margin:0;opacity:.86}.grid{display:grid;gap:14px}.stats{grid-template-columns:repeat(5,minmax(140px,1fr));margin-top:15px}.stat small{color:var(--muted)}.stat b{font-size:23px;display:block;margin-top:5px}.section{margin-top:18px}.sectionhead{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:11px}.sectionhead h3{margin:0;font-size:17px}.sectionhead p{margin:3px 0 0;color:var(--muted);font-size:12px}.toolbar,.actions{display:flex;gap:7px;flex-wrap:wrap}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.span2{grid-column:span 2}.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:12px}.table{width:100%;border-collapse:collapse;min-width:720px}.table th,.table td{padding:10px 11px;border-bottom:1px solid var(--line);font-size:12px;text-align:left;vertical-align:top}.table th{background:#f8fafc;color:#475467}.badge{display:inline-block;padding:5px 8px;border-radius:999px;background:#eef1f5;font-size:11px;font-weight:800}.badge.ACCEPTED,.badge.APPROVED,.badge.ACTIVE,.badge.COMPLETED{background:#e4f4ed;color:#0d6b4b}.badge.PENDING,.badge.SUBMITTED,.badge.PROCESS,.badge.ASSIGNED{background:#fff4dd;color:#805700}.badge.REJECTED{background:#fde9e7;color:#9d2f28}.empty{padding:28px;text-align:center;color:var(--muted)}.alert{padding:11px 13px;border-radius:10px;background:#fff5df;color:#745100;margin-top:10px}.tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}.tab{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 12px}.tab.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+.modalback{display:none;position:fixed;inset:0;background:rgba(15,23,42,.42);z-index:40;padding:24px;overflow:auto}.modalback.show{display:grid;place-items:start center}.modal{width:min(880px,100%);background:#fff;border-radius:18px;box-shadow:var(--shadow);margin:auto}.modalhead,.modalfoot{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}.modalfoot{border-top:1px solid var(--line);border-bottom:0}.modalbody{padding:18px}.modalhead h3{margin:0}.modalhead p{margin:3px 0 0;color:var(--muted);font-size:12px}.close{border:0;background:#f1f4f7;border-radius:9px;width:34px;height:34px}.toast{position:fixed;right:20px;bottom:20px;z-index:60;background:#17212b;color:#fff;padding:12px 14px;border-radius:11px;opacity:0;transform:translateY(8px);pointer-events:none;transition:.18s;max-width:380px}.toast.show{opacity:1;transform:none}.toast.error{background:#9d2f28}.loader{display:none;position:fixed;inset:0;background:rgba(255,255,255,.35);z-index:55;place-items:center}.loader.show{display:grid}.spin{width:40px;height:40px;border:4px solid #dce5e9;border-top-color:var(--brand);border-radius:50%;animation:sp .75s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+
+.checkhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 8px}.selection-count{display:inline-flex;align-items:center;justify-content:center;min-width:76px;padding:5px 9px;border-radius:999px;background:#edf6f7;color:var(--brand);font-size:11px;font-weight:800}.checkgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;padding:10px;border:1px solid var(--line);border-radius:13px;background:#f8fafc;max-height:260px;overflow:auto}.checkitem{position:relative;display:grid;grid-template-columns:24px minmax(0,1fr);gap:10px;align-items:start;padding:11px 12px;border:1px solid #dfe5eb;border-radius:11px;background:#fff;cursor:pointer;transition:border-color .15s,background .15s,box-shadow .15s,transform .15s}.checkitem:hover{border-color:#9fc6cc;background:#fbfefe;box-shadow:0 3px 10px rgba(15,76,92,.05)}.checkitem:has(input:checked){border-color:#65aeb7;background:#eef8f9;box-shadow:0 0 0 2px rgba(23,126,137,.08)}.checkitem input[type=checkbox]{appearance:none;-webkit-appearance:none;width:22px;height:22px;margin:0;border:2px solid #98a2b3;border-radius:6px;background:#fff;display:grid;place-content:center;cursor:pointer;transition:.15s}.checkitem input[type=checkbox]::before{content:'✓';color:#fff;font-size:15px;font-weight:900;line-height:1;transform:scale(0);transition:transform .12s}.checkitem input[type=checkbox]:checked{background:var(--brand2);border-color:var(--brand2)}.checkitem input[type=checkbox]:checked::before{transform:scale(1)}.checkitem input[type=checkbox]:focus-visible{outline:3px solid rgba(23,126,137,.18);outline-offset:2px}.checkcopy{min-width:0}.checkcopy b{display:block;color:#25313c;font-size:13px;line-height:1.35;margin-bottom:2px}.checkcopy .hint{margin-top:2px;line-height:1.45}.togglecard{display:flex!important;align-items:center;justify-content:space-between;gap:18px;padding:12px 13px!important;margin:0!important;border:1px solid #dfe5eb;border-radius:11px;background:#fafcfd;cursor:pointer}.togglecard:hover{border-color:#afcdd2;background:#f7fbfc}.togglecopy{display:block;min-width:0}.togglecopy b{display:block;font-size:13px;color:#344054;margin-bottom:2px}.togglecopy small{display:block;color:var(--muted);font-size:11px;font-weight:500;line-height:1.4}.switch{position:relative;display:inline-flex;align-items:center;min-width:48px;width:48px;height:26px;flex:0 0 48px}.switch input{position:absolute!important;opacity:0!important;width:1px!important;height:1px!important;padding:0!important;border:0!important}.slider{position:absolute;inset:0;border-radius:999px;background:#cfd6de;transition:.18s;box-shadow:inset 0 0 0 1px rgba(0,0,0,.04)}.slider::after{content:'';position:absolute;width:20px;height:20px;left:3px;top:3px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(15,23,42,.22);transition:.18s}.switch input:checked+.slider{background:var(--brand2)}.switch input:checked+.slider::after{transform:translateX(22px)}.switch input:focus-visible+.slider{outline:3px solid rgba(23,126,137,.18);outline-offset:2px}.expertise-preview{padding:11px 12px;border:1px dashed #8db8bf;border-radius:10px;background:#f2f9fa;color:#315d65;font-size:12px;line-height:1.55}.repeat-list{display:grid;gap:8px;margin-top:7px}.repeat-row{display:grid;grid-template-columns:34px minmax(0,1fr) 38px;gap:8px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:11px;background:#f8fafc}.repeat-row select{margin:0}.repeat-no{width:30px;height:30px;border-radius:8px;background:#e7f2f4;color:var(--brand);display:grid;place-items:center;font-size:12px;font-weight:800}.repeat-remove{width:36px;height:36px;padding:0!important;display:grid;place-items:center;font-size:18px}.repeat-add{margin-top:8px}.repeat-empty{padding:10px;border:1px dashed var(--line);border-radius:10px;color:var(--muted);font-size:12px}.letter-layout{display:grid;grid-template-columns:minmax(280px,.85fr) minmax(420px,1.15fr);gap:16px}.letter-panel{border:1px solid var(--line);border-radius:14px;padding:16px;background:#fff}.letter-panel h4{margin:0 0 13px;color:var(--brand)}.profile-list{display:grid;gap:8px}.profile-row{display:grid;grid-template-columns:120px 1fr;gap:10px;font-size:13px}.profile-row span:first-child{color:var(--muted)}.research-title{margin-top:14px;padding:12px;border:1px solid #cfd9e2;border-radius:10px;background:#f8fafc;font-weight:700;line-height:1.45}.matchchips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.chip{padding:4px 7px;border-radius:999px;background:#eef6f7;color:#315d65;font-size:11px;font-weight:700}.scorebar{height:7px;background:#edf1f4;border-radius:999px;overflow:hidden;margin:8px 0}.scorebar i{display:block;height:100%;background:var(--brand2);border-radius:999px}.subtlebox{padding:10px 12px;background:#f8fafc;border:1px solid var(--line);border-radius:10px;font-size:12px;color:#475467}.readonly{background:#f7f9fb!important;color:#52606d}.req{color:var(--bad)}
+.repeat-row[data-intern-member-row]{grid-template-columns:34px minmax(210px,1fr) minmax(160px,.75fr) 38px}.repeat-row[data-intern-member-row] input{width:100%;padding:10px 11px;border:1px solid #d9dee7;border-radius:10px}.badge.success{background:#e4f4ed;color:#0d6b4b}.badge.danger{background:#fde9e7;color:#9d2f28}
+@media(max-width:1050px){.stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.letter-layout{grid-template-columns:1fr}}@media(max-width:760px){.repeat-row[data-intern-member-row]{grid-template-columns:34px minmax(0,1fr) 38px}.repeat-row[data-intern-member-row] input{grid-column:2 / 3}.login{grid-template-columns:1fr}.login-visual{display:none}.app,.app.collapsed{display:block}.sidebar{position:fixed;left:-270px;width:250px;z-index:20;transition:left .18s}.sidebar.mobile-open{left:0}.content{padding:14px}.top{padding:0 12px}.user .txt{display:none}.formgrid,.stats,.checkgrid{grid-template-columns:1fr}.checkhead{align-items:flex-start}.selection-count{flex:0 0 auto}.span2{grid-column:span 1}.desktop-collapse{display:none}}
+</style>
+</head>
+<body>
+<section id="loginPage" class="login">
+  <div class="login-card">
+    <div class="logo"><div class="mark">TA</div><div><h1>Skripsi & Magang</h1><p>Administrasi akademik terintegrasi</p></div></div>
+    <div class="auth">
+      <h2>Masuk</h2><p>Gunakan akun portal sesuai role Anda.</p>
+      <div id="authNotice" class="notice"></div>
+      <form id="loginForm">
+        <div class="field"><label>Username atau email</label><input id="loginIdentifier" autocomplete="username" required></div>
+        <div class="field"><label>Password</label><input id="loginPassword" type="password" autocomplete="current-password" required></div>
+        <button id="loginBtn" class="btn primary full" type="button">Masuk</button>
+      </form>
+      <details class="forgot" id="forgotBox"><summary>Lupa password / reset password</summary>
+        <div class="resetbox">
+          <div class="field"><label>Username atau email</label><input id="resetIdentifier"></div>
+          <button type="button" class="btn secondary full" data-action="send-reset">Kirim kode verifikasi</button>
+          <div id="resetStatus" class="hint"></div>
+          <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
+          <div class="field"><label>Kode verifikasi 6 digit</label><input id="resetCode" inputmode="numeric" maxlength="6"></div>
+          <div class="field"><label>Password baru</label><input id="resetPassword" type="password"></div>
+          <div class="field"><label>Ulangi password baru</label><input id="resetPassword2" type="password"></div>
+          <button type="button" class="btn primary full" data-action="reset-password">Reset password</button>
+        </div>
+      </details>
+      <div class="hint" style="margin-top:16px">Versi frontend 5.2.0 · Skripsi + Pengajuan Magang terintegrasi.</div>
+    </div>
+  </div>
+  <div class="login-visual"><div><small>PORTAL AKADEMIK</small><h2>Skripsi dan pengajuan magang dalam satu portal, satu akun, dan satu database terintegrasi.</h2></div></div>
+</section>
+
+<!-- v4.7: LOGIN BOOTSTRAP MANDIRI.
+     Dipasang sebelum script portal besar sehingga tombol Masuk tetap berfungsi
+     walaupun modul lain gagal dievaluasi. -->
+<script>
+(function(){
+  'use strict';
+  var loginBtn=document.getElementById('loginBtn');
+  var loginForm=document.getElementById('loginForm');
+  var loginId=document.getElementById('loginIdentifier');
+  var loginPw=document.getElementById('loginPassword');
+  var noticeBox=document.getElementById('authNotice');
+  if(!loginBtn||!loginForm||!loginId||!loginPw||!noticeBox)return;
+
+  function showNotice(message,type){
+    noticeBox.textContent=message||'';
+    noticeBox.className=message?('notice show '+(type||'error')):'notice';
+  }
+  function setBusy(on){
+    window.__portalLoginBusyV52=!!on;
+    loginBtn.disabled=!!on;
+    loginBtn.textContent=on?'Memeriksa akun…':'Masuk';
+  }
+  function parse(raw){
+    if(raw&&typeof raw==='object')return raw;
+    try{return JSON.parse(String(raw||'{}'));}
+    catch(e){return {ok:false,message:'Respons login dari server tidak dapat dibaca.'};}
+  }
+  function quickEnter(result){
+    try{
+      var boot=result&&result.boot||{};
+      var user=boot.user||{};
+      var app=document.getElementById('app');
+      var login=document.getElementById('loginPage');
+      var content=document.getElementById('content');
+      var nav=document.getElementById('nav');
+      function setText(id,text){var el=document.getElementById(id);if(el)el.textContent=text||'';}
+      try{localStorage.setItem('portal_v52_token',String(result.token||''));localStorage.setItem('portal_v52_boot',JSON.stringify(boot));localStorage.setItem('portal_v52_page','dashboard');}catch(_){
+        try{sessionStorage.setItem('portal_v52_token',String(result.token||''));sessionStorage.setItem('portal_v52_boot',JSON.stringify(boot));sessionStorage.setItem('portal_v52_page','dashboard');}catch(__){}
+      }
+      setText('brandTitle',(boot.config&&boot.config.APP_TITLE)||(boot.app&&boot.app.name)||'Skripsi & Magang');
+      setText('brandOrg',(boot.config&&boot.config.INSTITUTION_NAME)||'');
+      setText('academicYear',(boot.config&&boot.config.ACADEMIC_YEAR)?('Tahun akademik '+boot.config.ACADEMIC_YEAR):'');
+      setText('version','v'+((boot.app&&boot.app.version)||'5.2.0'));
+      setText('userName',user.name||user.username||'Pengguna');
+      var roles={admin:'Admin / Prodi',lecturer:'Dosen',student:'Mahasiswa',monitor:'Monitor / Rekap'};
+      setText('userRole',roles[user.role_id]||user.role_id||'');
+      setText('avatar',String(user.name||user.username||'U').charAt(0).toUpperCase());
+      setText('pageTitle','Dashboard');
+      if(nav){
+        var icons={dashboard:'⌂',supervisor:'♟',guidance:'▤',documents:'▱',letters:'✉',reviews:'☑',internship:'▣',profile:'◎',admin:'⚙'};
+        nav.innerHTML=(boot.nav||[]).map(function(n){
+          var id=String(n.id||'').replace(/[^a-z0-9_-]/gi,'');
+          var label=String(n.label||id).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]});
+          return '<button type="button" data-page="'+id+'"'+(id==='dashboard'?' class="active"':'')+'><span class="ico">'+(icons[id]||'•')+'</span><span class="navlabel">'+label+'</span></button>';
+        }).join('');
+      }
+      if(content)content.innerHTML='<section class="hero"><h3>Login berhasil</h3><p>Portal siap digunakan. Dashboard dimuat lebih dulu; menu lain tetap dapat langsung diklik kapan saja.</p></section><div class="card" style="margin-top:14px"><div class="hint">Fast Login v4.7 aktif. Tombol memakai direct binding; tidak bergantung pada satu event-router global.</div></div>';
+      if(app)app.classList.remove('hidden');
+      if(login)login.classList.add('hidden');
+      return true;
+    }catch(e){
+      showNotice('Login berhasil, tetapi shell portal gagal ditampilkan: '+(e.message||String(e)),'error');
+      return false;
+    }
+  }
+  function handoff(result,attempt){
+    if(typeof window.__portalAcceptLoginV52==='function'){
+      try{window.__portalAcceptLoginV52(result);return;}
+      catch(e){console.error(e);}
+    }
+    if((attempt||0)<100)setTimeout(function(){handoff(result,(attempt||0)+1);},100);
+  }
+  function deliver(result){
+    if(!result||!result.ok){
+      setBusy(false);
+      showNotice((result&&result.message)||'Username atau password salah.','error');
+      return;
+    }
+    window.__pendingPortalLoginV52=result;
+    quickEnter(result);
+    setBusy(false);
+    handoff(result,0);
+  }
+  function fail(err){
+    setBusy(false);
+    showNotice('Login gagal terhubung ke server: '+((err&&err.message)||String(err||'unknown error')),'error');
+  }
+  function directLogin(ev){
+    if(ev){ev.preventDefault();if(ev.stopImmediatePropagation)ev.stopImmediatePropagation();else if(ev.stopPropagation)ev.stopPropagation();}
+    if(window.__portalLoginBusyV52)return false;
+    var identifier=String(loginId.value||'').trim();
+    var password=String(loginPw.value||'');
+    showNotice('');
+    if(!identifier||!password){showNotice('Username dan password wajib diisi.','error');return false;}
+    setBusy(true);
+    if(typeof google!=='undefined' && google.script && google.script.run){
+      try{
+        google.script.run
+          .withSuccessHandler(function(raw){deliver(parse(raw));})
+          .withFailureHandler(fail)
+          .portalLoginV52(identifier,password);
+      }catch(e){fail(e);}
+    }else{
+      // Hanya untuk uji file HTML lokal. Deployment Apps Script selalu memakai cabang di atas.
+      setTimeout(function(){
+        if(identifier==='admin' && password==='admin123'){
+          deliver({ok:true,token:'preview-v52',boot:{app:{name:'Skripsi & Magang',version:'5.2.0-preview'},user:{name:'Preview Admin',username:'admin',role_id:'admin',email:'admin@example.ac.id'},config:{APP_TITLE:'Skripsi & Magang',INSTITUTION_NAME:'Preview',ACADEMIC_YEAR:'2026/2027'},nav:[{id:'dashboard',label:'Dashboard'},{id:'supervisor',label:'Pembimbing'},{id:'guidance',label:'Bimbingan'},{id:'documents',label:'Dokumen'},{id:'letters',label:'Surat Riset'},{id:'reviews',label:'Desk Review'},{id:'internship',label:'Magang'},{id:'profile',label:'Profil Saya'},{id:'admin',label:'Administrasi'}]}});
+        }else{deliver({ok:false,message:'Mode preview lokal: gunakan admin / admin123.'});}
+      },150);
+    }
+    return false;
+  }
+
+  // Tiga jalur input, seluruhnya langsung terikat ke fungsi kecil ini.
+  loginBtn.addEventListener('click',directLogin,true);
+  loginForm.addEventListener('submit',directLogin,true);
+  loginPw.addEventListener('keydown',function(ev){if(ev.key==='Enter')directLogin(ev);},true);
+  window.portalLoginV52=directLogin;
+  // v4.7: INTERACTION BOOTSTRAP. Tidak memakai satu document-click router.
+  // Setiap elemen interaktif mendapat onclick langsung. Jika modul utama belum
+  // selesai, tombol inti (sidebar/logout/refresh) tetap mempunyai fallback.
+  function fallbackAction(action,el,ev){
+    if(ev){ev.preventDefault();ev.stopPropagation();}
+    if(typeof window.__portalActionRouterV52==='function'){
+      return window.__portalActionRouterV52(action,el,ev);
+    }
+    if(action==='sidebar-toggle'||action==='mobile-menu'){
+      var app=document.getElementById('app'), side=document.getElementById('sidebar');
+      if(window.matchMedia&&window.matchMedia('(max-width:760px)').matches){if(side)side.classList.toggle('mobile-open');return;}
+      if(app){app.classList.toggle('collapsed');try{localStorage.setItem('portal_v52_collapsed',app.classList.contains('collapsed')?'1':'0');}catch(_){}}
+      return;
+    }
+    if(action==='refresh'){
+      if(typeof window.__portalRefreshV52==='function')return window.__portalRefreshV52();
+      try{location.reload();}catch(_){}
+      return;
+    }
+    if(action==='logout'){
+      try{['portal_v52_token','portal_v52_boot','portal_v52_page','portal_v52_admin','portal_v52_collapsed'].forEach(function(k){localStorage.removeItem(k);sessionStorage.removeItem(k);});}catch(_){}
+      try{location.reload();}catch(_){}
+      return;
+    }
+    window.__pendingPortalActionsV52=window.__pendingPortalActionsV52||[];
+    window.__pendingPortalActionsV52.push({action:action,el:el});
+  }
+  function fallbackBind(root){
+    if(window.__portalMainReadyV52&&typeof window.__bindPortalDomV52==='function')return window.__bindPortalDomV52(root||document);
+    var scope=root&&root.querySelectorAll?root:document;
+    var items=[];
+    if(scope.matches&&(scope.matches('[data-page]')||scope.matches('[data-admin-tab]')||scope.matches('[data-action]')))items.push(scope);
+    if(scope.querySelectorAll)items=items.concat(Array.from(scope.querySelectorAll('[data-page],[data-admin-tab],[data-action]')));
+    items.forEach(function(el){
+      if(el.dataset&&el.dataset.fallbackBoundV52==='1')return;
+      if(el.dataset)el.dataset.fallbackBoundV52='1';
+      el.onclick=function(ev){
+        var page=el.getAttribute('data-page');
+        if(page!==null){ev.preventDefault();if(typeof window.__portalPageRouterV52==='function')return window.__portalPageRouterV52(page);window.__pendingPortalPageV52=page;var c=document.getElementById('content');if(c)c.innerHTML='<div class="card"><h3>Menyiapkan '+page+'…</h3><p class="hint">Menyiapkan halaman…</p></div>';return;}
+        var tab=el.getAttribute('data-admin-tab');
+        if(tab!==null){ev.preventDefault();if(typeof window.__portalAdminTabRouterV52==='function')return window.__portalAdminTabRouterV52(tab);window.__pendingPortalAdminTabV52=tab;return;}
+        var action=el.getAttribute('data-action');if(action!==null)return fallbackAction(action,el,ev);
+      };
+    });
+  }
+  window.__portalFallbackBindV52=fallbackBind;
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){fallbackBind(document);},{once:true});else fallbackBind(document);
+  try{new MutationObserver(function(ms){ms.forEach(function(m){Array.from(m.addedNodes||[]).forEach(function(n){if(n&&n.nodeType===1)fallbackBind(n);});});}).observe(document.documentElement,{childList:true,subtree:true});}catch(_){ }
+  window.__portalLoginBootstrapReadyV52=true;
+})();
+</script>
+
+<div id="app" class="app hidden">
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebrand"><div class="mark">TA</div><div class="brandtext"><b id="brandTitle">Skripsi & Magang</b><small id="brandOrg"></small></div></div>
+    <nav id="nav" class="nav"></nav>
+    <div class="sidefoot"><span id="version">v4.0.0</span></div>
+  </aside>
+  <main class="main">
+    <header class="top">
+      <div style="display:flex;align-items:center;gap:8px"><button id="sideToggle" type="button" class="side-toggle" data-action="sidebar-toggle" title="Minimize / tampilkan sidebar">☰</button><div><h2 id="pageTitle">Dashboard</h2><small id="academicYear"></small></div></div>
+      <div class="topactions"><button type="button" class="btn ghost small" data-action="refresh">↻ Perbarui</button><div class="user"><div id="avatar" class="avatar">U</div><div class="txt"><b id="userName"></b><small id="userRole"></small></div></div><button type="button" class="btn ghost small" data-action="change-password">Password</button><button type="button" class="btn ghost small" data-action="logout">Keluar</button></div>
+    </header>
+    <div id="content" class="content"></div>
+  </main>
+</div>
+
+<div id="modalBack" class="modalback"><div class="modal"><div class="modalhead"><div><h3 id="modalTitle">Form</h3><p id="modalSub"></p></div><button type="button" class="close" data-action="close-modal">×</button></div><div id="modalBody" class="modalbody"></div><div id="modalFoot" class="modalfoot"></div></div></div>
+<div id="loader" class="loader"><div class="spin"></div></div><div id="toast" class="toast"></div>
+
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+const K={token:'portal_v52_token',boot:'portal_v52_boot',page:'portal_v52_page',admin:'portal_v52_admin',collapsed:'portal_v52_collapsed',lastView:'portal_v52_last_view'};
+const MEM={};
+// v4.7: jangan pernah memakai window.name. Pada iframe Apps Script/Google Sites,
+// window.name dapat dikelola host/sandbox dan berpotensi mengganggu lifecycle frame.
+function storeGet(k){try{const v=window.localStorage&&localStorage.getItem(k);if(v!==null)return v||''}catch(e){}try{const v=window.sessionStorage&&sessionStorage.getItem(k);if(v!==null)return v||''}catch(e){}return MEM[k]??''}
+function storeSet(k,v){v=String(v??'');let ok=false;try{if(window.localStorage){localStorage.setItem(k,v);ok=true}}catch(e){}try{if(window.sessionStorage){sessionStorage.setItem(k,v);ok=true}}catch(e){}MEM[k]=v;return ok}
+function storeRemove(k){try{window.localStorage&&localStorage.removeItem(k)}catch(e){}try{window.sessionStorage&&sessionStorage.removeItem(k)}catch(e){}delete MEM[k]}
+function jsonGet(k){try{return JSON.parse(storeGet(k)||'null')}catch(e){return null}}
+function sessionJsonGet(k){try{return JSON.parse((window.sessionStorage&&sessionStorage.getItem(k))||'null')}catch(e){return null}}
+function sessionJsonSet(k,obj){try{const raw=JSON.stringify(obj);if(raw.length>1600000)return false;sessionStorage.setItem(k,raw);return true}catch(e){return false}}
+function sessionRemove(k){try{sessionStorage.removeItem(k)}catch(e){}}
+const S={token:storeGet(K.token)||'',boot:jsonGet(K.boot),page:storeGet(K.page)||'dashboard',adminTab:storeGet(K.admin)||'config',collapsed:storeGet(K.collapsed)==='1',pageSeq:0,adminData:null,adminRefs:{},cache:{},workspace:{pages:{},shared:{},admin:null,adminTabs:{},errors:{},syncedAt:0,pageSynced:{},adminSynced:0},lastView:sessionJsonGet(K.lastView)};
+const LABEL={dashboard:'Dashboard',supervisor:'Pembimbing Skripsi',guidance:'Bimbingan',documents:'Dokumen Skripsi',letters:'Surat Riset',reviews:'Desk Review',internship:'Pengajuan Magang',profile:'Profil Saya',admin:'Administrasi'};
+const ROLE={admin:'Admin / Prodi',lecturer:'Dosen',student:'Mahasiswa',monitor:'Monitor / Rekap'};
+const ICO={dashboard:'⌂',supervisor:'♟',guidance:'▤',documents:'▱',letters:'✉',reviews:'☑',internship:'▣',profile:'◎',admin:'⚙'};
+function save(){storeSet(K.token,S.token||'');storeSet(K.boot,JSON.stringify(S.boot||null));storeSet(K.page,S.page||'dashboard');storeSet(K.admin,S.adminTab||'config');storeSet(K.collapsed,S.collapsed?'1':'0')}
+function clearSession(){S.token='';S.boot=null;S.cache={};S.workspace={pages:{},shared:{},admin:null,adminTabs:{},errors:{},syncedAt:0,pageSynced:{},adminSynced:0};S.lastView=null;[K.token,K.boot].forEach(storeRemove);sessionRemove(K.lastView)}
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function attr(v){return esc(v)}function val(id){return ($(id)?.value||'').trim()}function truth(v){return v===true||['true','1','yes'].includes(String(v).toLowerCase())}
+function date(v){if(!v)return'-';let d=new Date(String(v).length===10?v+'T00:00:00':v);return isNaN(d)?esc(v):d.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'})}
+function dt(v){if(!v)return'-';let d=new Date(v);return isNaN(d)?esc(v):d.toLocaleString('id-ID',{dateStyle:'medium',timeStyle:'short'})}
+function toast(m,bad=false){const t=$('toast');t.textContent=m;t.className='toast show'+(bad?' error':'');clearTimeout(toast._t);toast._t=setTimeout(()=>t.className='toast',3000)}
+function busy(on){$('loader').classList.toggle('show',!!on)}
+function notice(m,type='error'){const n=$('authNotice');if(!m){n.className='notice';n.textContent='';return}n.textContent=m;n.className='notice show '+type}
+function rpc(req,timeout=18000){
+  if(typeof google==='undefined'||!google.script||!google.script.run)return Promise.resolve(mockRpc(req));
+  return new Promise((resolve,reject)=>{
+    let done=false;
+    const timer=setTimeout(()=>{if(!done){done=true;reject(new Error('Server belum merespons. Silakan coba lagi.'))}},timeout);
+    const ok=raw=>{
+      if(done)return;done=true;clearTimeout(timer);
+      try{
+        const parsed=typeof raw==='string'?JSON.parse(raw):raw;
+        if(!parsed||typeof parsed!=='object')throw new Error('Respons backend tidak valid.');
+        resolve(parsed);
+      }catch(e){reject(new Error('Respons backend tidak dapat dibaca: '+(e?.message||String(e))))}
+    };
+    const bad=e=>{if(done)return;done=true;clearTimeout(timer);reject(new Error(e?.message||String(e||'Backend error')))};
+    try{
+      const runner=google.script.run.withSuccessHandler(ok).withFailureHandler(bad);
+      const a=String(req?.action||'');
+      // v4.7: endpoint langsung. Tidak lagi melewati portalRpc -> portalRpcV30 -> route.
+      if(a==='page.load')return runner.portalPageV52(String(req.token||''),String(req.page||'dashboard'),!!req.fresh);
+      if(a==='admin.tab')return runner.portalAdminTabV52(String(req.token||''),String(req.tab||'config'),!!req.fresh);
+      if(a==='api')return runner.portalApiV52(String(req.token||''),String(req.name||''),JSON.stringify(Array.isArray(req.args)?req.args:[]));
+      if(a==='auth.resume')return runner.portalResumeV52(String(req.token||''));
+      if(a==='auth.logout')return runner.portalLogoutV52(String(req.token||''));
+      if(a==='auth.requestReset')return runner.portalRequestResetV52(String(req.identifier||''));
+      if(a==='auth.resetPassword')return runner.portalResetPasswordV52(String(req.identifier||''),String(req.code||''),String(req.newPassword||''));
+      throw new Error('Aksi frontend v4.7 tidak dikenal: '+a);
+    }catch(e){bad(e)}
+  })
+}
+
+async function api(name,...args){const r=await rpc({action:'api',name,args,token:S.token},25000);if(!r?.ok){if(r?.code==='SESSION_EXPIRED')return sessionExpired();throw new Error(r?.message||'Permintaan gagal.')}if(/^(save|update|delete|upload|respond|submit|create|directAssign|change|finalize)/i.test(String(name||'')))invalidateClientCacheV52();return r.data}
+function sessionExpired(){clearSession();showLogin('Sesi login berakhir. Silakan masuk kembali.');throw new Error('Sesi berakhir.')}
+function showLogin(msg,type='error'){clearSession();$('app').classList.add('hidden');$('loginPage').classList.remove('hidden');if(msg)notice(msg,type)}
+function hydrateBundleV52(page,bundle){return bundle?Object.assign({},bundle):null}
+function rememberViewV52(page,payload){
+  S.lastView={page:page,adminTab:S.adminTab,payload:payload,savedAt:Date.now()};
+  sessionJsonSet(K.lastView,S.lastView);
+}
+function renderRememberedViewV52(){
+  const v=S.lastView;if(!v||v.page!==S.page)return false;
+  try{
+    if(S.page==='admin'){
+      renderAdminShell();
+      if(v.adminTab===S.adminTab&&v.payload){S.adminData=v.payload.data;S.adminRefs=v.payload.refs||{};renderAdminTab(S.adminTab,S.adminData);return true;}
+      return false;
+    }
+    if(v.payload){renderPage(S.page,v.payload);return true;}
+  }catch(e){console.warn('Cached view ignored',e)}
+  return false;
+}
+function invalidateClientCacheV52(){
+  S.workspace.pageSynced={};
+  S.workspace.admin=null;
+  S.workspace.adminTabs={};
+  S.workspace.adminSynced=0;
+}
+function navPageIdsV52(){return (S.boot?.nav||[]).map(x=>x.id).filter(Boolean)}
+function pageIsFreshV52(page,maxAge=45000){const t=S.workspace.pageSynced?.[page]||0;return !!S.workspace.pages?.[page]&&Date.now()-t<maxAge}
+function sleepV52(ms){return new Promise(r=>setTimeout(r,ms))}
+async function fetchPageV52(page,fresh=false){
+  S.fetchingPages=S.fetchingPages||{};
+  if(S.fetchingPages[page])return S.fetchingPages[page];
+  const tokenAtStart=S.token;
+  S.fetchingPages[page]=(async()=>{
+    const r=await rpc({action:'page.load',page,token:tokenAtStart,fresh:!!fresh},18000);
+    if(tokenAtStart!==S.token)throw new Error('Sesi berubah.');
+    if(!r?.ok){if(r?.code==='SESSION_EXPIRED')return sessionExpired();throw new Error(r?.message||'Data halaman gagal dimuat.');}
+    S.workspace.pages=S.workspace.pages||{};S.workspace.pageSynced=S.workspace.pageSynced||{};
+    S.workspace.pages[page]=r.bundle||{};S.workspace.pageSynced[page]=Date.now();
+    return r.bundle||{};
+  })();
+  try{return await S.fetchingPages[page]}finally{delete S.fetchingPages[page]}
+}
+async function prefetchPageV52(page){
+  if(!page||page==='admin'||page===S.page||pageIsFreshV52(page))return;
+  try{await fetchPageV52(page,false)}catch(e){console.warn('Prefetch '+page+' dilewati:',e?.message||e)}
+}
+function schedulePrefetchV52(){ /* v4.7: sengaja no-op. Menu dimuat hanya saat dibuka agar login dan klik tidak saling berebut request. */ }
+async function refreshBootV52(){
+  try{
+    const r=await rpc({action:'auth.resume',token:S.token},12000);
+    if(!r?.ok){if(r?.code==='SESSION_EXPIRED')return sessionExpired();return;}
+    if(r.boot?.user){S.boot=r.boot;save();renderShell();}
+  }catch(e){console.warn('Boot refresh:',e?.message||e)}
+}
+function enter(r,restore=false){
+  S.token=r?.token||S.token;S.boot=r?.boot||S.boot;
+  if(!S.token)throw new Error('Token login tidak diterima dari backend.');
+  if(!S.boot?.user)throw new Error('Data pengguna/menu tidak diterima dari backend.');
+  if(!restore){S.page='dashboard';S.adminTab='config';S.lastView=null;sessionRemove(K.lastView);S.workspace.pages={};S.workspace.pageSynced={};S.workspace.adminTabs={};}
+  else if(!isPageAllowed(S.page))S.page='dashboard';
+  try{
+    renderShell();$('app').classList.remove('hidden');$('loginPage').classList.add('hidden');save();
+    if(!restore||!renderRememberedViewV52())$('content').innerHTML=`<div class="card"><h3>Memuat ${esc(LABEL[S.page]||S.page)}…</h3><p class="hint">Portal sudah siap. Hanya data halaman ini yang diprioritaskan.</p></div>`;
+  }catch(e){$('app').classList.add('hidden');$('loginPage').classList.remove('hidden');throw e;}
+  const first=S.page==='admin'?loadAdminTab(S.adminTab,!!restore):loadPage(S.page,!!restore);
+  Promise.resolve(first).then(()=>{schedulePrefetchV52();setTimeout(()=>refreshBootV52(),250);}).catch(e=>{
+    console.error('Initial page failed',e);
+    $('app').classList.remove('hidden');$('loginPage').classList.add('hidden');
+    if(!S.lastView)$('content').innerHTML=`<div class="card"><h3>Portal berhasil login</h3><div class="alert">${esc(e?.message||'Data halaman belum berhasil dimuat.')}</div><div class="toolbar" style="margin-top:12px"><button class="btn primary" data-action="refresh">Coba muat ulang</button><button class="btn ghost" data-action="logout">Keluar</button></div></div>`;
+  });
+  if(r.mustChangePassword)setTimeout(()=>{try{openPassword()}catch(e){console.error(e)}},250)
+}
+// Hand-off dari login bootstrap mandiri ke aplikasi utama.
+window.__portalAcceptLoginV52=function(result){
+  window.__pendingPortalLoginV52=null;
+  try{enter(result,false)}finally{
+    const b=$('loginBtn');if(b){b.disabled=false;b.textContent='Masuk'}
+    window.__portalLoginBusyV52=false;
+  }
+};
+if(window.__pendingPortalLoginV52){
+  const pending=window.__pendingPortalLoginV52;
+  setTimeout(()=>window.__portalAcceptLoginV52(pending),0);
+}
+function isPageAllowed(p){return p==='dashboard'||!!S.boot?.nav?.some(x=>x.id===p)}
+function renderShell(){const b=S.boot,u=b.user;document.body.querySelector('#app').classList.toggle('collapsed',S.collapsed);$('brandTitle').textContent='Skripsi & Magang';$('brandOrg').textContent=b.config?.INSTITUTION_NAME||'';$('academicYear').textContent='Tahun akademik '+(b.config?.ACADEMIC_YEAR||'');$('version').textContent='v'+(b.app?.version||'5.2.0');$('userName').textContent=u.name||u.username;$('userRole').textContent=ROLE[u.role_id]||u.role_id;$('avatar').textContent=(u.name||u.username||'U')[0].toUpperCase();const nav=S.boot.nav||[];$('nav').innerHTML=nav.map(n=>`<button type="button" data-page="${attr(n.id)}"><span class="ico">${ICO[n.id]||'•'}</span><span class="navlabel">${esc(n.label)}</span></button>`).join('');if(window.__bindPortalDomV52)window.__bindPortalDomV52($('nav'));const tg=$('sideToggle');if(tg){tg.textContent=S.collapsed?'☰':'☰';tg.title=S.collapsed?'Perbesar sidebar':'Minimize sidebar'}markNav()}
+function markNav(){document.querySelectorAll('#nav [data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===S.page));$('pageTitle').textContent=LABEL[S.page]||'Portal'}
+async function login(e){
+  // v4.7: satu-satunya jalur login adalah bootstrap kecil di atas.
+  if(typeof window.portalLoginV52==='function')return window.portalLoginV52(e);
+  if(e?.preventDefault)e.preventDefault();
+  return notice('Mesin login belum siap. Muat ulang deployment v4.7.','error');
+}
+
+async function sendReset(){const id=val('resetIdentifier')||val('loginIdentifier');if(!id)return notice('Masukkan username atau email terlebih dahulu.');$('resetStatus').textContent='Mengirim kode…';try{const r=await rpc({action:'auth.requestReset',identifier:id},20000);if(!r?.ok)throw new Error(r?.message||'Kode gagal dikirim.');$('resetStatus').textContent='Kode dikirim'+(r.destination?' ke '+r.destination:'')+'. Periksa Inbox/Spam.';notice('Kode verifikasi berhasil dikirim.','success')}catch(e){$('resetStatus').textContent=e.message;notice(e.message)}}
+async function resetPassword(){const id=val('resetIdentifier')||val('loginIdentifier'),code=val('resetCode'),p1=$('resetPassword').value,p2=$('resetPassword2').value;if(!id||!code||!p1)return notice('Username/email, kode, dan password baru wajib diisi.');if(p1!==p2)return notice('Konfirmasi password baru tidak sama.');try{const r=await rpc({action:'auth.resetPassword',identifier:id,code,newPassword:p1},18000);if(!r?.ok)throw new Error(r?.message||'Reset gagal.');$('forgotBox').open=false;$('loginIdentifier').value=id;$('loginPassword').value='';$('resetCode').value='';$('resetPassword').value='';$('resetPassword2').value='';notice(r.message||'Password berhasil direset. Silakan login.','success');$('loginPassword').focus()}catch(e){notice(e.message)}}
+async function resume(){
+  $('loginPage').classList.remove('hidden');$('app').classList.add('hidden');
+  if(!S.token||!S.boot?.user)return;
+  try{
+    if(!isPageAllowed(S.page))S.page='dashboard';
+    renderShell();$('app').classList.remove('hidden');$('loginPage').classList.add('hidden');markNav();
+    const hadCache=renderRememberedViewV52();
+    if(!hadCache)$('content').innerHTML=`<div class="card"><h3>Memuat ${esc(LABEL[S.page]||S.page)}…</h3><p class="hint">Posisi terakhir sudah dipulihkan. Data terbaru sedang diambil.</p></div>`;
+    // Halaman terakhir selalu dibaca ulang agar F5 menampilkan data Google Sheets terbaru.
+    if(S.page==='admin')await loadAdminTab(S.adminTab,true);else await loadPage(S.page,true);
+    refreshBootV52();
+    schedulePrefetchV52();
+  }catch(e){
+    console.error('Session restore failed',e);
+    if(String(e?.message||'').includes('Sesi'))return showLogin('Sesi login berakhir. Silakan masuk kembali.');
+    if(S.token&&S.boot?.user){$('app').classList.remove('hidden');$('loginPage').classList.add('hidden');toast('Data terbaru belum berhasil dimuat. Tampilan terakhir tetap dipertahankan.',true);return;}
+    showLogin('Sesi tidak dapat dipulihkan. Silakan login kembali.');
+  }
+}
+function forceLoginVisible(message){try{busy(false);$('app')?.classList.add('hidden');$('loginPage')?.classList.remove('hidden');if(message)notice(message,'error')}catch(_){}}
+async function safeStartV52(){try{$('loginPage').classList.remove('hidden');$('app').classList.add('hidden');await resume();}catch(e){console.error('Portal startup failed',e);if(!S.token){clearSession();forceLoginVisible('Portal dipulihkan ke halaman login karena terjadi kesalahan saat memuat sesi. Silakan login kembali.')}}}
+async function logout(){const t=S.token;S.prefetchGeneration=(S.prefetchGeneration||0)+1;clearSession();showLogin('Anda telah keluar.','success');try{await rpc({action:'auth.logout',token:t},5000)}catch(e){}}
+async function refreshPageV52(page,showError=true){
+  try{
+    const bundle=await fetchPageV52(page,true);
+    if(S.page===page){const b=hydrateBundleV52(page,bundle);renderPage(page,b);rememberViewV52(page,b);}
+    return bundle;
+  }catch(e){if(showError)toast('Pembaruan '+(LABEL[page]||page)+' gagal: '+e.message,true);throw e}
+}
+async function loadPage(page,force=false){
+  page=isPageAllowed(page)?page:'dashboard';S.page=page;save();markNav();$('sidebar').classList.remove('mobile-open');
+  if(page==='admin'){
+    renderAdminShell();
+    const cachedTab=S.workspace.adminTabs?.[S.adminTab];
+    if(cachedTab&&!force){S.adminData=cachedTab.data;S.adminRefs=cachedTab.refs||{};renderAdminTab(S.adminTab,S.adminData);rememberViewV52('admin',{data:S.adminData,refs:S.adminRefs});if(Date.now()-(cachedTab.syncedAt||0)>45000)loadAdminTab(S.adminTab,true);return;}
+    await loadAdminTab(S.adminTab,force);return;
+  }
+  const cached=hydrateBundleV52(page,S.workspace.pages?.[page]);
+  if(cached){renderPage(page,cached);rememberViewV52(page,cached);}
+  if(!cached)$('content').innerHTML=`<div class="card"><h3>Memuat ${esc(LABEL[page]||page)}…</h3><p class="hint">Mengambil data halaman ini.</p></div>`;
+  if(force||!cached||!pageIsFreshV52(page)){
+    try{await refreshPageV52(page,!cached)}catch(e){if(!cached)$('content').innerHTML=`<div class="card"><div class="alert">${esc(e.message)}</div><button class="btn primary" data-action="refresh" style="margin-top:12px">Coba lagi</button></div>`;}
+  }
+  schedulePrefetchV52();
+}
+window.__portalLoadPageV52=loadPage;
+async function refreshCurrentV52(){
+  S.prefetchGeneration=(S.prefetchGeneration||0)+1;
+  if(S.page==='admin')await loadAdminTab(S.adminTab,true);else await loadPage(S.page,true);
+  schedulePrefetchV52();
+}
+function renderPage(p,b){if(p==='dashboard')return renderDashboard(b.dashboard||{});if(p==='supervisor')return renderSupervisor(b);if(p==='guidance')return renderGuidance(b);if(p==='documents')return renderDocuments(b);if(p==='letters')return renderLetters(b);if(p==='reviews')return renderReviews(b);if(p==='internship')return renderInternship(b);if(p==='profile')return renderProfile(b.profile||{})}
+function cards(rows=[]){return `<div class="grid stats">${rows.map(x=>`<div class="card stat"><small>${esc(x.label)}</small><b>${esc(x.value)}</b></div>`).join('')}</div>`}
+function table(rows,cols,actions){if(!rows?.length)return'<div class="card empty">Belum ada data.</div>';return `<div class="tablewrap"><table class="table"><thead><tr>${cols.map(c=>`<th>${esc(c[1])}</th>`).join('')}${actions?'<th>Aksi</th>':''}</tr></thead><tbody>${rows.map((r,i)=>`<tr>${cols.map(c=>`<td>${c[2]?c[2](r[c[0]],r):esc(r[c[0]]??'-')}</td>`).join('')}${actions?`<td>${actions(r,i)}</td>`:''}</tr>`).join('')}</tbody></table></div>`}
+function renderDashboard(d){let h=`<section class="hero"><h3>Selamat datang, ${esc(S.boot.user.name||S.boot.user.username)}</h3><p>Data portal diperbarui saat halaman dibuka atau tombol Perbarui ditekan.</p></section>${cards(d.cards||[])}`;(d.alerts||[]).forEach(a=>h+=`<div class="alert">${esc(a)}</div>`);h+=`<section class="section"><div class="sectionhead"><div><h3>Aktivitas terbaru</h3></div></div>${table(d.timeline||[],Object.keys((d.timeline||[])[0]||{}).slice(0,5).map(k=>[k,k]))}</section>`;$('content').innerHTML=h}
+
+function internshipStatus(v){const s=String(v||'Menunggu');const cls=s==='Ditolak'?'danger':(s==='Diterima'||s.startsWith('Diterima Pilihan'))?'success':'';return `<span class="badge ${cls}">${esc(s)}</span>`}
+function internshipAppType(a){return a?.type==='kemenkeu'?'Kemenkeu':'Non-Kemenkeu'}
+function internshipUnits(){return S.cache.internship?.reference?.units||[]}
+function internshipStudents(){return S.cache.internship?.reference?.students||[]}
+function internshipUnique(field){return [...new Set(internshipUnits().map(x=>String(x[field]||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'id'))}
+function internshipUnitOptions(field,current=''){return internshipUnique(field).map(v=>`<option value="${attr(v)}" ${String(v)===String(current)?'selected':''}>${esc(v)}</option>`).join('')}
+function internshipStatusOptions(current=''){const rows=['Menunggu','Diproses','Diajukan','Surat Siap','Diterima','Diterima Pilihan 1','Diterima Pilihan 2','Diterima Pilihan 3','Ditolak'];return rows.map(v=>`<option value="${attr(v)}" ${String(v)===String(current)?'selected':''}>${esc(v)}</option>`).join('')}
+function renderInternship(b){S.cache.internship=b||{};if(!S.cache.internshipForm)S.cache.internshipForm=null;const mode=b?.mode||'';if(mode==='student')return renderInternshipStudent(b);if(mode==='admin'||mode==='monitor')return renderInternshipOffice(b);$('content').innerHTML='<div class="card"><div class="alert">Modul magang belum tersedia untuk role ini.</div></div>'}
+function internshipStudentHistoryRows(b){return (b.applications||[]).slice().sort((a,b)=>String(b.submitted_at||'').localeCompare(String(a.submitted_at||'')))}
+function renderInternshipStudent(b){
+ const st=b.student||{},e=b.eligibility||{},rows=internshipStudentHistoryRows(b),own=b.ownApplications||[],form=S.cache.internshipForm;
+ const active=own.filter(a=>String(a.status||'')!=='Ditolak');
+ let h=`<section class="hero"><h3>Pengajuan Magang</h3><p>Ajukan magang Kemenkeu atau Non-Kemenkeu, pantau proses surat, dan konfirmasi hasil penempatan dari satu halaman.</p></section>`;
+ h+=cards([{label:'Total riwayat',value:rows.length},{label:'Kemenkeu siklus ini',value:`${e.kemenkeu?.count||0}/1`},{label:'Non-Kemenkeu siklus ini',value:`${e.nonKemenkeu?.count||0}/3`},{label:'Siklus',value:e.cycle_no||1}]);
+ if(rows.length){h+=`<section class="section"><div class="sectionhead"><div><h3>Monitoring Pengajuan Saya</h3><p>Riwayat tetap tersimpan. Pengajuan berstatus Menunggu dapat diedit atau dihapus. Setelah Surat Siap, file TTE dapat dibuka dari tabel.</p></div></div>${internshipStudentTable(rows,st)}</section>`}
+ const picApps=rows.filter(a=>a.type==='non-kemenkeu'&&String(a.pic_student_id||'')===String(st.student_id||'')&&Object.values(a.memberStatuses||{}).some(x=>String(x)==='Surat Siap'));
+ if(picApps.length){h+=`<section class="card"><div class="sectionhead"><div><h3>Konfirmasi PIC Non-Kemenkeu</h3><p>Setelah surat berstatus Surat Siap, PIC dapat mengonfirmasi hasil Diterima atau Ditolak untuk setiap anggota.</p></div></div>${picApps.map(a=>`<div class="subtlebox" style="margin-bottom:12px"><b>${esc(a.office_name||'Instansi')}</b><div class="hint">Prioritas ${esc(a.priority_no||'-')} · ${internshipStatus(a.status)}</div>${(a.members||[]).map(m=>{const ms=(a.memberStatuses||{})[String(m.student_id)]||a.status;return `<div class="sectionhead" style="margin-top:10px"><div><b>${esc(m.name||m.student_id)}</b><p>${esc(m.student_id)} · ${internshipStatus(ms)}</p></div>${String(ms)==='Surat Siap'?`<div class="actions"><button class="btn success small" data-action="intern-finalize" data-id="${attr(a.application_id)}" data-student="${attr(m.student_id)}" data-decision="Diterima">Diterima</button><button class="btn danger small" data-action="intern-finalize" data-id="${attr(a.application_id)}" data-student="${attr(m.student_id)}" data-decision="Ditolak">Ditolak</button></div>`:''}</div>`}).join('')}</div>`).join('')}</section>`}
+ if(form){h+=renderInternshipForm(form,b)}else{
+   const canK=!!e.kemenkeu?.canSubmit,canN=!!e.nonKemenkeu?.canSubmit;
+   h+=`<section class="card"><div class="sectionhead"><div><h3>${active.length?'Tambah Pengajuan yang Diizinkan':'Buat Pengajuan Magang'}</h3><p>Kemenkeu maksimal satu pengajuan per siklus. Non-Kemenkeu maksimal tiga prioritas dan diajukan satu per satu. Jalur aktif tidak dapat dicampur.</p></div></div><div class="grid stats"><div class="card"><h3>Kemenkeu</h3><p class="muted">3 preferensi penempatan pada unit di lingkungan Kementerian Keuangan.</p><div class="hint">Riwayat siklus: ${esc(e.kemenkeu?.count||0)}/1</div>${e.kemenkeu?.reason?`<div class="alert" style="margin-top:10px">${esc(e.kemenkeu.reason)}</div>`:''}<button class="btn primary" data-action="intern-new" data-type="kemenkeu" ${canK?'':'disabled'} style="margin-top:12px">Ajukan Kemenkeu</button></div><div class="card"><h3>Non-Kemenkeu</h3><p class="muted">Individu/kelompok ke instansi pemerintah di luar Kemenkeu, BUMN/BUMD, swasta, atau organisasi lain.</p><div class="hint">Riwayat siklus: ${esc(e.nonKemenkeu?.count||0)}/3 · sisa ${esc(e.nonKemenkeu?.remaining??3)}</div>${e.nonKemenkeu?.reason?`<div class="alert" style="margin-top:10px">${esc(e.nonKemenkeu.reason)}</div>`:''}<button class="btn primary" data-action="intern-new" data-type="non-kemenkeu" ${canN?'':'disabled'} style="margin-top:12px">Ajukan Prioritas ${esc(e.nonKemenkeu?.nextPriority||1)}</button></div></div></section>`;
+ }
+ $('content').innerHTML=h;internshipApplyUnitFilters();internshipSyncKind();
+}
+function internshipStudentTable(rows,st){return table(rows,[['type','Jenis',(v,r)=>`<b>${esc(internshipAppType(r))}</b>${r.type==='non-kemenkeu'?`<br><span class="muted">Prioritas ${esc(r.priority_no||'-')}</span>`:''}`],['submitted_at','Diajukan',(v)=>dt(v)],['office_name','Tujuan',(v,r)=>r.type==='kemenkeu'?esc((r.preferences||[]).map(x=>x.office_name).filter(Boolean).join(' · ')||'-'):esc(v||'-')],['status','Status',(v)=>internshipStatus(v)],['signed_file_url','Surat TTE',(v)=>v?`<a target="_blank" rel="noopener" href="${attr(v)}">Buka surat</a>`:'-']],r=>{const owner=String(r.student_id||'')===String(st.student_id||'');const canEdit=owner&&String(r.status)==='Menunggu';return `<div class="actions">${canEdit?`<button class="btn secondary small" data-action="intern-edit" data-id="${attr(r.application_id)}">Edit</button><button class="btn danger small" data-action="intern-delete" data-id="${attr(r.application_id)}">Hapus</button>`:''}<button class="btn ghost small" data-action="intern-detail" data-id="${attr(r.application_id)}">Detail</button><button class="btn ghost small" data-action="intern-doc" data-id="${attr(r.application_id)}">Unduh Form</button></div>`})}
+function renderInternshipForm(form,b){const a=form.application||{},type=form.type||a.type,st=b.student||{};return type==='kemenkeu'?renderInternshipKForm(a,st):renderInternshipNKForm(a,st,b)}
+function renderInternshipKForm(a,st){const prefs=(a.preferences&&a.preferences.length?a.preferences:[{},{},{}]).slice(0,3);while(prefs.length<3)prefs.push({});return `<section class="card"><div class="sectionhead"><div><h3>${a.application_id?'Edit':'Form'} Pengajuan Kemenkeu</h3><p>Lengkapi identitas dan tiga preferensi unit penempatan.</p></div><button class="btn ghost" data-action="intern-cancel">Tutup Form</button></div><div class="formgrid"><div class="field"><label>NIM</label><input class="readonly" readonly value="${attr(st.student_id||'')}"></div><div class="field"><label>Nama</label><input class="readonly" readonly value="${attr(st.name||'')}"></div><div class="field"><label>No. WhatsApp <span class="req">*</span></label><input id="imWa" value="${attr(a.no_wa||'')}" placeholder="08xxxxxxxxxx"></div><div class="field"><label>Unit Asal <span class="req">*</span></label><input id="imUnitAsal" value="${attr(a.unit_asal||'')}" placeholder="Unit asal / penempatan saat ini"></div></div>${prefs.map((p,i)=>`<div class="card" style="margin-top:14px"><h3>Preferensi ${i+1}</h3><div class="formgrid"><div class="field"><label>Eselon I <span class="req">*</span></label><select id="imK_e1_${i}" data-intern-e1="${i}"><option value="">Pilih Eselon I</option>${internshipUnitOptions('eselon1',p.eselon1)}</select></div><div class="field"><label>Eselon II <span class="req">*</span></label><select id="imK_e2_${i}" data-intern-e2="${i}"><option value="">Pilih Eselon II</option>${internshipUnits().map(u=>`<option data-parent="${attr(u.eselon1)}" value="${attr(u.eselon2)}" ${String(p.eselon2)===String(u.eselon2)?'selected':''}>${esc(u.eselon2)}</option>`).join('')}</select></div><div class="field"><label>Kantor / Unit <span class="req">*</span></label><input id="imK_office_${i}" value="${attr(p.office_name||'')}"></div><div class="field"><label>Lokasi <span class="req">*</span></label><input id="imK_loc_${i}" value="${attr(p.location||'')}"></div><div class="field span2"><label>Rencana Kegiatan <span class="req">*</span></label><textarea id="imK_plan_${i}" style="min-height:100px">${esc(p.plan||'')}</textarea></div></div></div>`).join('')}<div class="toolbar" style="margin-top:16px"><button class="btn primary" data-action="intern-save-k" data-id="${attr(a.application_id||'')}">Simpan Pengajuan</button><button class="btn ghost" data-action="intern-cancel">Batal</button></div></section>`}
+function internshipMemberRow(value={},idx=0,ownerId=''){const students=internshipStudents().filter(s=>String(s.student_id)!==String(ownerId));return `<div class="repeat-row" data-intern-member-row><span class="repeat-no">${idx+1}</span><select data-intern-member><option value="">Pilih mahasiswa</option>${students.map(s=>`<option value="${attr(s.student_id)}" ${String(value.student_id||'')===String(s.student_id)?'selected':''}>${esc(s.name)} · ${esc(s.student_id)}</option>`).join('')}</select><input data-intern-member-unit placeholder="Unit/kelas (opsional)" value="${attr(value.unit||'')}"><button type="button" class="btn ghost repeat-remove" data-action="intern-member-remove">×</button></div>`}
+function renderInternshipNKForm(a,st,b){let extras=(a.members||[]).filter(m=>String(m.student_id)!==String(st.student_id));const kind=a.submission_kind||'Individu';return `<section class="card"><div class="sectionhead"><div><h3>${a.application_id?'Edit':'Form'} Pengajuan Non-Kemenkeu ${a.priority_no?'Prioritas '+esc(a.priority_no):'Prioritas '+esc(b.eligibility?.nonKemenkeu?.nextPriority||1)}</h3><p>Pengajuan dapat individu atau kelompok. PIC wajib menjadi anggota pengajuan.</p></div><button class="btn ghost" data-action="intern-cancel">Tutup Form</button></div><div class="formgrid"><div class="field"><label>Jenis Pengajuan</label><select id="imKind"><option ${kind==='Individu'?'selected':''}>Individu</option><option ${kind==='Kelompok'?'selected':''}>Kelompok</option></select></div><div class="field"><label>Jenis Instansi</label><select id="imInstType"><option value="">Pilih</option>${['Instansi Pemerintah','BUMN/BUMD','Swasta','Lembaga/Organisasi','Lainnya'].map(x=>`<option ${String(a.institution_type||'')===x?'selected':''}>${x}</option>`).join('')}</select></div><div class="field"><label>Kementerian/Lembaga</label><input id="imMinistry" value="${attr(a.ministry||'')}"></div><div class="field"><label>Eselon I</label><select id="imNe1"><option value="">Pilih / opsional</option>${internshipUnitOptions('eselon1',a.eselon1||'')}</select></div><div class="field"><label>Eselon II</label><select id="imNe2"><option value="">Pilih / opsional</option>${internshipUnitOptions('eselon2',a.eselon2||'')}</select></div><div class="field"><label>Nama Kantor <span class="req">*</span></label><input id="imOffice" value="${attr(a.office_name||'')}"></div><div class="field span2"><label>Alamat Kantor <span class="req">*</span></label><textarea id="imAddress">${esc(a.office_address||'')}</textarea></div><div class="field"><label>Sapaan Pimpinan <span class="req">*</span></label><select id="imSalutation">${['Bapak','Ibu','Saudara','Saudari','Bapak/Ibu'].map(x=>`<option ${String(a.leader_salutation||'Bapak/Ibu')===x?'selected':''}>${x}</option>`).join('')}</select></div><div class="field"><label>Jabatan Pimpinan <span class="req">*</span></label><input id="imLeaderPosition" value="${attr(a.leader_position||'')}" placeholder="Direktur / Kepala Kantor / ..."></div></div><div id="imGroupBox" class="card" style="margin-top:14px"><div class="sectionhead"><div><h3>Anggota & PIC</h3><p>Pemohon (${esc(st.name)} · ${esc(st.student_id)}) otomatis menjadi anggota. Tambahkan anggota lain jika pengajuan kelompok.</p></div><button class="btn secondary small" data-action="intern-member-add">+ Tambah Anggota</button></div><div id="imMemberList" class="repeat-list">${extras.map((m,i)=>internshipMemberRow(m,i,st.student_id)).join('')}</div><div class="formgrid" style="margin-top:12px"><div class="field"><label>PIC <span class="req">*</span></label><select id="imPic"><option value="${attr(st.student_id)}">${esc(st.name)} · ${esc(st.student_id)}</option>${internshipStudents().filter(s=>String(s.student_id)!==String(st.student_id)).map(s=>`<option value="${attr(s.student_id)}" ${String(a.pic_student_id||'')===String(s.student_id)?'selected':''}>${esc(s.name)} · ${esc(s.student_id)}</option>`).join('')}</select></div><div class="field"><label>No. WA PIC</label><input id="imPicWa" value="${attr(a.pic_wa||'')}"></div><div class="field"><label>Email PIC</label><input id="imPicEmail" value="${attr(a.pic_email||st.email||'')}"></div><div class="field"><label>Prodi PIC</label><input id="imPicProgram" value="${attr(a.pic_program||st.program_name||'')}"></div></div></div><div class="toolbar" style="margin-top:16px"><button class="btn primary" data-action="intern-save-nk" data-id="${attr(a.application_id||'')}">Simpan Pengajuan</button><button class="btn ghost" data-action="intern-cancel">Batal</button></div></section>`}
+function internshipApplyUnitFilters(){document.querySelectorAll('[data-intern-e1]').forEach(e1=>{const i=e1.dataset.internE1,e2=$('imK_e2_'+i);if(!e2)return;const parent=e1.value;Array.from(e2.options).forEach(o=>{if(!o.value)return;o.hidden=!!parent&&o.dataset.parent!==parent});if(e2.selectedOptions[0]?.hidden)e2.value=''})}
+function internshipSyncKind(){const kind=$('imKind'),box=$('imGroupBox');if(!kind||!box)return;const group=kind.value==='Kelompok';box.querySelector('[data-action="intern-member-add"]')?.classList.toggle('hidden',!group);const list=$('imMemberList');if(list)list.classList.toggle('hidden',!group)}
+function internshipStart(type){S.cache.internshipForm={type};renderInternshipStudent(S.cache.internship)}
+function internshipEdit(id){const a=(S.cache.internship?.ownApplications||[]).find(x=>String(x.application_id)===String(id));if(!a)return toast('Pengajuan tidak ditemukan.',true);S.cache.internshipForm={type:a.type,application:a};renderInternshipStudent(S.cache.internship);window.scrollTo({top:0,behavior:'smooth'})}
+function internshipCancel(){S.cache.internshipForm=null;renderInternshipStudent(S.cache.internship)}
+function internshipMembersPayload(){const owner=S.cache.internship?.student?.student_id;const rows=[{student_id:owner,unit:''}];document.querySelectorAll('[data-intern-member-row]').forEach(r=>{const sid=r.querySelector('[data-intern-member]')?.value||'',unit=r.querySelector('[data-intern-member-unit]')?.value||'';if(sid)rows.push({student_id:sid,unit})});return rows}
+async function internshipSaveK(el){const prefs=[0,1,2].map(i=>({eselon1:val('imK_e1_'+i),eselon2:val('imK_e2_'+i),office_name:val('imK_office_'+i),location:val('imK_loc_'+i),plan:val('imK_plan_'+i)}));const payload={application_id:el.dataset.id||'',type:'kemenkeu',no_wa:val('imWa'),unit_asal:val('imUnitAsal'),preferences:prefs};busy(true);try{await api('saveInternshipApplication',payload);toast('Pengajuan Kemenkeu disimpan.');S.cache.internshipForm=null;await loadPage('internship',true)}catch(e){toast(e.message,true)}finally{busy(false)}}
+async function internshipSaveNK(el){const payload={application_id:el.dataset.id||'',type:'non-kemenkeu',submission_kind:val('imKind'),institution_type:val('imInstType'),ministry:val('imMinistry'),eselon1:val('imNe1'),eselon2:val('imNe2'),office_name:val('imOffice'),office_address:val('imAddress'),leader_salutation:val('imSalutation'),leader_position:val('imLeaderPosition'),pic_student_id:val('imPic'),pic_wa:val('imPicWa'),pic_email:val('imPicEmail'),pic_program:val('imPicProgram'),members:internshipMembersPayload()};busy(true);try{await api('saveInternshipApplication',payload);toast('Pengajuan Non-Kemenkeu disimpan.');S.cache.internshipForm=null;await loadPage('internship',true)}catch(e){toast(e.message,true)}finally{busy(false)}}
+function internshipMemberAdd(){const box=$('imMemberList');if(!box)return;const n=box.querySelectorAll('[data-intern-member-row]').length;box.insertAdjacentHTML('beforeend',internshipMemberRow({},n,S.cache.internship?.student?.student_id))}
+function internshipMemberRemove(el){const row=el.closest('[data-intern-member-row]');if(row)row.remove();document.querySelectorAll('[data-intern-member-row] .repeat-no').forEach((x,i)=>x.textContent=i+1)}
+async function internshipDelete(id){if(!confirm('Hapus pengajuan magang ini?'))return;busy(true);try{await api('deleteInternshipApplication',id);toast('Pengajuan dihapus.');S.cache.internshipForm=null;await loadPage('internship',true)}catch(e){toast(e.message,true)}finally{busy(false)}}
+async function internshipFinalize(el){if(!confirm(`Konfirmasi status ${el.dataset.decision} untuk mahasiswa ini?`))return;busy(true);try{await api('finalizeInternshipMember',el.dataset.id,el.dataset.student,el.dataset.decision);toast('Status anggota diperbarui.');await loadPage('internship',true)}catch(e){toast(e.message,true)}finally{busy(false)}}
+function internshipDetail(id,readOnly=false){const a=(S.cache.internship?.applications||[]).find(x=>String(x.application_id)===String(id));if(!a)return toast('Pengajuan tidak ditemukan.',true);const prefs=(a.preferences||[]);let detail=`<div class="formgrid"><div class="field"><label>ID Pengajuan</label><input class="readonly" readonly value="${attr(a.application_id||'')}"></div><div class="field"><label>Status</label><div>${internshipStatus(a.status)}</div></div><div class="field"><label>Mahasiswa</label><input class="readonly" readonly value="${attr((a.student_name||'')+' · '+(a.student_id||''))}"></div><div class="field"><label>Jenis</label><input class="readonly" readonly value="${attr(internshipAppType(a))}"></div></div>`;
+ if(a.type==='kemenkeu')detail+=`<div class="subtlebox"><b>No. WA:</b> ${esc(a.no_wa||'-')} · <b>Unit Asal:</b> ${esc(a.unit_asal||'-')}</div>${prefs.map((p,i)=>`<div class="card"><b>Preferensi ${i+1}</b><p>${esc(p.eselon1||'-')} → ${esc(p.eselon2||'-')}<br>${esc(p.office_name||'-')} · ${esc(p.location||'-')}<br>Rencana: ${esc(p.plan||'-')}</p></div>`).join('')}`;
+ else detail+=`<div class="subtlebox"><b>Prioritas ${esc(a.priority_no||'-')}</b> · ${esc(a.submission_kind||'-')}<br>${esc(a.institution_type||'-')} · ${esc(a.ministry||'-')}<br><b>${esc(a.office_name||'-')}</b><br>${esc(a.office_address||'-')}<br>Yth. ${esc(a.leader_salutation||'')} ${esc(a.leader_position||'')}</div><div class="card"><h3>Anggota</h3>${(a.members||[]).map(m=>`<div style="padding:7px 0;border-bottom:1px solid #eef2f6"><b>${esc(m.name||m.student_id)}</b> · ${esc(m.student_id)} · ${internshipStatus((a.memberStatuses||{})[String(m.student_id)]||a.status)}</div>`).join('')}</div>`;
+ if(a.signed_file_url)detail+=`<div class="alert success">Surat TTE tersedia: <a target="_blank" rel="noopener" href="${attr(a.signed_file_url)}">Buka ${esc(a.signed_file_name||'surat')}</a></div>`;
+ openModal('Detail Pengajuan Magang',`${internshipAppType(a)} · diajukan ${dt(a.submitted_at)}`,detail,`<span></span><div class="actions"><button class="btn ghost" data-action="intern-doc" data-id="${attr(a.application_id)}">Unduh Form</button><button class="btn primary" data-action="close-modal">Tutup</button></div>`)}
+function internshipOfficeTable(rows,mode){return table(rows,[['student_name','Mahasiswa',(v,r)=>`<b>${esc(v||'-')}</b><br><span class="muted">${esc(r.student_id||'')}</span>`],['type','Jenis',(v,r)=>`${esc(internshipAppType(r))}${r.type==='non-kemenkeu'?`<br><span class="muted">Prioritas ${esc(r.priority_no||'-')}</span>`:''}`],['office_name','Tujuan',(v,r)=>r.type==='kemenkeu'?esc((r.preferences||[]).map(x=>x.office_name).filter(Boolean).join(' · ')||'-'):esc(v||'-')],['submitted_at','Diajukan',(v)=>dt(v)],['status','Status',(v)=>internshipStatus(v)]],r=>`<button class="btn secondary small" data-action="intern-office-detail" data-id="${attr(r.application_id)}" data-mode="${attr(mode)}">Lihat Detail</button>`)}
+function renderInternshipOffice(b){const mode=b.mode,rows=b.applications||[],s=b.summary||{};let h=`<section class="hero"><h3>${mode==='admin'?'Administrasi':'Monitoring'} Magang</h3><p>${mode==='admin'?'Kelola seluruh pengajuan, status proses, anggota, dan unggah Surat TTE.':'Rekap pengajuan magang untuk kebutuhan monitoring tanpa hak perubahan data.'}</p></section>${cards([{label:'Total Pengajuan',value:s.total||0},{label:'Kemenkeu',value:s.kemenkeu||0},{label:'Non-Kemenkeu',value:s.nonKemenkeu||0},{label:'Surat Siap',value:s.byStatus?.['Surat Siap']||0}])}<section class="section"><div class="sectionhead"><div><h3>Daftar Pengajuan</h3><p>Status diperbarui langsung dari database Google Sheets.</p></div><button class="btn ghost" data-action="intern-export">Export Rekap Spreadsheet</button></div>${internshipOfficeTable(rows,mode)}</section>`;$('content').innerHTML=h}
+function internshipOfficeDetail(el){const id=el.dataset.id,mode=el.dataset.mode||S.cache.internship?.mode,a=(S.cache.internship?.applications||[]).find(x=>String(x.application_id)===String(id));if(!a)return toast('Data tidak ditemukan.',true);let body=`<div class="formgrid"><div class="field"><label>ID</label><input readonly class="readonly" value="${attr(a.application_id)}"></div><div class="field"><label>Mahasiswa</label><input readonly class="readonly" value="${attr((a.student_name||'')+' · '+(a.student_id||''))}"></div><div class="field"><label>Jenis</label><input readonly class="readonly" value="${attr(internshipAppType(a))}"></div><div class="field"><label>Status saat ini</label><div>${internshipStatus(a.status)}</div></div></div>`;
+ if(a.type==='kemenkeu')body+=(a.preferences||[]).map((p,i)=>`<div class="subtlebox" style="margin-top:10px"><b>Preferensi ${i+1}</b><br>${esc(p.eselon1||'-')} → ${esc(p.eselon2||'-')}<br>${esc(p.office_name||'-')} · ${esc(p.location||'-')}<br>${esc(p.plan||'-')}</div>`).join('');
+ else body+=`<div class="subtlebox"><b>Prioritas ${esc(a.priority_no||'-')} · ${esc(a.submission_kind||'-')}</b><br>${esc(a.institution_type||'-')} · ${esc(a.ministry||'-')}<br>${esc(a.eselon1||'-')} → ${esc(a.eselon2||'-')}<br><b>${esc(a.office_name||'-')}</b><br>${esc(a.office_address||'-')}<br>Yth. ${esc(a.leader_salutation||'')} ${esc(a.leader_position||'')}<br>PIC: ${esc(a.pic_name||a.pic_student_id||'-')} · ${esc(a.pic_wa||'-')} · ${esc(a.pic_email||'-')}</div><div class="card" style="margin-top:12px"><h3>Status Anggota</h3>${(a.members||[]).map(m=>{const ms=(a.memberStatuses||{})[String(m.student_id)]||a.status;return `<div class="formgrid" style="border-bottom:1px solid #eef2f6;padding:8px 0"><div class="field"><b>${esc(m.name||m.student_id)}</b><div class="hint">${esc(m.student_id)} · ${esc(m.program_name||'')}</div></div>${mode==='admin'?`<div class="field"><select id="imMemberStatus_${attr(m.student_id)}">${internshipStatusOptions(ms)}</select></div><div class="field"><button class="btn secondary small" data-action="intern-member-status" data-id="${attr(a.application_id)}" data-student="${attr(m.student_id)}">Update anggota</button></div>`:`<div class="field">${internshipStatus(ms)}</div>`}</div>`}).join('')}</div>`;
+ if(a.signed_file_url)body+=`<div class="alert success">Surat tersedia: <a target="_blank" rel="noopener" href="${attr(a.signed_file_url)}">${esc(a.signed_file_name||'Buka Surat TTE')}</a></div>`;
+ if(mode==='admin')body+=`<div class="card" style="margin-top:12px"><h3>Proses Admin</h3><div class="formgrid"><div class="field"><label>Status Umum</label><select id="imAdminStatus">${internshipStatusOptions(a.status)}</select></div><div class="field span2"><label>Catatan Admin</label><textarea id="imAdminNote">${esc(a.admin_note||'')}</textarea></div><div class="field span2"><label>Upload Surat TTE / Surat Jadi</label><input id="imSignedFile" type="file" accept=".pdf,.doc,.docx"></div></div><div class="toolbar"><button class="btn primary" data-action="intern-admin-status" data-id="${attr(a.application_id)}">Simpan Status</button><button class="btn secondary" data-action="intern-upload" data-id="${attr(a.application_id)}">Upload Surat</button><button class="btn danger" data-action="intern-delete" data-id="${attr(a.application_id)}">Hapus</button></div></div>`;
+ openModal('Detail Administrasi Magang',`${internshipAppType(a)} · ${dt(a.submitted_at)}`,body,`<span></span><div class="actions"><button class="btn ghost" data-action="intern-doc" data-id="${attr(a.application_id)}">Unduh Form</button><button class="btn primary" data-action="close-modal">Tutup</button></div>`)}
+async function internshipAdminStatus(el){busy(true);try{await api('updateInternshipStatus',el.dataset.id,val('imAdminStatus'),val('imAdminNote'),'');toast('Status pengajuan diperbarui.');closeModal();await loadPage('internship',true)}catch(e){toast(e.message,true)}finally{busy(false)}}
+async function internshipMemberStatus(el){busy(true);try{await api('updateInternshipStatus',el.dataset.id,$('imMemberStatus_'+el.dataset.student)?.value||'Menunggu',val('imAdminNote'),el.dataset.student);toast('Status anggota diperbarui.');closeModal();await loadPage('internship',true)}catch(e){toast(e.message,true)}finally{busy(false)}}
+async function internshipUpload(el){const f=$('imSignedFile')?.files?.[0];if(!f)return toast('Pilih file surat terlebih dahulu.',true);busy(true);try{const data=await fileToDataUrl(f);await api('uploadInternshipSignedLetter',el.dataset.id,f.name,data);toast('Surat TTE berhasil diunggah.');closeModal();await loadPage('internship',true)}catch(e){toast(e.message,true)}finally{busy(false)}}
+async function internshipExport(){busy(true);try{const r=await api('exportInternshipRekap');if(r?.url)window.open(r.url,'_blank');toast('Rekap magang berhasil diexport.')}catch(e){toast(e.message,true)}finally{busy(false)}}
+function internshipDoc(id){const a=(S.cache.internship?.applications||[]).find(x=>String(x.application_id)===String(id))||(S.cache.internship?.ownApplications||[]).find(x=>String(x.application_id)===String(id));if(!a)return toast('Data pengajuan tidak ditemukan.',true);let content=`<h1>Form Pengajuan Magang</h1><p><b>ID:</b> ${esc(a.application_id)}</p><p><b>Mahasiswa:</b> ${esc(a.student_name)} (${esc(a.student_id)})</p><p><b>Jenis:</b> ${esc(internshipAppType(a))}</p><p><b>Status:</b> ${esc(a.status)}</p>`;if(a.type==='kemenkeu')content+=`<p><b>No. WA:</b> ${esc(a.no_wa||'-')}<br><b>Unit Asal:</b> ${esc(a.unit_asal||'-')}</p><h2>Preferensi</h2><ol>${(a.preferences||[]).map(p=>`<li><b>${esc(p.eselon1||'-')} / ${esc(p.eselon2||'-')}</b><br>${esc(p.office_name||'-')} - ${esc(p.location||'-')}<br>Rencana: ${esc(p.plan||'-')}</li>`).join('')}</ol>`;else content+=`<p><b>Prioritas:</b> ${esc(a.priority_no||'-')}<br><b>Jenis Pengajuan:</b> ${esc(a.submission_kind||'-')}<br><b>Instansi:</b> ${esc(a.office_name||'-')}<br><b>Alamat:</b> ${esc(a.office_address||'-')}<br><b>Pimpinan:</b> ${esc(a.leader_salutation||'')} ${esc(a.leader_position||'')}</p><h2>Anggota</h2><ul>${(a.members||[]).map(m=>`<li>${esc(m.name||m.student_id)} (${esc(m.student_id)})</li>`).join('')}</ul>`;const html=`<!doctype html><html><head><meta charset="utf-8"><title>Pengajuan ${esc(a.application_id)}</title><style>body{font-family:Arial,sans-serif;line-height:1.5;margin:36px}h1{font-size:20px}h2{font-size:16px}</style></head><body>${content}</body></html>`;const blob=new Blob(['\ufeff',html],{type:'application/msword'}),url=URL.createObjectURL(blob),x=document.createElement('a');x.href=url;x.download=`Pengajuan_Magang_${a.application_id}.doc`;document.body.appendChild(x);x.click();x.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+
+function renderSupervisor(b){
+ const role=S.boot.user.role_id,req=b.requests||[],ref=b.reference||{};S.cache.supervisor=b;let h='';
+ if(role==='student'){
+   const fields=ref.fields||[],courses=ref.courses||[],win=S.boot.selectionWindow||{},state=b.studentState||{};
+   const winInfo=win.open?`<div class="alert success">Periode pemilihan pembimbing aktif${win.end?' sampai '+esc(win.end):''}.</div>`:`<div class="alert error">${esc(win.message||'Periode pemilihan pembimbing sedang ditutup.')}</div>`;
+   h+=winInfo;
+   if(state.has_active_thesis){
+     h+=`<div class="card"><div class="alert success">Pembimbing Anda sudah ditetapkan. Form pengajuan disembunyikan karena proses pemilihan pembimbing telah selesai.</div></div>`;
+   }else if(state.has_pending_request){
+     h+=`<div class="card"><div class="alert">Pengajuan pembimbing Anda sedang menunggu keputusan dosen. Selama masih berstatus <b>PENDING</b>, form pengajuan baru disembunyikan.</div></div>`;
+   }else{
+     h+=`<div class="card"><div class="sectionhead"><div><h3>Cari pembimbing</h3><p>${state.last_status==='REJECTED'?'Pengajuan sebelumnya ditolak. Anda dapat mengajukan dosen lain.':'Pilih bidang dan mata kuliah, lalu isi rencana judul serta abstrak.'} Sistem mencocokkan kata-kata penting dari judul/abstrak dan keyword mata kuliah dengan ekspertise dosen.</p></div></div><div class="formgrid"><div class="field"><label>Bidang skripsi <span class="req">*</span></label><select id="svField"><option value="">Pilih bidang</option>${fields.map(x=>`<option value="${attr(x.field_id)}" data-courses="${attr(x.course_ids||x.course_id||'')}">${esc(x.field_name)}</option>`).join('')}</select></div><div class="field"><label>Mata Kuliah terkait <span class="req">*</span></label><select id="svCourse"><option value="">Pilih mata kuliah</option>${courses.map(x=>`<option value="${attr(x.course_id)}">${esc(x.course_code?x.course_code+' · ':'')}${esc(x.course_name)}</option>`).join('')}</select><div class="hint">Pilih salah satu Mata Kuliah yang terkait dengan Bidang. Jika hanya satu, sistem memilihnya otomatis.</div></div><div class="field span2"><label>Rencana judul skripsi <span class="req">*</span></label><input id="svTitle" placeholder="Tuliskan rencana judul penelitian"></div><div class="field span2"><label>Abstrak / ringkasan rencana penelitian <span class="req">*</span></label><textarea id="svAbstract" style="min-height:150px" placeholder="Jelaskan masalah, tujuan, objek/data, dan pendekatan penelitian secara ringkas"></textarea></div></div><button class="btn primary" data-action="find-supervisors">Cari rekomendasi dosen</button><div id="recommend" class="section"></div></div>`;
+   }
+ }
+ if(role==='admin'){const ov=b.overview||{},students=ov.students||[],lecturers=ov.lecturers||[];h+=`<div class="card"><h3>Penetapan pembimbing oleh prodi</h3><div class="formgrid"><div class="field"><label>Mahasiswa</label><select id="assignStudent"><option value="">Pilih</option>${students.map(x=>`<option value="${attr(x.student_id)}">${esc(x.name)} · ${esc(x.student_id)}</option>`).join('')}</select></div><div class="field"><label>Dosen</label><select id="assignLecturer"><option value="">Pilih</option>${lecturers.map(x=>`<option value="${attr(x.lecturer_id)}">${esc(x.name)} · sisa ${esc(x.remaining_quota??'')}</option>`).join('')}</select></div><div class="field span2"><label>Catatan</label><textarea id="assignNote"></textarea></div></div><button class="btn primary" data-action="direct-assign">Tetapkan</button></div>`}
+ if(role==='lecturer'){
+   const q=b.lecturerSummary||{};
+   const quota=Number(q.quota||0),used=Number(q.current_load||0),remaining=Math.max(0,Number(q.remaining_quota||0));
+   const pct=quota>0?Math.min(100,Math.round((used/quota)*100)):0;
+   h+=`<div class="card"><div class="sectionhead"><div><h3>Kapasitas Bimbingan</h3><p>Ringkasan mahasiswa yang sudah menjadi bimbingan Anda dan kuota yang masih tersedia.</p></div></div><div class="grid stats"><div class="card stat"><small>Mahasiswa bimbingan aktif</small><b>${esc(used)}</b></div><div class="card stat"><small>Total kuota</small><b>${esc(quota)}</b></div><div class="card stat"><small>Sisa kuota</small><b>${esc(remaining)}</b></div></div><div class="scorebar" style="margin-top:14px"><i style="width:${pct}%"></i></div><div class="hint" style="margin-top:7px">Terpakai ${esc(used)} dari ${esc(quota)} kuota (${esc(pct)}%).</div></div>`;
+ }
+ h+=`<section class="section"><div class="sectionhead"><div><h3>Riwayat & Pengajuan Pembimbing</h3>${role==='lecturer'?'<p>Buka detail pengajuan terlebih dahulu sebelum memberi keputusan.</p>':''}</div></div>${table(req,[['student_name','Mahasiswa'],['field_name','Bidang'],['course_name','Mata Kuliah'],['title','Rencana Judul'],['lecturer_name','Dosen'],['status','Status',(v)=>`<span class="badge ${attr(v)}">${esc(v)}</span>`]],role==='lecturer'?(r=>`<button class="btn secondary small" data-action="supervisor-detail" data-id="${attr(r.request_id)}">Lihat Detail</button>`):null)}</section>`;$('content').innerHTML=h
+}
+
+function syncSupervisorCourse(){const f=$('svField'),c=$('svCourse');if(!f||!c)return;const opt=f.options[f.selectedIndex];const ids=String(opt?.dataset?.courses||'').split(',').map(x=>x.trim()).filter(Boolean);Array.from(c.options).forEach(o=>{o.disabled=ids.length>0&&!!o.value&&!ids.includes(String(o.value))});if(ids.length===1)c.value=ids[0];else if(!ids.includes(String(c.value)))c.value='';}
+async function findSupervisors(){
+ const payload={field_id:val('svField'),course_id:val('svCourse'),title:val('svTitle'),abstract:val('svAbstract')};
+ if(!payload.field_id||!payload.course_id||!payload.title||!payload.abstract)return toast('Bidang, mata kuliah, rencana judul, dan abstrak wajib diisi.',true);busy(true);
+ try{const rows=await api('recommendSupervisors',payload);$('recommend').innerHTML=(rows||[]).length?`<div class="grid">${rows.map(r=>{const bd=r.score_breakdown||{};return `<div class="card"><div class="sectionhead"><div><b>${esc(r.name)}</b><p class="hint">${esc(r.program_name||'Prodi belum diisi')} · ${esc((r.matched_field_names||[]).join(' · ')||'Bidang belum tercatat')}</p></div><span class="badge ${r.exact_field_match?'ACCEPTED':''}">${esc(r.score)}%</span></div><div class="scorebar"><i style="width:${Math.max(0,Math.min(100,Number(r.score||0)))}%"></i></div><div class="matchchips">${r.exact_field_match?'<span class="chip">Bidang cocok</span>':''}${(r.match_keywords||[]).map(k=>`<span class="chip">${esc(k)}</span>`).join('')}</div><p class="hint">Ekspertise: ${esc(r.expertise||'-')}</p><div class="subtlebox">Skor bidang ${esc(bd.field||0)} · judul/abstrak ${esc(bd.title_abstract||0)} · mata kuliah ${esc(bd.course||0)} · keyword bidang ${esc(bd.field_semantic||0)} · kapasitas ${esc(bd.capacity||0)}<br>Kuota: ${esc(r.current_load)}/${esc(r.quota)} (sisa ${esc(r.remaining_quota)})</div><div style="margin-top:10px"><button class="btn secondary" data-action="submit-supervisor" data-id="${attr(r.lecturer_id)}">Ajukan dosen ini</button></div></div>`}).join('')}</div>`:'<div class="empty">Belum ada dosen yang cukup cocok dan memiliki kuota. Perjelas rencana judul/abstrak atau cek pilihan bidang.</div>'}catch(e){toast(e.message,true)}finally{busy(false)}
+}
+async function submitSupervisor(id){busy(true);try{await api('submitSupervisorRequest',{lecturer_id:String(id||'').trim(),field_id:val('svField'),course_id:val('svCourse'),title:val('svTitle'),abstract:val('svAbstract')});toast('Pengajuan berhasil dikirim.');await loadPage('supervisor',true)}catch(e){toast(e.message,true);if(/dosen.*tidak ditemukan|dinonaktifkan/i.test(e.message||'')){try{await findSupervisors()}catch(_){}}}finally{busy(false)}}
+
+function supervisorRequestDetail(id){
+ const r=(S.cache.supervisor?.requests||[]).find(x=>String(x.request_id)===String(id))||{};
+ const pending=String(r.status||'').toUpperCase()==='PENDING';
+ const submitted=r.submitted_at?dt(r.submitted_at):'-';
+ const body=`<div class="subtlebox"><b>${esc(r.student_name||'-')}</b><br>NIM: ${esc(r.student_id||'-')}<br>Bidang: ${esc(r.field_name||'-')} · Mata Kuliah: ${esc(r.course_name||'-')}<br>Diajukan: ${esc(submitted)} · Status: <span class="badge ${attr(r.status||'')}">${esc(r.status||'-')}</span></div><div class="section"><div class="field"><label>Rencana Judul</label><textarea class="readonly" readonly>${esc(r.title||'')}</textarea></div><div class="field"><label>Abstrak / Ringkasan Rencana Penelitian</label><textarea class="readonly" readonly style="min-height:170px">${esc(r.abstract||'')}</textarea></div>${pending?`<div class="field"><label>Feedback untuk mahasiswa</label><textarea id="decisionFeedback" placeholder="Berikan catatan atau alasan keputusan. Boleh dikosongkan jika tidak diperlukan."></textarea></div>`:(r.feedback?`<div class="field"><label>Feedback yang telah diberikan</label><textarea class="readonly" readonly>${esc(r.feedback)}</textarea></div>`:'')}</div>`;
+ const foot=pending?`<button class="btn ghost" data-action="close-modal">Tutup</button><div class="actions"><button class="btn danger" data-action="save-supervisor-response" data-id="${attr(id)}" data-decision="REJECTED">Tolak</button><button class="btn success" data-action="save-supervisor-response" data-id="${attr(id)}" data-decision="ACCEPTED">Terima Mahasiswa</button></div>`:`<span></span><button class="btn primary" data-action="close-modal">Tutup</button>`;
+ openModal('Detail Pengajuan Pembimbing','Periksa seluruh rencana mahasiswa sebelum memberi keputusan.',body,foot);
+}
+async function saveSupervisorResponse(id,decision){busy(true);try{await api('respondSupervisorRequest',id,decision,val('decisionFeedback'));closeModal();toast('Keputusan disimpan.');await loadPage('supervisor',true)}catch(e){toast(e.message,true)}finally{busy(false)}}
+async function directAssign(){const st=val('assignStudent'),l=val('assignLecturer');if(!st||!l)return toast('Pilih mahasiswa dan dosen.',true);busy(true);try{await api('directAssignSupervisor',st,l,val('assignNote'));toast('Pembimbing berhasil ditetapkan.');await loadPage('supervisor',true)}catch(e){toast(e.message,true)}finally{busy(false)}}
+function renderGuidance(b){
+ const rows=b.guidance||[],th=b.theses||[],role=S.boot.user.role_id;S.cache.theses=th;S.cache.guidance=rows;let h='';
+ if(role==='student'&&th.length){
+   h+=`<div class="card"><div class="sectionhead"><div><h3>Catat Bimbingan</h3><p>Tulis catatan mahasiswa terlebih dahulu. Setelah disimpan, dosen pembimbing dapat menambahkan feedback pada catatan yang sama.</p></div></div><div class="formgrid"><div class="field"><label>Mahasiswa</label><select id="gStudent">${th.map(x=>`<option value="${attr(x.student_id)}">${esc(x.student_name||x.student_id)}</option>`).join('')}</select></div><div class="field"><label>Tanggal</label><input id="gDate" type="date" value="${new Date().toISOString().slice(0,10)}"></div><div class="field span2"><label>Topik</label><input id="gTopic" placeholder="Topik/perkembangan yang dibahas"></div><div class="field span2"><label>Catatan mahasiswa <span class="req">*</span></label><textarea id="gNote" style="min-height:130px" placeholder="Tuliskan perkembangan, pertanyaan, kendala, atau hasil konsultasi"></textarea></div></div><button class="btn primary" data-action="save-guidance">Simpan Catatan Bimbingan</button></div>`;
+ }
+ h+=`<section class="section"><div class="sectionhead"><div><h3>Riwayat Bimbingan</h3><p>${role==='lecturer'?'Tambahkan feedback pada catatan yang telah dikirim mahasiswa.':'Feedback dosen akan muncul pada baris catatan yang sama.'}</p></div></div>${table(rows,[['guidance_date','Tanggal'],['student_name','Mahasiswa'],['topic','Topik'],['student_note','Catatan Mahasiswa'],['lecturer_feedback','Feedback Dosen']],role==='lecturer'?(r=>`<button class="btn secondary small" data-action="guidance-feedback" data-id="${attr(r.guidance_id)}">${r.lecturer_feedback?'Edit Feedback':'Tambah Feedback'}</button>`):null)}</section>`;
+ $('content').innerHTML=h
+}
+async function saveGuidance(){const note=val('gNote');if(!note)return toast('Catatan mahasiswa wajib diisi sebelum disimpan.',true);busy(true);try{await api('saveGuidance',{student_id:val('gStudent'),guidance_date:val('gDate'),topic:val('gTopic'),student_note:note});toast('Catatan bimbingan tersimpan.');await loadPage('guidance',true)}catch(e){toast(e.message,true)}finally{busy(false)}}
+function openGuidanceFeedback(id){const r=(S.cache.guidance||[]).find(x=>String(x.guidance_id)===String(id))||{};openModal('Feedback Bimbingan',esc(r.student_name||r.student_id||''),`<div class="subtlebox"><b>${esc(r.topic||'Bimbingan')}</b><br>${esc(r.student_note||'-')}</div><div class="field" style="margin-top:14px"><label>Feedback dosen <span class="req">*</span></label><textarea id="gfText" style="min-height:150px" placeholder="Tuliskan feedback, arahan, revisi, atau tindak lanjut">${esc(r.lecturer_feedback||'')}</textarea></div>`,`<span></span><div class="actions"><button class="btn ghost" data-action="close-modal">Batal</button><button class="btn primary" data-action="save-guidance-feedback" data-id="${attr(id)}" data-student="${attr(r.student_id||'')}">Simpan Feedback</button></div>`)}
+async function saveGuidanceFeedback(id,studentId){const feedback=val('gfText');if(!feedback)return toast('Feedback dosen wajib diisi.',true);busy(true);try{await api('saveGuidance',{guidance_id:id,student_id:studentId,lecturer_feedback:feedback});closeModal();toast('Feedback dosen tersimpan.');await loadPage('guidance',true)}catch(e){toast(e.message,true)}finally{busy(false)}}
+
+function renderDocuments(b){const rows=b.documents||[],th=b.theses||[];let h='';if(['student','lecturer'].includes(S.boot.user.role_id)&&th.length){h+=`<div class="card"><h3>Upload dokumen</h3><div class="formgrid"><div class="field"><label>Mahasiswa</label><select id="dStudent">${th.map(x=>`<option value="${attr(x.student_id)}">${esc(x.student_name||x.student_id)}</option>`).join('')}</select></div><div class="field"><label>Jenis dokumen</label><select id="dType"><option value="PROPOSAL">Proposal</option><option value="GUIDANCE_PROOF">Bukti Bimbingan</option><option value="FINAL_THESIS">Skripsi Akhir</option><option value="OTHER">Lampiran</option></select></div><div class="field span2"><label>File</label><input id="dFile" type="file"></div></div><button class="btn primary" data-action="upload-document">Upload</button></div>`}h+=`<section class="section">${table(rows,[['document_type','Jenis'],['student_name','Mahasiswa'],['file_name','File'],['version','Versi'],['uploaded_at','Upload',dt],['file_url','Tautan',(v)=>v?`<a href="${attr(v)}" target="_blank">Buka</a>`:'-']])}</section>`;$('content').innerHTML=h}
+function fileData(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(f)})}
+async function uploadDocument(){const f=$('dFile')?.files?.[0];if(!f)return toast('Pilih file.',true);busy(true);try{const data=await fileData(f);await api('uploadDocument',{student_id:val('dStudent'),document_type:val('dType'),file_name:f.name},data);toast('Dokumen berhasil diupload.');await loadPage('documents',true)}catch(e){toast(e.message,true)}finally{busy(false)}}
+function letterFormHtml(ctx,hidden){
+ const st=ctx.student||{},th=ctx.thesis||{},tpl=ctx.templates||{};
+ return `<div id="newLetterForm" class="card" style="${hidden?'display:none':''}"><div class="sectionhead"><div><h3>Pengajuan Surat Riset Skripsi</h3><p>Data Bidang, Mata Kuliah, dan Judul yang sudah disetujui pembimbing ditarik otomatis dari data mahasiswa.</p></div></div><div class="letter-layout"><div class="letter-panel"><h4>Data Mahasiswa</h4><div class="profile-list"><div class="profile-row"><span>Nama</span><b>${esc(st.name||'-')}</b></div><div class="profile-row"><span>NIM</span><b>${esc(st.student_id||'-')}</b></div><div class="profile-row"><span>Prodi</span><b>${esc(st.program_name||'-')}</b></div><div class="profile-row"><span>Gender</span><b>${esc(st.gender||'-')}</b></div><div class="profile-row"><span>No. Telp</span><b>${esc(st.phone_number||'-')}</b></div><div class="profile-row"><span>Email</span><b>${esc(st.email||'-')}</b></div><div class="profile-row"><span>Bidang</span><b>${esc(th.field_name||'-')}</b></div><div class="profile-row"><span>Mata Kuliah</span><b>${esc(th.course_name||st.course_name||'-')}</b></div></div><div style="margin-top:16px"><label style="font-size:12px;font-weight:700;color:#475467">Judul Penelitian <span class="req">*</span></label><textarea id="lTitle" style="width:100%;margin-top:6px;min-height:110px" placeholder="Judul penelitian">${esc(th.title||'')}</textarea><input id="lField" type="hidden" value="${attr(th.field_id||'')}"></div></div><div class="letter-panel"><h4>Tujuan Surat</h4><div class="formgrid"><div class="field"><label>Sapaan <span class="req">*</span></label><select id="lSalutation"><option value="">Pilih sapaan</option>${['Bapak','Ibu','Saudara','Saudari','Bapak/Ibu'].map(x=>`<option>${x}</option>`).join('')}</select></div><div class="field"><label>Pejabat <span class="req">*</span></label><input id="lOfficial" placeholder="Contoh: Direktur ... / Kepala Kantor ..."></div><div class="field"><label>Tingkat Jabatan</label><select id="lPosition"><option value="">Pilih</option><option>Eselon I</option><option>Eselon II</option><option>Eselon III</option><option>Eselon IV</option><option>Non Eselon</option><option>Lainnya</option></select></div><div class="field"><label>Jenis Surat <span class="req">*</span></label><select id="lType"><option value="INTERNAL">Internal Kemenkeu</option><option value="EXTERNAL" selected>Eksternal Kemenkeu</option><option value="DJP">DJP</option></select></div><div class="field span2"><div id="letterTemplateBox" class="subtlebox" data-internal="${attr(tpl.INTERNAL||'')}" data-external="${attr(tpl.EXTERNAL||'')}" data-djp="${attr(tpl.DJP||'')}"></div></div><div class="field"><label>Kantor / Unit Eselon II</label><input id="lOfficeII" placeholder="Contoh: Sekretariat Ditjen ..."></div><div class="field"><label>Kantor / Unit Eselon I</label><input id="lOfficeI" placeholder="Contoh: Direktorat Jenderal ..."></div><div class="field span2"><label>Instansi / Unit Tujuan <span class="req">*</span></label><input id="lInst" placeholder="Nama instansi/unit yang dituju"></div><div class="field span2"><label>Alamat Kantor <span class="req">*</span></label><textarea id="lAddr" placeholder="Alamat lengkap kantor"></textarea></div><div class="field span2"><label>Tembusan</label><textarea id="lCopies" placeholder="Tuliskan daftar tembusan bila ada"></textarea></div><div class="field span2"><label>Tujuan / Keperluan Riset</label><textarea id="lPurpose">Permohonan izin/pengambilan data untuk penelitian skripsi</textarea></div><div class="field span2"><label>Link Dokumen Kelengkapan Google Drive</label><input id="lSupporting" type="url" placeholder="https://drive.google.com/..."><div class="hint">Gunakan link folder/file Google Drive yang berisi dokumen kelengkapan mahasiswa dan pastikan aksesnya sesuai kebutuhan.</div></div><div class="field"><label>Contact Person</label><input id="lContact"></div><div class="field"><label>Kontak</label><input id="lInfo"></div></div><button class="btn primary" data-action="submit-letter">Kirim Pengajuan Surat Riset</button></div></div></div>`;
+}
+function updateLetterTemplatePreview(){const type=val('lType'),box=$('letterTemplateBox');if(!box)return;const key=type==='INTERNAL'?'internal':type==='DJP'?'djp':'external';const url=box.dataset[key]||'';box.innerHTML=url?`<b>Contoh format ${esc(type)}</b><br><a href="${attr(url)}" target="_blank" rel="noopener">Unduh / buka file contoh format</a>`:`<b>Contoh format ${esc(type)}</b><br><span class="hint">Admin belum mengatur link contoh format untuk jenis surat ini.</span>`}
+function renderLetters(b){
+ const rows=b.letters||[],role=S.boot.user.role_id,ctx=b.letterContext||{};S.cache.letters=rows;S.cache.letterContext=ctx;let h='';
+ const monitor=`<section class="section"><div class="sectionhead"><div><h3>Monitoring Surat Riset</h3><p>Pantau status pengajuan dan surat yang telah diterbitkan.</p></div>${role==='student'&&rows.length?'<button class="btn primary" data-action="new-letter">+ Tambah Pengajuan Surat Riset Baru</button>':''}</div>${table(rows,[['submitted_at','Tanggal',(v)=>dt(v)],['student_name','Mahasiswa'],['research_title','Judul'],['salutation_official','Pejabat Tujuan'],['institution','Instansi/Unit'],['letter_type','Jenis'],['supporting_document_url','Kelengkapan',(v)=>v?`<a target="_blank" href="${attr(v)}">Buka</a>`:'-'],['status','Status',(v)=>`<span class="badge ${attr(v)}">${esc(v)}</span>`],['letter_number','Nomor'],['letter_file_url','Surat Jadi',(v)=>v?`<a target="_blank" href="${attr(v)}">Buka</a>`:'-']],role==='admin'?(r=>`<button class="btn secondary small" data-action="process-letter" data-id="${attr(r.letter_id)}">Lihat / Edit</button>`):null)}</section>`;
+ if(role==='student'){
+   if(rows.length) h+=monitor;
+   h+=letterFormHtml(ctx,rows.length>0);
+   if(!rows.length) h+=monitor;
+ }else h+=monitor;
+ $('content').innerHTML=h;if(role==='student'&&!rows.length)updateLetterTemplatePreview()
+}
+function showNewLetterForm(){const f=$('newLetterForm');if(!f)return;f.style.display='block';f.scrollIntoView({behavior:'smooth',block:'start'});setTimeout(updateLetterTemplatePreview,0)}
+async function submitLetter(){
+ const payload={research_title:val('lTitle'),field_id:val('lField'),salutation:val('lSalutation'),salutation_official:val('lOfficial'),position_level:val('lPosition'),office_eselon_ii:val('lOfficeII'),office_eselon_i:val('lOfficeI'),institution:val('lInst'),address:val('lAddr'),copies_to:val('lCopies'),letter_type:val('lType'),purpose:val('lPurpose'),supporting_document_url:val('lSupporting'),contact_person:val('lContact'),contact_info:val('lInfo')};
+ if(!payload.research_title||!payload.salutation||!payload.salutation_official||!payload.institution||!payload.address)return toast('Judul, sapaan, pejabat, instansi/unit, dan alamat kantor wajib diisi.',true);
+ busy(true);try{await api('createResearchLetter',payload);toast('Pengajuan surat riset berhasil dikirim.');await loadPage('letters',true)}catch(e){toast(e.message,true)}finally{busy(false)}
+}
+function processLetter(id){
+ const r=(S.cache.letters||[]).find(x=>String(x.letter_id)===String(id))||{};
+ const body=`<div class="formgrid"><div class="field span2"><label>Judul Penelitian</label><textarea id="lpTitle">${esc(r.research_title||'')}</textarea></div><div class="field"><label>Sapaan</label><select id="lpSalutation">${['Bapak','Ibu','Saudara','Saudari','Bapak/Ibu'].map(x=>`<option ${r.salutation===x?'selected':''}>${x}</option>`).join('')}</select></div><div class="field"><label>Pejabat</label><input id="lpOfficial" value="${attr(r.salutation_official||'')}"></div><div class="field"><label>Tingkat Jabatan</label><input id="lpPosition" value="${attr(r.position_level||'')}"></div><div class="field"><label>Jenis Surat</label><select id="lpType">${['INTERNAL','EXTERNAL','DJP'].map(x=>`<option value="${x}" ${String(r.letter_type||'').toUpperCase()===x?'selected':''}>${x}</option>`).join('')}</select></div><div class="field"><label>Unit Eselon II</label><input id="lpOfficeII" value="${attr(r.office_eselon_ii||'')}"></div><div class="field"><label>Unit Eselon I</label><input id="lpOfficeI" value="${attr(r.office_eselon_i||'')}"></div><div class="field span2"><label>Instansi / Unit Tujuan</label><input id="lpInst" value="${attr(r.institution||'')}"></div><div class="field span2"><label>Alamat</label><textarea id="lpAddress">${esc(r.address||'')}</textarea></div><div class="field span2"><label>Tembusan</label><textarea id="lpCopies">${esc(r.copies_to||'')}</textarea></div><div class="field span2"><label>Tujuan / Keperluan</label><textarea id="lpPurpose">${esc(r.purpose||'')}</textarea></div><div class="field span2"><label>Link Dokumen Kelengkapan</label><input id="lpSupporting" value="${attr(r.supporting_document_url||'')}"></div><div class="field"><label>Contact Person</label><input id="lpContact" value="${attr(r.contact_person||'')}"></div><div class="field"><label>Kontak</label><input id="lpInfo" value="${attr(r.contact_info||'')}"></div><div class="field"><label>Status</label><select id="lpStatus">${['SUBMITTED','PROCESS','APPROVED','REJECTED'].map(x=>`<option ${r.status===x?'selected':''}>${x}</option>`).join('')}</select></div><div class="field"><label>Nomor Surat</label><input id="lpNumber" value="${attr(r.letter_number||'')}"></div><div class="field span2"><label>URL Surat Jadi</label><input id="lpUrl" value="${attr(r.letter_file_url||'')}"><div class="hint">Boleh diisi manual atau gunakan upload file di bawah.</div></div><div class="field span2"><label>Upload File Surat yang Sudah Jadi</label><input id="lpFile" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">${r.letter_file_url?`<div class="hint">File saat ini: <a href="${attr(r.letter_file_url)}" target="_blank">buka surat</a></div>`:''}</div><div class="field span2"><label>Catatan Admin</label><textarea id="lpNote">${esc(r.admin_note||'')}</textarea></div></div>`;
+ openModal('Edit & Proses Surat Riset',esc(r.student_name||r.student_id||''),body,`<div><button class="btn danger" data-action="delete-letter" data-id="${attr(id)}">Hapus Pengajuan</button></div><div class="actions"><button class="btn ghost" data-action="close-modal">Batal</button><button class="btn primary" data-action="save-letter" data-id="${attr(id)}">Simpan / Update</button></div>`)
+}
+async function fileToDataUrl(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(new Error('File gagal dibaca.'));r.readAsDataURL(file)})}
+async function saveLetter(id){
+ const patch={research_title:val('lpTitle'),salutation:val('lpSalutation'),salutation_official:val('lpOfficial'),position_level:val('lpPosition'),letter_type:val('lpType'),office_eselon_ii:val('lpOfficeII'),office_eselon_i:val('lpOfficeI'),institution:val('lpInst'),address:val('lpAddress'),copies_to:val('lpCopies'),purpose:val('lpPurpose'),supporting_document_url:val('lpSupporting'),contact_person:val('lpContact'),contact_info:val('lpInfo'),status:val('lpStatus'),letter_number:val('lpNumber'),letter_file_url:val('lpUrl'),admin_note:val('lpNote')};
+ busy(true);try{await api('updateResearchLetter',id,patch);const file=$('lpFile')?.files?.[0];if(file){const data=await fileToDataUrl(file);await api('uploadResearchLetterFile',id,file.name,data)}closeModal();toast('Pengajuan surat diperbarui.');await loadPage('letters',true)}catch(e){toast(e.message,true)}finally{busy(false)}
+}
+async function deleteLetter(id){if(!confirm('Hapus pengajuan surat riset ini? Tindakan ini tidak dapat dibatalkan.'))return;busy(true);try{await api('deleteResearchLetter',id);closeModal();toast('Pengajuan surat dihapus.');await loadPage('letters',true)}catch(e){toast(e.message,true)}finally{busy(false)}}
+
+function renderReviews(b){const rows=b.reviews||[],role=S.boot.user.role_id,ov=b.overview||{};S.cache.reviews=rows;let h='';if(role==='admin')h+=`<div class="card"><h3>Buat desk review</h3><div class="formgrid"><div class="field"><label>Tahap</label><select id="rStage"><option value="PROPOSAL">Seminar Proposal</option><option value="FINAL">Ujian Skripsi</option></select></div><div class="field"><label>Mahasiswa</label><select id="rStudent"><option value="">Pilih</option>${(ov.students||[]).map(x=>`<option value="${attr(x.student_id)}">${esc(x.name)}</option>`).join('')}</select></div><div class="field"><label>Reviewer</label><select id="rReviewer"><option value="">Pilih</option>${(ov.lecturers||[]).map(x=>`<option value="${attr(x.lecturer_id)}">${esc(x.name)}</option>`).join('')}</select></div><div class="field"><label>Judul</label><input id="rTitle"></div></div><button class="btn primary" data-action="assign-review">Buat penugasan</button></div>`;h+=`<section class="section">${table(rows,[['stage','Tahap'],['student_name','Mahasiswa'],['reviewer_name','Reviewer'],['title','Judul'],['status','Status',(v)=>`<span class="badge ${attr(v)}">${esc(v)}</span>`],['decision','Keputusan']],role==='lecturer'?(r=>r.status!=='COMPLETED'?`<button class="btn primary small" data-action="complete-review" data-id="${attr(r.review_id)}">Isi review</button>`:'-'):null)}</section>`;$('content').innerHTML=h}
+async function assignReview(){busy(true);try{await api('saveDeskReview',{stage:val('rStage'),student_id:val('rStudent'),reviewer_id:val('rReviewer'),title:val('rTitle')});toast('Desk review dibuat.');await loadPage('reviews',true)}catch(e){toast(e.message,true)}finally{busy(false)}}
+function completeReview(id){const r=(S.cache.reviews||[]).find(x=>String(x.review_id)===String(id))||{};openModal('Hasil desk review',esc(r.student_name||''),`<div class="formgrid"><div class="field"><label>Nilai</label><input id="rrScore" type="number" min="0" max="100" value="${attr(r.score||'')}"></div><div class="field"><label>Keputusan</label><select id="rrDecision"><option value="LAYAK">Layak</option><option value="REVISI">Revisi</option><option value="TIDAK LAYAK">Tidak Layak</option></select></div><div class="field span2"><label>Catatan</label><textarea id="rrNote">${esc(r.review_note||'')}</textarea></div></div>`,`<span></span><div class="actions"><button class="btn ghost" data-action="close-modal">Batal</button><button class="btn primary" data-action="save-review" data-id="${attr(id)}">Simpan</button></div>`)}
+async function saveReview(id){busy(true);try{await api('saveDeskReview',{review_id:id,status:'COMPLETED',score:val('rrScore'),decision:val('rrDecision'),review_note:val('rrNote')});closeModal();toast('Review disimpan.');await loadPage('reviews',true)}catch(e){toast(e.message,true)}finally{busy(false)}}
+
+function renderProfile(p){
+ const u=p.user||S.boot.user||{},d=p.detail||{},role=u.role_id;let extra='';
+ if(role==='student')extra=`<div class="field"><label>Program Studi</label><input id="pfProgram" value="${attr(d.program_name||'')}"></div><div class="field"><label>Kelas</label><input id="pfClass" value="${attr(d.class_name||'')}"></div><div class="field"><label>Gender / Sapaan</label><input id="pfGender" value="${attr(d.gender||'')}"></div><div class="field"><label>No. Telepon</label><input id="pfPhone" value="${attr(d.phone_number||'')}"></div><div class="field span2"><label>Data Skripsi Disetujui</label><div class="subtlebox">Judul: ${esc(d.thesis_title||'-')}<br>Bidang: ${esc(d.thesis_field_name||d.thesis_field_id||'-')} · Mata Kuliah: ${esc(d.thesis_course_name||'-')}<br>Pembimbing: ${esc(d.supervisor_name||d.supervisor_id||'-')}</div></div>`;
+ if(role==='lecturer')extra=`<div class="field"><label>Prodi</label><input id="pfProgram" value="${attr(d.program_name||'')}"></div><div class="field"><label>No. Telepon</label><input id="pfPhone" value="${attr(d.phone_number||'')}"></div><div class="field span2"><label>Ekspertise</label><textarea id="pfExpertise" style="min-height:130px" placeholder="Contoh: pembiayaan infrastruktur, KPBU, keuangan publik, data panel">${esc(d.expertise_manual||d.expertise||'')}</textarea><div class="hint">Ekspertise ditulis manual sepenuhnya dan digunakan sebagai dasar pencocokan rekomendasi pembimbing.</div></div>`;
+ $('content').innerHTML=`<div class="card"><div class="sectionhead"><div><h3>Update Profil</h3><p>Profil dapat diperbarui oleh semua role. Email dan role dikunci agar relasi akun tidak terputus.</p></div></div><div class="formgrid"><div class="field"><label>Email</label><input class="readonly" value="${attr(u.email||'')}" readonly></div><div class="field"><label>Role</label><input class="readonly" value="${attr(ROLE[role]||role)}" readonly></div><div class="field"><label>Nama <span class="req">*</span></label><input id="pfName" value="${attr(u.name||d.name||'')}"></div><div class="field"><label>Username <span class="req">*</span></label><input id="pfUsername" value="${attr(u.username||'')}"></div>${extra}</div><div class="toolbar"><button class="btn primary" data-action="save-profile">Simpan Profil</button><button class="btn ghost" data-action="change-password">Ganti Password</button></div></div>`;
+}
+async function saveProfile(){const payload={name:val('pfName'),username:val('pfUsername')};if($('pfProgram'))payload.program_name=val('pfProgram');if($('pfClass'))payload.class_name=val('pfClass');if($('pfGender'))payload.gender=val('pfGender');if($('pfPhone'))payload.phone_number=val('pfPhone');if($('pfExpertise'))payload.expertise_manual=val('pfExpertise');busy(true);try{const r=await api('updateMyProfile',payload);if(r?.user){S.boot.user=Object.assign({},S.boot.user,r.user);save();renderShell()}toast('Profil berhasil diperbarui.');await loadPage('profile',true)}catch(e){toast(e.message,true)}finally{busy(false)}}
+
+function renderAdminShell(){const tabs=[['config','Konfigurasi'],['users','User'],['roles','Role'],['courses','Mata Kuliah'],['fields','Bidang'],['lecturers','Dosen'],['students','Mahasiswa'],['internship_units','Unit Magang']];$('content').innerHTML=`<div class="tabs">${tabs.map(x=>`<button class="tab ${S.adminTab===x[0]?'active':''}" data-admin-tab="${x[0]}">${x[1]}</button>`).join('')}</div><div id="adminPane" class="card">Memuat data…</div>`}
+async function loadAdminTab(tab,force=false){
+ S.adminTab=tab;save();document.querySelectorAll('[data-admin-tab]').forEach(x=>x.classList.toggle('active',x.dataset.adminTab===tab));
+ S.workspace.adminTabs=S.workspace.adminTabs||{};const cached=S.workspace.adminTabs[tab];
+ if(!force&&cached){S.adminData=cached.data;S.adminRefs=cached.refs||{};renderAdminTab(tab,S.adminData);rememberViewV52('admin',{data:S.adminData,refs:S.adminRefs});if(Date.now()-(cached.syncedAt||0)>45000)loadAdminTab(tab,true);return;}
+ if(!$('adminPane'))return;
+ if(!cached)$('adminPane').innerHTML='Memuat data '+esc(tab)+'…';
+ try{const r=await fetchAdminTabV52(tab,force);if(S.page==='admin'&&S.adminTab===tab){S.adminData=r.data;S.adminRefs=r.refs||{};renderAdminTab(tab,r.data);rememberViewV52('admin',{data:S.adminData,refs:S.adminRefs});}}
+ catch(e){if(!cached&&$('adminPane'))$('adminPane').innerHTML=`<div class="alert">${esc(e.message)}</div>`;else toast('Pembaruan data '+tab+' gagal: '+e.message,true)}
+}
+async function fetchAdminTabV52(tab,fresh=false){
+ S.fetchingAdmin=S.fetchingAdmin||{};if(S.fetchingAdmin[tab])return S.fetchingAdmin[tab];
+ const tokenAtStart=S.token;
+ S.fetchingAdmin[tab]=(async()=>{const r=await rpc({action:'admin.tab',tab,token:tokenAtStart,fresh:!!fresh},16000);if(tokenAtStart!==S.token)throw new Error('Sesi berubah.');if(!r?.ok){if(r?.code==='SESSION_EXPIRED')return sessionExpired();throw new Error(r?.message||'Data admin gagal dimuat.')}S.workspace.adminTabs=S.workspace.adminTabs||{};const item={data:r.data,refs:r.refs||{},syncedAt:Date.now()};S.workspace.adminTabs[tab]=item;S.workspace.admin={tab:tab,data:r.data,refs:r.refs||{}};S.workspace.adminSynced=item.syncedAt;return item})();
+ try{return await S.fetchingAdmin[tab]}finally{delete S.fetchingAdmin[tab]}
+};
+
+const META={
+ users:{key:'email',cols:['email','username','name','role_id','reference_id','active'],fields:[['email','Email','email'],['username','Username'],['name','Nama'],['role_id','Role','role'],['reference_id','Reference ID'],['password','Password','password'],['active','Aktif','check']]},
+ roles:{key:'role_id',cols:['role_id','role_name','permissions_json','active'],fields:[['role_id','Role ID'],['role_name','Nama Role'],['permissions_json','Permissions JSON'],['active','Aktif','check']]},
+ courses:{key:'course_id',cols:['course_id','course_code','course_name','semester','keywords','active'],fields:[['course_id','Course ID'],['course_code','Kode'],['course_name','Nama'],['semester','Semester'],['keywords','Kata kunci Mata Kuliah','textarea'],['active','Aktif','check']]},
+ fields:{key:'field_id',cols:['field_id','field_name','course_names','keywords','active'],fields:[['field_id','Field ID'],['field_name','Nama Bidang'],['course_ids','Mata Kuliah terkait','coursemulti'],['keywords','Kata kunci bidang','textarea'],['active','Aktif','check']]},
+ lecturers:{key:'lecturer_id',cols:['lecturer_id','email','name','program_name','expertise','quota','active'],fields:[['lecturer_id','ID Dosen'],['email','Email','email'],['name','Nama'],['program_name','Prodi'],['phone_number','No. Telepon'],['field_ids','Bidang Dosen','fieldrepeat'],['expertise_manual','Ekspertise','expertise'],['quota','Kuota','number'],['active','Aktif','check']]},
+ students:{key:'student_id',cols:['student_id','email','name','program_name','class_name','course_name','gender','phone_number','thesis_title','active','thesis_status'],fields:[['student_id','NIM'],['email','Email','email'],['name','Nama'],['program_name','Program Studi'],['class_name','Kelas'],['course_id','Mata Kuliah default','course'],['gender','Gender'],['phone_number','No. Telepon'],['thesis_status','Status Skripsi'],['active','Aktif','check']]},
+ internship_units:{key:'unit_id',cols:['unit_id','eselon1','eselon2','office_name','location','active'],fields:[['unit_id','Unit ID'],['eselon1','Eselon I'],['eselon2','Eselon II'],['office_name','Nama Kantor / Unit'],['location','Lokasi'],['active','Aktif','check']]}
+};
+
+const COL_LABEL={unit_id:'Unit ID',eselon1:'Eselon I',eselon2:'Eselon II',office_name:'Kantor / Unit',location:'Lokasi',course_names:'Mata Kuliah terkait',course_id:'Course ID',course_code:'Kode',course_name:'Mata Kuliah',keywords:'Kata Kunci',field_id:'Field ID',field_name:'Bidang',program_name:'Prodi',lecturer_id:'ID Dosen',student_id:'NIM',phone_number:'No. Telepon',thesis_title:'Judul Skripsi',role_id:'Role',reference_id:'Reference ID',active:'Aktif',quota:'Kuota',expertise:'Ekspertise',email:'Email',username:'Username',name:'Nama',semester:'Semester',class_name:'Kelas',gender:'Gender',thesis_status:'Status Skripsi'};
+function renderAdminTab(tab,data){
+ if(tab==='config')return $('adminPane').innerHTML=`<div class="sectionhead"><div><h3>Konfigurasi Portal</h3></div><button class="btn secondary" data-action="edit-config">Ubah</button></div>${table(Object.entries(data).map(([k,v])=>({key:k,value:v})),[['key','Pengaturan'],['value','Nilai']])}`;
+ const m=META[tab],rows=(data||[]).map(r=>Object.assign({},r));
+ if(tab==='fields'){const idx=Object.fromEntries((S.adminRefs.courses||[]).map(x=>[String(x.course_id),x]));rows.forEach(r=>{const ids=String(r.course_ids||r.course_id||'').split(',').map(x=>x.trim()).filter(Boolean);r.course_names=ids.map(id=>idx[String(id)]?.course_name||id).join(', ')||'-'})}
+ if(tab==='students'){const idx=Object.fromEntries((S.adminRefs.courses||[]).map(x=>[String(x.course_id),x]));rows.forEach(r=>r.course_name=idx[String(r.course_id)]?.course_name||r.course_id||'-')}
+ $('adminPane').innerHTML=`<div class="sectionhead"><div><h3>${esc(tab)}</h3><p>Data dimuat hanya untuk tab ini agar portal tetap ringan.</p></div><div class="toolbar"><button class="btn secondary" data-action="admin-add" data-entity="${tab}">+ Tambah</button><button class="btn ghost" data-action="admin-export" data-entity="${tab}">Export</button></div></div>${table(rows,m.cols.map(c=>[c,COL_LABEL[c]||c]),(r,i)=>`<button class="btn secondary small" data-action="admin-edit" data-entity="${tab}" data-index="${i}">Edit</button>`)}`
+}
+function splitSelectIds(v){return String(v||'').split(',').map(x=>x.trim()).filter(Boolean)}
+function repeatSelectOptions(kind,value){
+ const rows=kind==='course'?(S.adminRefs.courses||[]):S.adminRefs.fields||[];
+ return `<option value="">Pilih ${kind==='course'?'mata kuliah':'bidang'}</option>`+rows.map(x=>{const id=kind==='course'?x.course_id:x.field_id;const text=kind==='course'?(x.course_code?x.course_code+' · ':'')+(x.course_name||''):(x.field_name||'');return `<option value="${attr(id)}" ${String(value)===String(id)?'selected':''}>${esc(text)}</option>`}).join('');
+}
+function repeatSelectRow(kind,value,index){return `<div class="repeat-row" data-repeat-row="${kind}"><span class="repeat-no">${Number(index)+1}</span><select data-repeat-select="${kind}">${repeatSelectOptions(kind,value||'')}</select><button type="button" class="btn ghost repeat-remove" data-action="repeat-remove" data-kind="${kind}" title="Hapus pilihan">×</button></div>`}
+function repeatSelectField(kind,label,value){const values=splitSelectIds(value);if(!values.length)values.push('');return `<div class="field span2"><label>${esc(label)} <span class="req">*</span></label><div class="hint">Pilih dari dropdown. Gunakan tombol tambah untuk menambahkan pilihan lain.</div><div id="repeat_${kind}" class="repeat-list">${values.map((v,i)=>repeatSelectRow(kind,v,i)).join('')}</div><button type="button" class="btn secondary small repeat-add" data-action="repeat-add" data-kind="${kind}">+ Tambah ${kind==='course'?'Mata Kuliah':'Bidang'}</button></div>`}
+function renumberRepeat(kind){document.querySelectorAll(`#repeat_${kind} [data-repeat-row]`).forEach((row,i)=>{const n=row.querySelector('.repeat-no');if(n)n.textContent=i+1})}
+function addRepeatSelect(kind){const box=$('repeat_'+kind);if(!box)return;box.insertAdjacentHTML('beforeend',repeatSelectRow(kind,'',box.querySelectorAll('[data-repeat-row]').length));renumberRepeat(kind)}
+function removeRepeatSelect(el){const kind=el.dataset.kind||el.closest('[data-repeat-row]')?.dataset.repeatRow;const box=$('repeat_'+kind);const row=el.closest('[data-repeat-row]');if(!box||!row)return;const rows=box.querySelectorAll('[data-repeat-row]');if(rows.length<=1){const sel=row.querySelector('select');if(sel)sel.value='';return}row.remove();renumberRepeat(kind)}
+
+function adminFieldHtml(f,row){
+ const [n,l,t='text']=f,v=row[n]??'';
+ if(t==='check')return `<div class="field"><label class="togglecard" for="af_${n}"><span class="togglecopy"><b>${esc(l)}</b><small>Geser sakelar untuk mengaktifkan atau menonaktifkan data.</small></span><span class="switch"><input id="af_${n}" type="checkbox" ${truth(v)?'checked':''}><span class="slider"></span></span></label></div>`;
+ if(t==='textarea')return `<div class="field span2"><label>${esc(l)}</label><textarea id="af_${n}">${esc(v)}</textarea></div>`;
+ if(t==='role'){const roles=S.adminRefs.roles||[];const opts=roles.length?roles:[{role_id:'admin',role_name:'Admin'},{role_id:'lecturer',role_name:'Dosen'},{role_id:'student',role_name:'Mahasiswa'}];return `<div class="field"><label>${esc(l)}</label><select id="af_${n}">${opts.map(x=>`<option value="${attr(x.role_id)}" ${String(v)===String(x.role_id)?'selected':''}>${esc(x.role_name)}</option>`).join('')}</select></div>`}
+ if(t==='course'){const rows=S.adminRefs.courses||[];const auto=!v&&rows.length===1?rows[0].course_id:v;return `<div class="field"><label>${esc(l)} <span class="req">*</span></label><select id="af_${n}"><option value="">Pilih mata kuliah</option>${rows.map(x=>`<option value="${attr(x.course_id)}" ${String(auto)===String(x.course_id)?'selected':''}>${esc(x.course_code?x.course_code+' · ':'')}${esc(x.course_name)}</option>`).join('')}</select></div>`}
+ if(t==='coursemulti')return repeatSelectField('course',l,v||row.course_ids||row.course_id||'');
+ if(t==='fieldrepeat')return repeatSelectField('field',l,v||row.field_ids||'');
+ if(t==='expertise'){const manual=v||row.expertise_manual||row.expertise||'';return `<div class="field span2"><label>${esc(l)} <span class="req">*</span></label><textarea id="af_${n}" style="min-height:130px" placeholder="Contoh: akuntansi pemerintahan, pembiayaan infrastruktur, KPBU, audit sektor publik, data panel">${esc(manual)}</textarea><div class="hint">Tulis seluruh ekspertise dosen secara manual. Data Bidang tidak otomatis dimasukkan ke ekspertise.</div></div>`}
+ return `<div class="field"><label>${esc(l)}</label><input id="af_${n}" type="${t}" value="${attr(t==='password'?'':v)}"></div>`
+}
+function adminForm(entity,index){const m=META[entity],row=index>=0?(S.adminData[index]||{}):{};S.cache.adminEdit={entity,index};const body=`<div class="formgrid">${m.fields.map(f=>adminFieldHtml(f,row)).join('')}</div>`;openModal((index>=0?'Edit ':'Tambah ')+entity,'Isi seluruh data pada satu form. Pilihan relasional diambil langsung dari database.',body,`<div>${index>=0?`<button class="btn danger" data-action="admin-delete">Hapus</button>`:''}</div><div class="actions"><button class="btn ghost" data-action="close-modal">Batal</button><button class="btn primary" data-action="admin-save">Simpan</button></div>`)}
+async function adminSave(){const {entity,index}=S.cache.adminEdit,m=META[entity],row=index>=0?Object.assign({},S.adminData[index]):{};m.fields.forEach(f=>{const [n,,t='text']=f;if(t==='coursemulti'){row[n]=Array.from(document.querySelectorAll('[data-repeat-select="course"]')).map(x=>x.value.trim()).filter(Boolean).filter((x,i,a)=>a.indexOf(x)===i).join(',');return}if(t==='fieldrepeat'){row[n]=Array.from(document.querySelectorAll('[data-repeat-select="field"]')).map(x=>x.value.trim()).filter(Boolean).filter((x,i,a)=>a.indexOf(x)===i).join(',');return}const el=$('af_'+n);if(!el)return;row[n]=t==='check'?el.checked:el.value.trim()});busy(true);try{await api('saveAdminEntity',entity,row);closeModal();toast('Data disimpan.');await loadAdminTab(entity)}catch(e){toast(e.message,true)}finally{busy(false)}}
+
+async function adminDelete(){const {entity,index}=S.cache.adminEdit,m=META[entity],row=S.adminData[index];if(!confirm('Hapus data ini?'))return;busy(true);try{await api('deleteAdminEntity',entity,row[m.key]);closeModal();toast('Data dihapus.');await loadAdminTab(entity)}catch(e){toast(e.message,true)}finally{busy(false)}}
+function editConfig(){const c=S.adminData||{};openModal('Konfigurasi Portal','Perubahan disimpan langsung ke Config. Link contoh format Surat Riset dapat berupa Google Drive/Docs atau URL lain yang dapat diakses mahasiswa.',`<div class="formgrid"><div class="field span2"><label>Institusi / Prodi</label><input id="cfOrg" value="${attr(c.INSTITUTION_NAME||'')}"></div><div class="field"><label>Tahun Akademik</label><input id="cfYear" value="${attr(c.ACADEMIC_YEAR||'')}"></div><div class="field"><label>Batas Upload MB</label><input id="cfMax" type="number" value="${attr(c.MAX_UPLOAD_MB||8)}"></div><div class="field"><label>Awal Pemilihan</label><input id="cfStart" type="date" value="${attr(c.SUPERVISOR_REQUEST_START||'')}"></div><div class="field"><label>Akhir Pemilihan</label><input id="cfEnd" type="date" value="${attr(c.SUPERVISOR_REQUEST_END||'')}"></div><div class="field span2"><label>Contoh Format Surat Internal Kemenkeu</label><input id="cfTplInternal" type="url" value="${attr(c.LETTER_TEMPLATE_INTERNAL||'')}" placeholder="https://drive.google.com/..."></div><div class="field span2"><label>Contoh Format Surat Eksternal Kemenkeu</label><input id="cfTplExternal" type="url" value="${attr(c.LETTER_TEMPLATE_EXTERNAL||'')}" placeholder="https://drive.google.com/..."></div><div class="field span2"><label>Contoh Format Surat DJP</label><input id="cfTplDjp" type="url" value="${attr(c.LETTER_TEMPLATE_DJP||'')}" placeholder="https://drive.google.com/..."></div></div>`,`<span></span><div class="actions"><button class="btn ghost" data-action="close-modal">Batal</button><button class="btn primary" data-action="save-config">Simpan</button></div>`)}
+async function saveConfig(){busy(true);try{const r=await api('saveConfigMap',{INSTITUTION_NAME:val('cfOrg'),ACADEMIC_YEAR:val('cfYear'),MAX_UPLOAD_MB:val('cfMax'),SUPERVISOR_REQUEST_START:val('cfStart'),SUPERVISOR_REQUEST_END:val('cfEnd'),LETTER_TEMPLATE_INTERNAL:val('cfTplInternal'),LETTER_TEMPLATE_EXTERNAL:val('cfTplExternal'),LETTER_TEMPLATE_DJP:val('cfTplDjp')});if(r?.selectionWindow&&S.boot)S.boot.selectionWindow=r.selectionWindow;closeModal();toast('Konfigurasi disimpan.');await loadAdminTab('config')}catch(e){toast(e.message,true)}finally{busy(false)}}
+
+async function adminExport(entity){busy(true);try{const r=await api('exportEntityToSpreadsheet',entity);if(r?.url)window.open(r.url,'_blank');toast('Export selesai.')}catch(e){toast(e.message,true)}finally{busy(false)}}
+function openPassword(){openModal('Ganti Password','Gunakan minimal 8 karakter.',`<div class="field"><label>Password saat ini</label><input id="pwCurrent" type="password"></div><div class="field"><label>Password baru</label><input id="pwNew" type="password"></div><div class="field"><label>Ulangi password</label><input id="pwNew2" type="password"></div>`,`<span></span><div class="actions"><button class="btn ghost" data-action="close-modal">Batal</button><button class="btn primary" data-action="save-password">Simpan</button></div>`)}
+async function savePassword(){if($('pwNew').value!==$('pwNew2').value)return toast('Konfirmasi password tidak sama.',true);busy(true);try{await api('changeMyPassword',{currentPassword:$('pwCurrent').value,newPassword:$('pwNew').value});closeModal();toast('Password diperbarui.')}catch(e){toast(e.message,true)}finally{busy(false)}}
+function openModal(title,sub,body,foot){$('modalTitle').textContent=title;$('modalSub').textContent=sub||'';$('modalBody').innerHTML=body||'';$('modalFoot').innerHTML=foot||'';$('modalBack').classList.add('show');if(window.__bindPortalDomV52)window.__bindPortalDomV52($('modalBack'))}
+function closeModal(){$('modalBack').classList.remove('show');$('modalBody').innerHTML='';$('modalFoot').innerHTML=''}
+function toggleSidebar(){if(window.matchMedia('(max-width:760px)').matches){$('sidebar').classList.toggle('mobile-open');return}S.collapsed=!S.collapsed;save();$('app').classList.toggle('collapsed',S.collapsed);const t=$('sideToggle');if(t)t.title=S.collapsed?'Perbesar sidebar':'Minimize sidebar'}
+const HANDLERS={
+ 'send-reset':()=>sendReset(),'reset-password':()=>resetPassword(),'sidebar-toggle':()=>toggleSidebar(),'mobile-menu':()=>toggleSidebar(),'refresh':()=>refreshCurrentV52(),'change-password':()=>openPassword(),'save-password':()=>savePassword(),'logout':()=>logout(),'close-modal':()=>closeModal(),'find-supervisors':()=>findSupervisors(),'submit-supervisor':el=>submitSupervisor(el.dataset.id),'supervisor-detail':el=>supervisorRequestDetail(el.dataset.id),'save-supervisor-response':el=>saveSupervisorResponse(el.dataset.id,el.dataset.decision),'direct-assign':()=>directAssign(),'save-guidance':()=>saveGuidance(),'guidance-feedback':el=>openGuidanceFeedback(el.dataset.id),'save-guidance-feedback':el=>saveGuidanceFeedback(el.dataset.id,el.dataset.student),'upload-document':()=>uploadDocument(),'submit-letter':()=>submitLetter(),'new-letter':()=>showNewLetterForm(),'process-letter':el=>processLetter(el.dataset.id),'save-letter':el=>saveLetter(el.dataset.id),'delete-letter':el=>deleteLetter(el.dataset.id),'assign-review':()=>assignReview(),'complete-review':el=>completeReview(el.dataset.id),'save-review':el=>saveReview(el.dataset.id),'admin-add':el=>adminForm(el.dataset.entity,-1),'admin-edit':el=>adminForm(el.dataset.entity,Number(el.dataset.index)),'admin-save':()=>adminSave(),'admin-delete':()=>adminDelete(),'admin-export':el=>adminExport(el.dataset.entity),'edit-config':()=>editConfig(),'save-config':()=>saveConfig(),'save-profile':()=>saveProfile(),'repeat-add':el=>addRepeatSelect(el.dataset.kind),'repeat-remove':el=>removeRepeatSelect(el),
+ 'intern-new':el=>internshipStart(el.dataset.type),'intern-edit':el=>internshipEdit(el.dataset.id),'intern-cancel':()=>internshipCancel(),'intern-save-k':el=>internshipSaveK(el),'intern-save-nk':el=>internshipSaveNK(el),'intern-member-add':()=>internshipMemberAdd(),'intern-member-remove':el=>internshipMemberRemove(el),'intern-delete':el=>internshipDelete(el.dataset.id),'intern-finalize':el=>internshipFinalize(el),'intern-detail':el=>internshipDetail(el.dataset.id),'intern-office-detail':el=>internshipOfficeDetail(el),'intern-admin-status':el=>internshipAdminStatus(el),'intern-member-status':el=>internshipMemberStatus(el),'intern-upload':el=>internshipUpload(el),'intern-export':()=>internshipExport(),'intern-doc':el=>internshipDoc(el.dataset.id)
+};
+// v4.7 DIRECT DOM BINDING: setiap tombol punya handler sendiri.
+function bindPortalDomV52(root){
+  const scope=(root&&root.querySelectorAll)?root:document;
+  let nodes=[];
+  if(scope.matches&&(scope.matches('[data-page]')||scope.matches('[data-admin-tab]')||scope.matches('[data-action]')))nodes.push(scope);
+  if(scope.querySelectorAll)nodes=nodes.concat(Array.from(scope.querySelectorAll('[data-page],[data-admin-tab],[data-action]')));
+  nodes.forEach(el=>{
+    if(!el||!el.getAttribute)return;
+    el.dataset.boundV52='1';
+    el.onclick=function(ev){
+      if(ev){ev.preventDefault();ev.stopPropagation();}
+      const page=el.getAttribute('data-page');
+      if(page!==null)return Promise.resolve(loadPage(page)).catch(x=>toast(x.message||String(x),true));
+      const tab=el.getAttribute('data-admin-tab');
+      if(tab!==null)return Promise.resolve(loadAdminTab(tab)).catch(x=>toast(x.message||String(x),true));
+      const action=el.getAttribute('data-action');
+      if(action!==null){const fn=HANDLERS[action];if(!fn)return toast('Aksi '+action+' belum tersedia.',true);return Promise.resolve(fn(el,ev)).catch(x=>toast(x.message||String(x),true));}
+    };
+  });
+}
+window.__bindPortalDomV52=bindPortalDomV52;
+window.__portalPageRouterV52=page=>Promise.resolve(loadPage(page)).catch(x=>toast(x.message||String(x),true));
+window.__portalAdminTabRouterV52=tab=>Promise.resolve(loadAdminTab(tab)).catch(x=>toast(x.message||String(x),true));
+window.__portalActionRouterV52=(action,el,e)=>{const fn=HANDLERS[action];if(fn)Promise.resolve(fn(el,e)).catch(x=>toast(x.message||String(x),true));};
+window.__portalRefreshV52=()=>refreshCurrentV52();
+bindPortalDomV52(document);
+try{new MutationObserver(ms=>ms.forEach(m=>Array.from(m.addedNodes||[]).forEach(n=>{if(n&&n.nodeType===1)bindPortalDomV52(n)}))).observe(document.body,{childList:true,subtree:true});}catch(e){console.warn('Mutation binder unavailable',e)}
+window.__portalMainReadyV52=true;
+if(window.__pendingPortalActionsV52&&window.__pendingPortalActionsV52.length){const q=window.__pendingPortalActionsV52.splice(0);q.forEach(x=>{const fn=HANDLERS[x.action];if(fn)Promise.resolve(fn(x.el,null)).catch(e=>toast(e.message||String(e),true));});}
+if(window.__pendingPortalPageV52){const p=window.__pendingPortalPageV52;window.__pendingPortalPageV52='';setTimeout(()=>window.__portalPageRouterV52(p),0)}
+if(window.__pendingPortalAdminTabV52){const t=window.__pendingPortalAdminTabV52;window.__pendingPortalAdminTabV52='';setTimeout(()=>window.__portalAdminTabRouterV52(t),0)}
+$('modalBack').addEventListener('click',e=>{if(e.target===$('modalBack'))closeModal()});
+document.addEventListener('change',e=>{if(e.target&&e.target.id==='svField')syncSupervisorCourse();if(e.target&&e.target.id==='lType')updateLetterTemplatePreview();if(e.target&&e.target.id==='imKind')internshipSyncKind();if(e.target?.matches?.('[data-intern-e1]'))internshipApplyUnitFilters();if(e.target&&e.target.id==='imPic'){const s=internshipStudents().find(x=>String(x.student_id)===String(e.target.value));if(s){if($('imPicEmail')&&!val('imPicEmail'))$('imPicEmail').value=s.email||'';if($('imPicProgram')&&!val('imPicProgram'))$('imPicProgram').value=s.program_name||''}}});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&S.token&&S.boot&&Date.now()-(S.cache.lastFocusRefresh||0)>60000){S.cache.lastFocusRefresh=Date.now();refreshCurrentV52().catch(e=>toast('Pembaruan data gagal: '+e.message,true))}});
+window.addEventListener('error',e=>{console.error(e.error||e.message);try{if($('loginPage')?.classList.contains('hidden')&&$('app')?.classList.contains('hidden'))forceLoginVisible('Terjadi kesalahan tampilan. Portal dikembalikan ke halaman login.');else toast('Terjadi kesalahan tampilan: '+(e.message||'unknown'),true)}catch(_){}});
+window.addEventListener('unhandledrejection',e=>{console.error(e.reason);try{if($('loginPage')?.classList.contains('hidden')&&$('app')?.classList.contains('hidden'))forceLoginVisible('Koneksi portal gagal dipulihkan. Silakan login kembali.')}catch(_){}});
+if(!window.__portalLoginBootstrapReadyV52){forceLoginVisible('Mesin Fast Login v4.7 belum terpasang lengkap.');} safeStartV52();
+
+function mockRpc(req){
+ const boot={app:{name:'Skripsi & Magang',version:'5.2.0-preview'},user:{name:'Preview Admin',username:'admin',role_id:'admin',email:'admin@example.ac.id'},config:{APP_TITLE:'Skripsi & Magang',INSTITUTION_NAME:'Preview Prodi',ACADEMIC_YEAR:'2026/2027'},selectionWindow:{start:'2026-08-01',end:'2026-09-30',open:true},nav:[{id:'dashboard',label:'Dashboard'},{id:'supervisor',label:'Pembimbing'},{id:'guidance',label:'Bimbingan'},{id:'documents',label:'Dokumen'},{id:'letters',label:'Surat Riset'},{id:'reviews',label:'Desk Review'},{id:'internship',label:'Magang'},{id:'profile',label:'Profil Saya'},{id:'admin',label:'Administrasi'}]};
+ if(req.action==='auth.login'){if(req.identifier!=='admin'||req.password!=='admin123')return{ok:false,message:'Username atau password salah.'};return{ok:true,token:'demo',boot}}
+ if(req.action==='auth.resume')return req.token?{ok:true,token:req.token,boot}:{ok:false,message:'Sesi habis'};
+ if(req.action==='auth.requestReset')return{ok:true,destination:'a***@example.ac.id'};if(req.action==='auth.resetPassword')return{ok:true,message:'Password berhasil direset.'};if(req.action==='auth.logout')return{ok:true};
+ if(req.action==='page.load'){const page=req.page;if(page==='dashboard')return{ok:true,bundle:{dashboard:{cards:[{label:'Mahasiswa aktif',value:128},{label:'Pembimbing aktif',value:91}],timeline:[],alerts:[]}}};if(page==='supervisor')return{ok:true,bundle:{reference:{fields:[{field_id:'BID-ASP',field_name:'Akuntansi Sektor Publik'}]},requests:[],overview:{students:[],lecturers:[]}}};if(page==='guidance')return{ok:true,bundle:{guidance:[],theses:[]}};if(page==='documents')return{ok:true,bundle:{documents:[],theses:[]}};if(page==='letters')return{ok:true,bundle:{letters:[],letterContext:{student:{student_id:'4111220064',name:'Nabilla Putri Azzahra',email:'4111220064_nabilla@pknstan.ac.id',program_name:'MAP',gender:'Sdri',phone_number:'087816109649',course_name:'Skripsi'},thesis:{title:'Lelang Aset Koruptor: Studi Persepsi dan Pandangan Publik pada Lelang Barang Rampasan Komisi Pemberantasan Korupsi',field_id:'BID-ASP',field_name:'Lelang'}}}};if(page==='reviews')return{ok:true,bundle:{reviews:[],overview:{students:[],lecturers:[]}}};if(page==='internship')return{ok:true,bundle:{mode:'admin',applications:[],summary:{total:0,kemenkeu:0,nonKemenkeu:0,byStatus:{'Surat Siap':0}},reference:{students:[],units:[]}}};if(page==='profile')return{ok:true,bundle:{profile:{user:boot.user,detail:{program_name:'Preview Prodi',phone_number:'08123456789'}}}}}
+ if(req.action==='admin.tab'){if(req.tab==='config')return{ok:true,data:{INSTITUTION_NAME:'Preview',ACADEMIC_YEAR:'2026/2027',MAX_UPLOAD_MB:'8'}};const refs=req.tab==='fields'||req.tab==='students'?{courses:[{course_id:'MK-SKRIPSI',course_code:'SKR',course_name:'Skripsi'}]}:req.tab==='lecturers'?{fields:[{field_id:'BID-ASP',field_name:'Akuntansi Sektor Publik',keywords:'keuangan publik, akuntabilitas',course_ids:'MK-SKRIPSI'}]}:req.tab==='users'?{roles:[{role_id:'admin',role_name:'Administrator'},{role_id:'lecturer',role_name:'Dosen'},{role_id:'student',role_name:'Mahasiswa'},{role_id:'monitor',role_name:'Monitor / Rekap'}]}:{};return{ok:true,data:[],refs}}
+ if(req.action==='api')return{ok:true,data:req.name==='recommendSupervisors'?[{lecturer_id:'DSN1',name:'Dosen Preview',expertise:'Akuntansi sektor publik, pembiayaan infrastruktur',score:92,current_load:2,quota:8,remaining_quota:6,exact_field_match:true,matched_field_names:['Akuntansi Sektor Publik'],match_keywords:['keuangan','publik'],score_breakdown:{field:35,title_abstract:30,course:13,field_semantic:9,capacity:5}}]:{ok:true}};
+ return{ok:false,message:'Mock action unknown'}
+}
+})();
+</script>
+</body>
+</html>
