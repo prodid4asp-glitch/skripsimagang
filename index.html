@@ -31,9 +31,9 @@ body{font-size:13px;line-height:1.45}.login-visual h2{font-size:32px}.auth h2{fo
  * CSV_URL sudah diisi dengan sumber CSV publik yang diberikan.
  */
 window.PORTAL_CONFIG=Object.freeze({
-  API_URL:'https://script.google.com/macros/s/AKfycbwju3e1pF0IpUGcObzoY0a-SgPdybEoQ16suB-8mhtWnVO8I9HBBr0ZiHErZwnvDUzT/exec',
+  API_URL:'https://script.google.com/macros/s/AKfycbx6b0xyWx3v5zO-UlVxb2u61rAkomjxrA-bmgG_SF_nWvTYWwR7FqHhKyp1NvhruwWP/exec',
   CSV_URL:'https://docs.google.com/spreadsheets/d/e/2PACX-1vQsDcY7dlj3xzz7LdCeCkfIO6GxHls5TtdKB6u-p8vtKM69SINdz_e2URadoJR3d5_ChAtFr7RV5rPT/pub?output=csv',
-  VERSION:'6.14.0'
+  VERSION:'6.15.0'
 });
 
 (function(){
@@ -143,7 +143,7 @@ window.PORTAL_CONFIG=Object.freeze({
           <button type="button" class="btn primary full" data-action="reset-password">Reset password</button>
         </div>
       </details>
-      <div class="hint" style="margin-top:16px">Versi 6.14.0</div>
+      <div class="hint" style="margin-top:16px">Versi 6.15.0</div>
     </div>
   </div>
   <div class="login-visual"><div><small>AYO SEMANGAT</small><h2>Skripsi yang baik adalah skripsi yang selesai.</h2></div></div>
@@ -192,7 +192,7 @@ window.PORTAL_CONFIG=Object.freeze({
       setText('brandTitle',(boot.config&&boot.config.APP_TITLE)||(boot.app&&boot.app.name)||'Skripsi & Magang');
       setText('brandOrg',(boot.config&&boot.config.INSTITUTION_NAME)||'');
       setText('academicYear','Tahun akademik '+((boot.config&&boot.config.ACADEMIC_YEAR)||'2026/2027'));
-      setText('version','v'+((boot.app&&boot.app.version)||'6.14.0'));
+      setText('version','v'+((boot.app&&boot.app.version)||'6.15.0'));
       setText('userName',user.name||user.username||'Pengguna');
       var roles={admin:'Admin / Prodi',lecturer:'Dosen',student:'Mahasiswa',monitor:'Monitor / Rekap'};
       setText('userRole',roles[user.role_id]||user.role_id||'');
@@ -499,7 +499,7 @@ if(window.__pendingPortalLoginV52){
   setTimeout(()=>window.__portalAcceptLoginV52(pending),0);
 }
 function isPageAllowed(p){return p==='dashboard'||(p!=='reviews'&&!!S.boot?.nav?.some(x=>x.id===p))}
-function renderShell(){const b=S.boot,u=b.user;document.body.querySelector('#app').classList.toggle('collapsed',S.collapsed);$('brandTitle').textContent='Skripsi & Magang';$('brandOrg').textContent=b.config?.INSTITUTION_NAME||'';$('academicYear').textContent='Tahun akademik '+(b.config?.ACADEMIC_YEAR||'2026/2027');$('version').textContent='v'+(b.app?.version||'6.14.0');$('userName').textContent=u.name||u.username;$('userRole').textContent=ROLE[u.role_id]||u.role_id;$('avatar').textContent=(u.name||u.username||'U')[0].toUpperCase();const nav=(S.boot.nav||[]).filter(n=>n.id!=='reviews');$('nav').innerHTML=nav.map(n=>`<button type="button" data-page="${attr(n.id)}"><span class="ico">${ICO[n.id]||'•'}</span><span class="navlabel">${esc(n.label)}</span></button>`).join('');if(window.__bindPortalDomV52)window.__bindPortalDomV52($('nav'));const tg=$('sideToggle');if(tg){tg.textContent=S.collapsed?'☰':'☰';tg.title=S.collapsed?'Perbesar sidebar':'Minimize sidebar'}markNav()}
+function renderShell(){const b=S.boot,u=b.user;document.body.querySelector('#app').classList.toggle('collapsed',S.collapsed);$('brandTitle').textContent='Skripsi & Magang';$('brandOrg').textContent=b.config?.INSTITUTION_NAME||'';$('academicYear').textContent='Tahun akademik '+(b.config?.ACADEMIC_YEAR||'2026/2027');$('version').textContent='v'+(b.app?.version||'6.15.0');$('userName').textContent=u.name||u.username;$('userRole').textContent=ROLE[u.role_id]||u.role_id;$('avatar').textContent=(u.name||u.username||'U')[0].toUpperCase();const nav=(S.boot.nav||[]).filter(n=>n.id!=='reviews');$('nav').innerHTML=nav.map(n=>`<button type="button" data-page="${attr(n.id)}"><span class="ico">${ICO[n.id]||'•'}</span><span class="navlabel">${esc(n.label)}</span></button>`).join('');if(window.__bindPortalDomV52)window.__bindPortalDomV52($('nav'));const tg=$('sideToggle');if(tg){tg.textContent=S.collapsed?'☰':'☰';tg.title=S.collapsed?'Perbesar sidebar':'Minimize sidebar'}markNav()}
 function markNav(){document.querySelectorAll('#nav [data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===S.page));$('pageTitle').textContent=LABEL[S.page]||'Portal'}
 async function login(e){
   // v4.7: satu-satunya jalur login adalah bootstrap kecil di atas.
@@ -661,7 +661,115 @@ async function internshipAdminStatus(el){busy(true);try{await api('updateInterns
 async function internshipUpload(el){const f=$('imSignedFile')?.files?.[0];if(!f)return toast('Pilih file surat terlebih dahulu.',true);busy(true);try{const data=await fileToDataUrl(f);await api('uploadInternshipSignedLetter',el.dataset.id,f.name,data);toast('Surat TTE berhasil diunggah.');closeModal();await loadPage('internship',true)}catch(e){toast(e.message,true)}finally{busy(false)}}
 async function internshipExport(){busy(true);try{const r=await api('exportInternshipRekap');if(r?.url)window.open(r.url,'_blank');toast('Rekap magang berhasil diexport.')}catch(e){toast(e.message,true)}finally{busy(false)}}
 function downloadBase64File(fileName,mimeType,base64){const binary=atob(String(base64||'')),bytes=new Uint8Array(binary.length);for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);const blob=new Blob([bytes],{type:mimeType||'application/vnd.openxmlformats-officedocument.wordprocessingml.document'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=fileName||'Draft_Surat_Permohonan_Magang.docx';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1500)}
-async function internshipDoc(id){busy(true);try{const result=await api('generateInternshipDraftLetter',id);if(!result?.base64)throw new Error('Draft surat belum berhasil dibuat.');downloadBase64File(result.file_name,result.mime_type,result.base64);toast('Draft surat Word berhasil dibuat dari data pengajuan.')}catch(e){toast(e.message,true)}finally{busy(false)}}
+async function ensureInternshipDocxLibraryV615(){
+ if(window.docx?.Document&&window.docx?.Packer)return window.docx;
+ if(window.__internshipDocxLoadV615)return window.__internshipDocxLoadV615;
+ const sources=['https://cdn.jsdelivr.net/npm/docx@9.6.1/dist/index.iife.js','https://unpkg.com/docx@9.6.1/dist/index.iife.js'];
+ window.__internshipDocxLoadV615=(async()=>{
+   for(const src of sources){
+     try{
+       await new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.async=true;s.onload=resolve;s.onerror=()=>reject(new Error('Gagal memuat '+src));document.head.appendChild(s)});
+       if(window.docx?.Document&&window.docx?.Packer)return window.docx;
+     }catch(_){ }
+   }
+   throw new Error('Library pembentuk Word belum dapat dimuat. Periksa koneksi internet lalu coba lagi.');
+ })();
+ try{return await window.__internshipDocxLoadV615}finally{window.__internshipDocxLoadV615=null}
+}
+function saveInternshipBlobV615(blob,fileName){
+ const url=URL.createObjectURL(blob),link=document.createElement('a');
+ link.href=url;link.download=fileName||'Permohonan Izin Magang Mahasiswa PKN STAN.docx';
+ document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
+}
+/* BEGIN_INTERNSHIP_DOCX_V615 */
+function buildInternshipDraftDocxV615(app,docxApi){
+ const d=docxApi||window.docx;
+ if(!d?.Document)throw new Error('Library pembentuk Word belum tersedia.');
+ const {Document,Paragraph,TextRun,Table,TableRow,TableCell,WidthType,AlignmentType,BorderStyle,TableLayoutType,VerticalAlign,Header,Footer,ImageRun,NumberFormat,PageNumber,ExternalHyperlink,HeightRule}=d;
+ const cmToTwip=cm=>Math.round(Number(cm||0)*567);
+ const cmToPx=cm=>Math.round(Number(cm||0)*37.7952755906);
+ const fontName='Arial',baseSize=22,kopTopSize=26,kopAddrSize=14,footerSize=16;
+ const spacingSingle={line:240,lineRule:'auto'},spacingYth={line:312,lineRule:'auto'},spacingBody={line:360,lineRule:'auto'};
+ const hanging049=cmToTwip(.49);
+ const noBorder={top:{style:BorderStyle.NONE,size:0,color:'FFFFFF'},bottom:{style:BorderStyle.NONE,size:0,color:'FFFFFF'},left:{style:BorderStyle.NONE,size:0,color:'FFFFFF'},right:{style:BorderStyle.NONE,size:0,color:'FFFFFF'},insideHorizontal:{style:BorderStyle.NONE,size:0,color:'FFFFFF'},insideVertical:{style:BorderStyle.NONE,size:0,color:'FFFFFF'}};
+ const run=(text,o={})=>new TextRun({text:String(text??''),font:o.font||fontName,size:o.size||baseSize,bold:!!o.bold,italics:!!o.italics,color:o.color,break:o.break||0});
+ const para=(content,o={})=>new Paragraph({alignment:o.alignment||AlignmentType.JUSTIFIED,spacing:{before:0,after:o.after??0,...(o.spacing||spacingSingle)},indent:o.indent,children:Array.isArray(content)?content:[run(content,o)]});
+ const leftPara=(content,o={})=>para(content,Object.assign({},o,{alignment:o.alignment||AlignmentType.LEFT}));
+ const centerPara=(content,o={})=>para(content,Object.assign({},o,{alignment:AlignmentType.CENTER}));
+ const cell=(content,width,o={})=>new TableCell({width:{size:cmToTwip(width),type:WidthType.DXA},columnSpan:o.columnSpan,rowSpan:o.rowSpan,borders:o.borders||noBorder,verticalAlign:o.verticalAlign||VerticalAlign.CENTER,margins:o.margins||{top:0,bottom:0,left:0,right:0},children:o.children||[leftPara(content,o)]});
+ const numberedParagraph=(content,o={})=>new Paragraph({numbering:{reference:'surat-numbering',level:0},alignment:AlignmentType.JUSTIFIED,spacing:{before:0,after:o.after??0,...spacingBody},indent:{left:hanging049,hanging:hanging049},children:Array.isArray(content)?content:[run(content)]});
+ const logoBase64=String(app.logo_base64||'').replace(/^data:image\/[a-z0-9.+-]+;base64,/i,'');
+ let logoBinary=null;
+ if(logoBase64){const raw=atob(logoBase64);logoBinary=Uint8Array.from(raw,c=>c.charCodeAt(0));}
+ const kopLogoChildren=logoBinary?[new ImageRun({type:'png',data:logoBinary,transformation:{width:cmToPx(2.3),height:cmToPx(2.2)},altText:{title:'Logo PKN STAN',description:'Logo Politeknik Keuangan Negara STAN',name:'Logo PKN STAN'}})]:[];
+ const kopTable=new Table({width:{size:cmToTwip(17),type:WidthType.DXA},columnWidths:[cmToTwip(2.5),cmToTwip(14.5)],layout:TableLayoutType.FIXED,borders:noBorder,rows:[
+   new TableRow({height:{value:cmToTwip(.6),rule:HeightRule?.EXACT||'exact'},children:[cell('',2.5,{rowSpan:3,margins:{top:0,bottom:0,left:0,right:40},children:[new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:0,after:0,...spacingSingle},children:kopLogoChildren})]}),cell('',14.5,{children:[centerPara('KEMENTERIAN KEUANGAN REPUBLIK INDONESIA',{bold:true,size:kopTopSize})]})]}),
+   new TableRow({height:{value:cmToTwip(.86),rule:HeightRule?.EXACT||'exact'},children:[cell('',14.5,{children:[centerPara('BADAN PENDIDIKAN DAN PELATIHAN KEUANGAN',{bold:true}),centerPara('POLITEKNIK KEUANGAN NEGARA STAN',{bold:true})]})]}),
+   new TableRow({height:{value:cmToTwip(.76),rule:HeightRule?.EXACT||'exact'},children:[cell('',14.5,{children:[centerPara('JALAN BINTARO UTAMA SEKTOR V BINTARO JAYA, TANGERANG SELATAN 15222',{size:kopAddrSize}),centerPara('SITUS: www.pknstan.ac.id',{size:kopAddrSize})]})]}),
+   new TableRow({height:{value:cmToTwip(.11),rule:HeightRule?.EXACT||'exact'},children:[cell('',17,{columnSpan:2,borders:{top:{style:BorderStyle.NONE,size:0,color:'FFFFFF'},left:{style:BorderStyle.NONE,size:0,color:'FFFFFF'},right:{style:BorderStyle.NONE,size:0,color:'FFFFFF'},bottom:{style:BorderStyle.SINGLE,size:18,color:'000000'}},children:[new Paragraph({spacing:{before:0,after:0}})]})]})
+ ]});
+ const firstHeader=new Header({children:[kopTable,new Paragraph({spacing:{before:0,after:0}})]});
+ const defaultHeader=new Header({children:[centerPara([new TextRun({children:[PageNumber.CURRENT],font:fontName,size:baseSize})]) ]});
+ const emptyFooter=new Footer({children:[new Paragraph({children:[]})]});
+ const defaultFooter=new Footer({children:[new Paragraph({alignment:AlignmentType.JUSTIFIED,spacing:{before:0,after:0,...spacingSingle},children:[run('Apabila terdapat tindakan pegawai yang tidak sesuai dengan semangat anti korupsi dan nilai-nilai dasar ASN, Bapak/Ibu dapat menyampaikan laporan melalui saluran pengaduan PKN STAN pada Surel: pengaduan@pknstan.ac.id.',{size:footerSize})]})]});
+ const nomorTable=new Table({width:{size:cmToTwip(17),type:WidthType.DXA},columnWidths:[cmToTwip(2.36),cmToTwip(.4),cmToTwip(7.12),cmToTwip(7.12)],layout:TableLayoutType.FIXED,borders:noBorder,rows:[
+   new TableRow({children:[cell('Nomor',2.36),cell(':',.4),cell([run('[@NomorND]')],7.12),cell([run('[@TanggalND]')],7.12,{alignment:AlignmentType.RIGHT})]}),
+   new TableRow({children:[cell('Sifat',2.36),cell(':',.4),cell('Segera',7.12),cell('',7.12)]}),
+   new TableRow({children:[cell('Lampiran',2.36),cell(':',.4),cell('-',14.24,{columnSpan:2})]}),
+   new TableRow({children:[cell('Hal',2.36),cell(':',.4),cell('Permohonan Izin Magang Mahasiswa PKN STAN',14.24,{columnSpan:2})]})
+ ]});
+ const recipientLines=Array.isArray(app.recipientLines)&&app.recipientLines.length?app.recipientLines:[`${app.jabatanPimpinan||'Pimpinan'} ${app.namaKantor||'Instansi Tujuan'}`,app.alamatKantor||'-'];
+ const ythTable=new Table({width:{size:cmToTwip(17),type:WidthType.DXA},columnWidths:[cmToTwip(1.25),cmToTwip(15.75)],layout:TableLayoutType.FIXED,borders:noBorder,rows:[new TableRow({children:[cell('Yth.',1.25,{indent:{left:cmToTwip(.25)},verticalAlign:VerticalAlign.TOP}),cell('',15.75,{verticalAlign:VerticalAlign.TOP,children:recipientLines.map(x=>leftPara(x,{spacing:spacingYth}))})]})]});
+ const anggota=Array.isArray(app.anggota)&&app.anggota.length?app.anggota:[];
+ const widths=[1,4.2,2.6,3.5,4.92];
+ const memberRows=[new TableRow({tableHeader:true,children:['No.','Nama','NIM','Program Studi','Pilihan Unit Spesifik'].map((text,i)=>new TableCell({width:{size:cmToTwip(widths[i]),type:WidthType.DXA},verticalAlign:VerticalAlign.CENTER,margins:{top:90,bottom:90,left:100,right:100},children:[centerPara(text,{bold:true})]}))})]
+   .concat(anggota.map((item,index)=>new TableRow({children:[String(index+1),item.nama||'-',item.nim||'-',item.prodi||'-',item.unit||app.namaKantor||'-'].map((text,i)=>new TableCell({width:{size:cmToTwip(widths[i]),type:WidthType.DXA},verticalAlign:VerticalAlign.CENTER,margins:{top:85,bottom:85,left:100,right:100},children:[leftPara(String(text),{alignment:i===0?AlignmentType.CENTER:AlignmentType.LEFT})]}))})));
+ const anggotaTable=new Table({width:{size:cmToTwip(16.22),type:WidthType.DXA},columnWidths:widths.map(cmToTwip),alignment:AlignmentType.RIGHT,layout:TableLayoutType.FIXED,rows:memberRows});
+ const signatureMiddle=[leftPara(''),leftPara(''),leftPara(''),leftPara(''),leftPara(''),leftPara(''),leftPara('Ditandatangani secara elektronik',{color:'D0CECE'})];
+ const tandaTanganTable=new Table({width:{size:cmToTwip(17.02),type:WidthType.DXA},columnWidths:[cmToTwip(9.76),cmToTwip(7.26)],layout:TableLayoutType.FIXED,borders:noBorder,rows:[
+   new TableRow({children:[cell('',9.76),cell('Wakil Direktur Bidang Akademik',7.26)]}),
+   new TableRow({children:[cell('',9.76),cell('',7.26,{children:signatureMiddle})]}),
+   new TableRow({children:[cell('',9.76),cell('Agus Bandiyono',7.26)]})
+ ]});
+ const phone=String(app.pic?.wa||'-').trim();
+ const picName=String(app.pic?.nama||anggota[0]?.nama||'-'),picEmail=String(app.pic?.email||'-');
+ const salutation=String(app.sapaanPimpinan||'Bapak/Ibu'),academicPeriod=String(app.academicPeriod||'tahun akademik berjalan');
+ return new Document({creator:'PKN STAN',title:`Permohonan Izin Magang - ${app.namaKantor||'Instansi Tujuan'}`,description:'Surat permohonan izin magang mahasiswa PKN STAN',numbering:{config:[{reference:'surat-numbering',levels:[{level:0,format:NumberFormat.DECIMAL,text:'%1.',alignment:AlignmentType.LEFT,style:{paragraph:{indent:{left:hanging049,hanging:hanging049}},run:{font:fontName,size:baseSize}}}]}]},styles:{default:{document:{run:{font:fontName,size:baseSize},paragraph:{spacing:{before:0,after:0,...spacingSingle}}}}},sections:[{properties:{titlePage:true,page:{margin:{top:cmToTwip(2),right:cmToTwip(2),bottom:cmToTwip(2),left:cmToTwip(2.2)}}},headers:{first:firstHeader,default:defaultHeader},footers:{first:emptyFooter,default:defaultFooter},children:[
+   nomorTable,new Paragraph({spacing:{before:0,after:120,...spacingSingle}}),ythTable,new Paragraph({spacing:{before:0,after:120,...spacingSingle}}),
+   para('Sehubungan dengan pelaksanaan kegiatan akademik di lingkup Politeknik Keuangan Negara STAN (PKN STAN), dengan ini kami sampaikan hal-hal sebagai berikut.',{indent:{firstLine:720},spacing:spacingBody}),
+   numberedParagraph('PKN STAN merupakan perguruan tinggi yang terus berkomitmen untuk mencetak tenaga pengelola keuangan negara/daerah yang andal.'),
+   numberedParagraph('Mahasiswa PKN STAN wajib mengikuti program magang dengan beban 10 SKS yang ditempuh pada semester akhir. Program magang bertujuan meningkatkan kemampuan dan keterampilan serta menerapkan teori dan pengetahuan yang telah diperoleh selama masa pendidikan.'),
+   numberedParagraph(`Magang dilaksanakan pada kantor-kantor instansi pemerintah/sektor publik dan swasta pada ${academicPeriod}. Adapun mahasiswa yang bermaksud melaksanakan kegiatan magang di instansi ${salutation} adalah sebagai berikut:`),
+   anggotaTable,new Paragraph({spacing:{before:0,after:120,...spacingSingle}}),
+   numberedParagraph(`Berkenaan dengan hal tersebut di atas, kami mohon perkenan agar kiranya mahasiswa tersebut dapat diberikan kesempatan untuk melaksanakan magang di instansi yang ${salutation} pimpin.`),
+   numberedParagraph([run('Besar harapan kami agar jawaban atas permohonan tersebut dapat kami terima pada kesempatan pertama melalui surat balasan dan/atau media lain yang ditentukan instansi tujuan dan/atau dengan mengisi '),run('form',{italics:true}),run(' kesediaan magang melalui tautan '),new ExternalHyperlink({link:'https://s.kemenkeu.go.id/KesediaanMitraMagang',children:[new TextRun({text:'s.kemenkeu.go.id/KesediaanMitraMagang',font:fontName,size:baseSize,color:'0563C1',underline:{type:'single'}})]}),run('.')]),
+   numberedParagraph(`Dalam hal dibutuhkan konfirmasi lebih lanjut, kami telah menugasi ${picName} (HP: ${phone}, Surel: ${picEmail}) sebagai narahubung.`),
+   para('Dengan semangat ber-KARAKTER (Komitmen, Adil, Reliabel, Akuntabel, Konsisten, Transparan, Empati, dan Ramah), seluruh civitas academica PKN STAN senantiasa memberikan pelayanan yang profesional dalam rangka menjaga Zona Integritas Wilayah Bebas dari Korupsi (WBK) menuju Wilayah Birokrasi Bersih dan Melayani (WBBM).',{indent:{firstLine:720},spacing:spacingBody}),
+   para(`Atas perhatian dan kerja sama ${salutation}, kami ucapkan terima kasih.`,{indent:{firstLine:720},spacing:spacingBody,after:360}),
+   tandaTanganTable
+ ]}]});
+}
+/* END_INTERNSHIP_DOCX_V615 */
+async function exportInternshipDraftDocxV615(payload){
+ const docxApi=await ensureInternshipDocxLibraryV615(),doc=buildInternshipDraftDocxV615(payload,docxApi),blob=await docxApi.Packer.toBlob(doc);
+ saveInternshipBlobV615(blob,payload.file_name);
+}
+async function internshipDoc(id){
+ busy(true);
+ try{
+   try{
+     const payload=await api('getInternshipDraftPayload',id);
+     await exportInternshipDraftDocxV615(payload);
+     toast('Draft surat Word berhasil dibuat dengan format surat yang rapi.');
+   }catch(primaryError){
+     console.warn('Generator DOCX langsung gagal; memakai generator cadangan.',primaryError);
+     const result=await api('generateInternshipDraftLetter',id);
+     if(!result?.base64)throw primaryError;
+     downloadBase64File(result.file_name,result.mime_type,result.base64);
+     toast('Draft surat berhasil diunduh menggunakan generator cadangan.');
+   }
+ }catch(e){toast(e.message,true)}finally{busy(false)}
+}
 
 function renderSupervisor(b){
  const role=S.boot.user.role_id,req=(b.requests||[]).slice().sort((a,z)=>String(a.submitted_at||'9999-12-31').localeCompare(String(z.submitted_at||'9999-12-31'))).map((r,i)=>Object.assign({queue_no:i+1},r)),ref=b.reference||{};b.requests=req;S.cache.supervisor=b;let h='';
@@ -924,7 +1032,7 @@ window.addEventListener('unhandledrejection',e=>{console.error(e.reason);try{if(
 if(!window.__portalLoginBootstrapReadyV52){forceLoginVisible('Mesin Fast Login v4.7 belum terpasang lengkap.');} safeStartV52();
 
 function mockRpc(req){
- const boot={app:{name:'Skripsi & Magang',version:'6.14.0-preview'},user:{name:'Preview Admin',username:'admin',role_id:'admin',email:'admin@example.ac.id'},config:{APP_TITLE:'Skripsi & Magang',INSTITUTION_NAME:'Preview Prodi',ACADEMIC_YEAR:'2026/2027'},selectionWindow:{start:'2026-08-01',end:'2026-09-30',open:true},nav:[{id:'dashboard',label:'Dashboard'},{id:'supervisor',label:'Pembimbing'},{id:'guidance',label:'Bimbingan'},{id:'documents',label:'Dokumen'},{id:'proposal_seminar',label:'Seminar Proposal'},{id:'thesis_exam',label:'Ujian Skripsi'},{id:'letters',label:'Surat Riset'},{id:'internship',label:'Magang'},{id:'profile',label:'Profil Saya'},{id:'admin',label:'Administrasi'}]};
+ const boot={app:{name:'Skripsi & Magang',version:'6.15.0-preview'},user:{name:'Preview Admin',username:'admin',role_id:'admin',email:'admin@example.ac.id'},config:{APP_TITLE:'Skripsi & Magang',INSTITUTION_NAME:'Preview Prodi',ACADEMIC_YEAR:'2026/2027'},selectionWindow:{start:'2026-08-01',end:'2026-09-30',open:true},nav:[{id:'dashboard',label:'Dashboard'},{id:'supervisor',label:'Pembimbing'},{id:'guidance',label:'Bimbingan'},{id:'documents',label:'Dokumen'},{id:'proposal_seminar',label:'Seminar Proposal'},{id:'thesis_exam',label:'Ujian Skripsi'},{id:'letters',label:'Surat Riset'},{id:'internship',label:'Magang'},{id:'profile',label:'Profil Saya'},{id:'admin',label:'Administrasi'}]};
  if(req.action==='auth.login'){if(req.identifier!=='admin'||req.password!=='admin123')return{ok:false,message:'Username atau password salah.'};return{ok:true,token:'demo',boot}}
  if(req.action==='auth.resume')return req.token?{ok:true,token:req.token,boot}:{ok:false,message:'Sesi habis'};
  if(req.action==='auth.requestReset')return{ok:true,destination:'a***@example.ac.id'};if(req.action==='auth.resetPassword')return{ok:true,message:'Password berhasil direset.'};if(req.action==='auth.logout')return{ok:true};
