@@ -33,9 +33,9 @@ body{font-size:13px;line-height:1.45}.login-visual h2{font-size:32px}.auth h2{fo
  * CSV_URL sudah diisi dengan sumber CSV publik yang diberikan.
  */
 window.PORTAL_CONFIG=Object.freeze({
-  API_URL:'https://script.google.com/macros/s/AKfycbyp_f5QqkI4MDoBnEWAtLb1J0YqmoSymRRIG5jXcBz9qeSXfYlk9GXaiikdp-YnFuPs/exec',
+  API_URL:'https://script.google.com/macros/s/AKfycbzXQX8EQinx-RUz8eHXcQJblYq5gMfBCqnuIsnVkdjsDqWVk6x3t2s80Eea4WbNZMVs/exec',
   CSV_URL:'https://docs.google.com/spreadsheets/d/e/2PACX-1vQsDcY7dlj3xzz7LdCeCkfIO6GxHls5TtdKB6u-p8vtKM69SINdz_e2URadoJR3d5_ChAtFr7RV5rPT/pub?output=csv',
-  VERSION:'6.26.0'
+  VERSION:'6.27.0'
 });
 
 (function(){
@@ -86,7 +86,7 @@ window.PORTAL_CONFIG=Object.freeze({
       form.appendChild(hiddenInput('request',JSON.stringify(payload||{})));
       var item={frame:frame,form:form,resolve:resolve,reject:reject,timer:null};
       var timeoutMs=Number(timeout)||30000;
-      item.timer=setTimeout(function(){pending.delete(requestId);cleanup(item);reject(new Error('API tidak merespons dalam '+Math.round(timeoutMs/1000)+' detik. Server mungkin masih penuh oleh eksekusi lama: tutup tab portal lama, tunggu sekitar 1 menit, lalu coba lagi. Pastikan juga URL /exec dan deployment sudah versi terbaru.'));},timeoutMs);
+      item.timer=setTimeout(function(){pending.delete(requestId);cleanup(item);reject(new Error('Koneksi server melewati '+Math.round(timeoutMs/1000)+' detik. Tampilan terakhir tetap aman; silakan tekan Coba lagi.'));},timeoutMs);
       pending.set(requestId,item);document.body.appendChild(frame);document.body.appendChild(form);
       try{form.submit();}catch(err){pending.delete(requestId);cleanup(item);reject(err);}
     });
@@ -147,7 +147,7 @@ window.PORTAL_CONFIG=Object.freeze({
           <button type="button" class="btn primary full" data-action="reset-password">Reset password</button>
         </div>
       </details>
-      <div class="hint" style="margin-top:16px">Versi 6.26.0</div>
+      <div class="hint" style="margin-top:16px">Versi 6.27.0</div>
     </div>
   </div>
   <div class="login-visual"><div><small>PORTAL AKADEMIK</small><h2>Skripsi dan pengajuan magang dalam satu portal, satu akun, dan satu database terintegrasi.</h2></div></div>
@@ -196,7 +196,7 @@ window.PORTAL_CONFIG=Object.freeze({
       setText('brandTitle',(boot.config&&boot.config.APP_TITLE)||(boot.app&&boot.app.name)||'Skripsi & Magang');
       setText('brandOrg',(boot.config&&boot.config.INSTITUTION_NAME)||'');
       setText('academicYear','Tahun akademik '+((boot.config&&boot.config.ACADEMIC_YEAR)||'2026/2027'));
-      setText('version','v'+((boot.app&&boot.app.version)||'6.26.0'));
+      setText('version','v'+((boot.app&&boot.app.version)||'6.27.0'));
       setText('userName',user.name||user.username||'Pengguna');
       var roles={admin:'Admin / Prodi',lecturer:'Dosen',student:'Mahasiswa',monitor:'Monitor / Rekap'};
       setText('userRole',roles[user.role_id]||user.role_id||'');
@@ -382,7 +382,7 @@ function toast(m,bad=false){const t=$('toast');t.textContent=m;t.className='toas
 function busy(on){$('loader').classList.toggle('show',!!on)}
 function notice(m,type='error'){const n=$('authNotice');if(!m){n.className='notice';n.textContent='';return}n.textContent=m;n.className='notice show '+type}
 function finishStartupV62(){document.documentElement.classList.add('portal-ui-ready')}
-function rpc(req,timeout=18000){
+function rpc(req,timeout=30000){
   if(!window.PortalBridge||typeof window.PortalBridge.request!=='function')return Promise.reject(new Error('Jembatan API belum siap.'));
   return window.PortalBridge.request(req,timeout).then(raw=>{
     const parsed=typeof raw==='string'?JSON.parse(raw):raw;
@@ -431,7 +431,7 @@ async function fetchPageV52(page,fresh=false){
   if(S.fetchingPages[page])return S.fetchingPages[page];
   const tokenAtStart=S.token;
   S.fetchingPages[page]=(async()=>{
-    const r=await rpc({action:'page.load',page,token:tokenAtStart,fresh:!!fresh},18000);
+    const r=await rpc({action:'page.load',page,token:tokenAtStart,fresh:!!fresh},30000);
     if(tokenAtStart!==S.token)throw new Error('Sesi berubah.');
     if(!r?.ok){if(r?.code==='SESSION_EXPIRED')return sessionExpired();throw new Error(r?.message||'Data halaman gagal dimuat.');}
     S.workspace.pages=S.workspace.pages||{};S.workspace.pageSynced=S.workspace.pageSynced||{};
@@ -447,7 +447,7 @@ async function prefetchPageV52(page){
 }
 function schedulePrefetchV52(){
   clearTimeout(schedulePrefetchV52._t);
-  // v6.26: prefetch otomatis dinonaktifkan. Hanya halaman yang benar-benar
+  // v6.27: prefetch otomatis dinonaktifkan. Hanya halaman yang benar-benar
   // dibuka pengguna yang meminta data ke Apps Script.
 }
 async function refreshBootV52(){
@@ -468,7 +468,7 @@ function enter(r,restore=false){
     renderShell();$('app').classList.remove('hidden');$('loginPage').classList.add('hidden');finishStartupV62();save();
     if(!restore||!renderRememberedViewV52())$('content').innerHTML=`<div class="card"><h3>Memuat ${esc(LABEL[S.page]||S.page)}…</h3><p class="hint">Portal sudah siap. Hanya data halaman ini yang diprioritaskan.</p></div>`;
   }catch(e){$('app').classList.add('hidden');$('loginPage').classList.remove('hidden');throw e;}
-  const first=S.page==='admin'?loadAdminTab(S.adminTab,!!restore):loadPage(S.page,!!restore);
+  const first=S.page==='admin'?loadAdminTab(S.adminTab,false):loadPage(S.page,false);
   Promise.resolve(first).then(()=>{scheduleDurableSaveV61();}).catch(e=>{
     console.error('Initial page failed',e);
     $('app').classList.remove('hidden');$('loginPage').classList.add('hidden');
@@ -489,7 +489,7 @@ if(window.__pendingPortalLoginV52){
   setTimeout(()=>window.__portalAcceptLoginV52(pending),0);
 }
 function isPageAllowed(p){return p==='dashboard'||(p!=='reviews'&&!!S.boot?.nav?.some(x=>x.id===p))}
-function renderShell(){const b=S.boot,u=b.user;document.body.querySelector('#app').classList.toggle('collapsed',S.collapsed);$('brandTitle').textContent='Skripsi & Magang';$('brandOrg').textContent=b.config?.INSTITUTION_NAME||'';$('academicYear').textContent='Tahun akademik '+(b.config?.ACADEMIC_YEAR||'2026/2027');$('version').textContent='v'+(b.app?.version||'6.26.0');$('userName').textContent=u.name||u.username;$('userRole').textContent=ROLE[u.role_id]||u.role_id;$('avatar').textContent=(u.name||u.username||'U')[0].toUpperCase();const nav=(S.boot.nav||[]).filter(n=>n.id!=='reviews');$('nav').innerHTML=nav.map(n=>`<button type="button" data-page="${attr(n.id)}"><span class="ico">${ICO[n.id]||'•'}</span><span class="navlabel">${esc(n.label)}</span></button>`).join('');if(window.__bindPortalDomV52)window.__bindPortalDomV52($('nav'));const tg=$('sideToggle');if(tg){tg.textContent=S.collapsed?'☰':'☰';tg.title=S.collapsed?'Perbesar sidebar':'Minimize sidebar'}markNav()}
+function renderShell(){const b=S.boot,u=b.user;document.body.querySelector('#app').classList.toggle('collapsed',S.collapsed);$('brandTitle').textContent='Skripsi & Magang';$('brandOrg').textContent=b.config?.INSTITUTION_NAME||'';$('academicYear').textContent='Tahun akademik '+(b.config?.ACADEMIC_YEAR||'2026/2027');$('version').textContent='v'+(b.app?.version||'6.27.0');$('userName').textContent=u.name||u.username;$('userRole').textContent=ROLE[u.role_id]||u.role_id;$('avatar').textContent=(u.name||u.username||'U')[0].toUpperCase();const nav=(S.boot.nav||[]).filter(n=>n.id!=='reviews');$('nav').innerHTML=nav.map(n=>`<button type="button" data-page="${attr(n.id)}"><span class="ico">${ICO[n.id]||'•'}</span><span class="navlabel">${esc(n.label)}</span></button>`).join('');if(window.__bindPortalDomV52)window.__bindPortalDomV52($('nav'));const tg=$('sideToggle');if(tg){tg.textContent=S.collapsed?'☰':'☰';tg.title=S.collapsed?'Perbesar sidebar':'Minimize sidebar'}markNav()}
 function markNav(){document.querySelectorAll('#nav [data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===S.page));$('pageTitle').textContent=LABEL[S.page]||'Portal'}
 async function login(e){
   // v4.7: satu-satunya jalur login adalah bootstrap kecil di atas.
@@ -549,7 +549,7 @@ async function loadPage(page,force=false){
   const cached=hydrateBundleV52(page,S.workspace.pages?.[page]);
   if(cached){renderPage(page,cached);rememberViewV52(page,cached);}
   if(!cached)$('content').innerHTML=`<div class="card"><h3>Memuat ${esc(LABEL[page]||page)}…</h3><p class="hint">Mengambil data halaman ini.</p></div>`;
-  if(cached&&!force){refreshPageV52(page,false).catch(()=>{});}
+  if(cached&&!force&&!pageIsFreshV52(page,300000)){refreshPageV52(page,false).catch(()=>{});}
   else if(force||!cached){try{await refreshPageV52(page,!cached)}catch(e){if(!cached)$('content').innerHTML=`<div class="card"><div class="alert">${esc(e.message)}</div><button class="btn primary" data-action="refresh" style="margin-top:12px">Coba lagi</button></div>`;}}
   schedulePrefetchV52();
 }
@@ -641,8 +641,8 @@ function internshipDetail(id,readOnly=false){const a=(S.cache.internship?.applic
  openModal('Detail Pengajuan Magang',`${internshipAppType(a)} · diajukan ${dt(a.submitted_at)}`,detail,`<span></span><div class="actions"><button class="btn ghost" data-action="intern-doc" data-id="${attr(a.application_id)}">Unduh Draft Surat</button><button class="btn primary" data-action="close-modal">Tutup</button></div>`)}
 function internshipOfficeTable(rows,mode){return table(rows,[['student_name','Mahasiswa',(v,r)=>`<b>${esc(v||'-')}</b><br><span class="muted">${esc(r.student_id||'')}</span>`],['type','Jenis',(v,r)=>`${esc(internshipAppType(r))}${r.type==='non-kemenkeu'?`<br><span class="muted">Prioritas ${esc(r.priority_no||'-')}</span>`:''}`],['office_name','Tujuan',(v,r)=>r.type==='kemenkeu'?esc((r.preferences||[]).map(x=>x.office_name).filter(Boolean).join(' · ')||'-'):esc(v||'-')],['submitted_at','Diajukan',(v)=>dt(v)],['status','Status',(v)=>internshipStatus(v)]],r=>`<button class="btn secondary small" data-action="intern-office-detail" data-id="${attr(r.application_id)}" data-mode="${attr(mode)}">Lihat Detail</button>`)}
 function renderInternshipOffice(b){const mode=b.mode,rows=b.applications||[],s=b.summary||{};let h=`<section class="hero"><h3>${mode==='admin'?'Administrasi':'Monitoring'} Magang</h3><p>${mode==='admin'?'Kelola seluruh pengajuan, status proses, anggota, dan unggah Surat TTE.':'Rekap pengajuan magang untuk kebutuhan monitoring tanpa hak perubahan data.'}</p></section>${cards([{label:'Total Pengajuan',value:s.total||0},{label:'Kemenkeu',value:s.kemenkeu||0},{label:'Non-Kemenkeu',value:s.nonKemenkeu||0},{label:'Surat Siap',value:s.byStatus?.['Surat Siap']||0}])}<section class="section"><div class="sectionhead"><div><h3>Daftar Pengajuan</h3><p>Status diperbarui langsung dari database Google Sheets.</p><span id="internshipLiveStatus" class="live-sync">Sinkron hemat kuota aktif</span></div><button class="btn ghost" data-action="intern-export">Export Rekap Spreadsheet</button></div>${internshipOfficeTable(rows,mode)}</section>`;$('content').innerHTML=h}
-function realtimeDelayV626(base,failures=0){const step=Math.min(4,Math.max(0,Number(failures)||0)),delay=Math.min(60000,(Number(base)||5000)*Math.pow(2,step));return delay+Math.floor(Math.random()*700)}
-const INTERNSHIP_REALTIME_INTERVAL_V622=5000;
+function realtimeDelayV627(base,failures=0){const step=Math.min(4,Math.max(0,Number(failures)||0)),delay=Math.min(60000,(Number(base)||5000)*Math.pow(2,step));return delay+Math.floor(Math.random()*700)}
+const INTERNSHIP_REALTIME_INTERVAL_V622=60000;
 function applyInternshipBundleV622(bundle,revision){
  if(!bundle)return;
  const next=Object.assign({},bundle,{internship_revision:revision||bundle.internship_revision||''});
@@ -667,7 +667,7 @@ async function pollInternshipRealtimeV622(){
    const checked=result?.checked_at?dt(result.checked_at):new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
    setInternshipLiveStatusV622('Tersinkron · '+checked);
  }catch(e){pollInternshipRealtimeV622._failures=(pollInternshipRealtimeV622._failures||0)+1;console.warn('Sinkron magang:',e?.message||e);setInternshipLiveStatusV622('Server sibuk · mencoba lagi bertahap','error')}
- finally{pollInternshipRealtimeV622._busy=false;startInternshipRealtimeV622(realtimeDelayV626(INTERNSHIP_REALTIME_INTERVAL_V622,pollInternshipRealtimeV622._failures||0))}
+ finally{pollInternshipRealtimeV622._busy=false;startInternshipRealtimeV622(realtimeDelayV627(INTERNSHIP_REALTIME_INTERVAL_V622,pollInternshipRealtimeV622._failures||0))}
 }
 function internshipOfficeDetail(el){const id=el.dataset.id,mode=el.dataset.mode||S.cache.internship?.mode,a=(S.cache.internship?.applications||[]).find(x=>String(x.application_id)===String(id));if(!a)return toast('Data tidak ditemukan.',true);let body=`<div class="formgrid"><div class="field"><label>ID</label><input readonly class="readonly" value="${attr(a.application_id)}"></div><div class="field"><label>Mahasiswa</label><input readonly class="readonly" value="${attr((a.student_name||'')+' · '+(a.student_id||''))}"></div><div class="field"><label>Jenis</label><input readonly class="readonly" value="${attr(internshipAppType(a))}"></div><div class="field"><label>Status saat ini</label><div>${internshipStatus(a.status)}</div></div></div>`;
  if(a.type==='kemenkeu')body+=(a.preferences||[]).map((p,i)=>`<div class="subtlebox" style="margin-top:10px"><b>Preferensi ${i+1}</b><br>${esc(p.eselon1||'-')} → ${esc(p.eselon2||'-')}<br>${esc(p.office_name||'-')} · ${esc(p.location||'-')}<br>${esc(p.plan||'-')}</div>`).join('');
@@ -857,7 +857,7 @@ function renderSupervisor(b){
  h+=`<section class="section"><div class="sectionhead"><div><h3>Riwayat & Pengajuan Pembimbing</h3><p>Diurutkan dari waktu pengajuan paling awal agar urutan antrean mahasiswa terlihat jelas.</p>${liveStatus}</div></div>${table(req,[['queue_no','Urutan'],['submitted_at','Waktu Pengajuan',dt],['student_name','Mahasiswa'],['field_name','Bidang'],['course_name','Mata Kuliah'],['title','Rencana Judul'],['lecturer_name','Dosen'],['status','Status',statusBadge]],supervisorRequestActionV621(role))}</section>`;$('content').innerHTML=h;startSupervisorRealtimeV621();
 }
 
-const SUPERVISOR_REALTIME_INTERVAL_V621=5000;
+const SUPERVISOR_REALTIME_INTERVAL_V621=60000;
 function supervisorComposerBusyV621(){
  if($('modalBack')?.classList?.contains('show'))return true;
  const role=S.boot?.user?.role_id||'';
@@ -905,7 +905,7 @@ async function pollSupervisorRealtimeV621(){
    const checked=result?.checked_at?dt(result.checked_at):new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
    setSupervisorLiveStatusV621('Tersinkron · '+checked);
  }catch(e){pollSupervisorRealtimeV621._failures=(pollSupervisorRealtimeV621._failures||0)+1;console.warn('Sinkron pengajuan pembimbing:',e?.message||e);setSupervisorLiveStatusV621('Server sibuk · mencoba lagi bertahap','error');}
- finally{pollSupervisorRealtimeV621._busy=false;startSupervisorRealtimeV621(realtimeDelayV626(SUPERVISOR_REALTIME_INTERVAL_V621,pollSupervisorRealtimeV621._failures||0));}
+ finally{pollSupervisorRealtimeV621._busy=false;startSupervisorRealtimeV621(realtimeDelayV627(SUPERVISOR_REALTIME_INTERVAL_V621,pollSupervisorRealtimeV621._failures||0));}
 }
 
 function syncSupervisorCourse(){const f=$('svField'),c=$('svCourse');if(!f||!c)return;const opt=f.options[f.selectedIndex];const ids=String(opt?.dataset?.courses||'').split(',').map(x=>x.trim()).filter(Boolean);Array.from(c.options).forEach(o=>{o.disabled=ids.length>0&&!!o.value&&!ids.includes(String(o.value))});if(ids.length===1)c.value=ids[0];else if(!ids.includes(String(c.value)))c.value='';}
@@ -974,7 +974,7 @@ function openGuidanceFeedback(id){const r=(S.cache.guidance||[]).find(x=>String(
 async function saveGuidanceFeedback(id,studentId){const feedback=val('gfText');if(!feedback)return toast('Masukan dosen wajib diisi.',true);busy(true);try{await api('saveGuidance',{guidance_id:id,student_id:studentId,lecturer_feedback:feedback});closeModal();toast('Masukan dosen tersimpan.');await loadPage('guidance',true)}catch(e){toast(e.message,true)}finally{busy(false)}}
 
 const DOCUMENT_LABEL={PROPOSAL:'Proposal Skripsi',GUIDANCE_PROOF:'Bukti Bimbingan',EXAM_THESIS:'Skripsi untuk Ujian Skripsi',FINAL_THESIS:'Skripsi Akhir',OTHER:'Lampiran'};
-const DOCUMENT_REALTIME_INTERVAL_V620=5000;
+const DOCUMENT_REALTIME_INTERVAL_V620=60000;
 function periodDateTimeV624(value){
  const text=String(value||'').trim(),match=text.match(/^(\d{4})-(\d{2})-(\d{2})(?:[T\s](\d{2}):(\d{2})(?::(\d{2}))?)?$/);if(!match)return text;
  const months=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
@@ -1016,7 +1016,7 @@ async function pollDocumentsRealtimeV620(){
    const checked=result?.checked_at?dt(result.checked_at):new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
    setDocumentLiveStatusV620('Tersinkron · '+checked);
  }catch(e){pollDocumentsRealtimeV620._failures=(pollDocumentsRealtimeV620._failures||0)+1;console.warn('Sinkron dokumen:',e?.message||e);setDocumentLiveStatusV620('Server sibuk · mencoba lagi bertahap','error');}
- finally{pollDocumentsRealtimeV620._busy=false;startDocumentsRealtimeV620(realtimeDelayV626(DOCUMENT_REALTIME_INTERVAL_V620,pollDocumentsRealtimeV620._failures||0));}
+ finally{pollDocumentsRealtimeV620._busy=false;startDocumentsRealtimeV620(realtimeDelayV627(DOCUMENT_REALTIME_INTERVAL_V620,pollDocumentsRealtimeV620._failures||0));}
 }
 function fileData(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(f)})}
 async function uploadDocument(){const f=$('dFile')?.files?.[0];if(!f)return toast('Pilih file.',true);busy(true);try{const data=await fileData(f),result=await api('uploadDocument',{student_id:val('dStudent'),document_type:val('dType'),file_name:f.name},data);S.cache.documentFormOpen=false;const base=S.cache.documentBundleV620||S.workspace.pages?.documents||{},next=Object.assign({},base,{documents:Array.isArray(result.documents)?result.documents:(base.documents||[]),document_revision:result.document_revision||base.document_revision||''});S.cache.documentBundleV620=next;if(next.document_revision)S.cache.documentRevisionV620=String(next.document_revision);S.workspace.pages=S.workspace.pages||{};S.workspace.pageSynced=S.workspace.pageSynced||{};S.workspace.pages.documents=next;S.workspace.pageSynced.documents=Date.now();scheduleDurableSaveV61();renderDocuments(next);rememberViewV52('documents',next);toast('Dokumen berhasil diupload.')}catch(e){toast(e.message,true)}finally{busy(false)}}
@@ -1238,10 +1238,10 @@ document.addEventListener('change',e=>{if(e.target&&e.target.id==='svField')sync
 document.addEventListener('input',e=>{if(e.target?.id==='recSearch')applySupervisorRecommendationFiltersV617();if(e.target?.id==='smSearch')applySupervisorApplicationFiltersV617();if(e.target?.id==='adminUserSearch')applyAdminUserFiltersV617()});
 document.addEventListener('visibilitychange',()=>{
  if(document.hidden||!S.token||!S.boot)return;
- if(S.page==='documents')startDocumentsRealtimeV620(1200);
- if(S.page==='supervisor')startSupervisorRealtimeV621(1200);
- if(S.page==='internship')startInternshipRealtimeV622(1200);
- if(Date.now()-(S.cache.lastFocusRefresh||0)>60000){S.cache.lastFocusRefresh=Date.now();refreshCurrentV52().catch(e=>toast('Pembaruan data gagal: '+e.message,true));}
+ const delay=8000+Math.floor(Math.random()*12000);
+ if(S.page==='documents')startDocumentsRealtimeV620(delay);
+ if(S.page==='supervisor')startSupervisorRealtimeV621(delay);
+ if(S.page==='internship')startInternshipRealtimeV622(delay);
 });
 window.addEventListener('beforeunload',()=>{stopDocumentsRealtimeV620();stopSupervisorRealtimeV621();stopInternshipRealtimeV622();if(S.token)save()});
 window.addEventListener('portal:csv',()=>{if(S.token&&S.page==='dashboard'&&S.workspace.pages?.dashboard?.dashboard)renderDashboard(S.workspace.pages.dashboard.dashboard)});
@@ -1250,7 +1250,7 @@ window.addEventListener('unhandledrejection',e=>{console.error(e.reason);try{if(
 if(!window.__portalLoginBootstrapReadyV52){forceLoginVisible('Mesin Fast Login v4.7 belum terpasang lengkap.');} safeStartV52();
 
 function mockRpc(req){
- const boot={app:{name:'Skripsi & Magang',version:'6.26.0'},user:{name:'Preview Admin',username:'admin',role_id:'admin',email:'admin@example.ac.id'},config:{APP_TITLE:'Skripsi & Magang',INSTITUTION_NAME:'Preview Prodi',ACADEMIC_YEAR:'2026/2027'},selectionWindow:{start:'2026-08-01T00:00:00',end:'2026-09-30T23:59:59',open:true},nav:[{id:'dashboard',label:'Dashboard'},{id:'supervisor',label:'Pembimbing'},{id:'guidance',label:'Bimbingan'},{id:'documents',label:'Dokumen'},{id:'proposal_seminar',label:'Seminar Proposal'},{id:'thesis_exam',label:'Ujian Skripsi'},{id:'letters',label:'Surat Riset'},{id:'internship',label:'Magang'},{id:'profile',label:'Profil Saya'},{id:'admin',label:'Administrasi'}]};
+ const boot={app:{name:'Skripsi & Magang',version:'6.27.0'},user:{name:'Preview Admin',username:'admin',role_id:'admin',email:'admin@example.ac.id'},config:{APP_TITLE:'Skripsi & Magang',INSTITUTION_NAME:'Preview Prodi',ACADEMIC_YEAR:'2026/2027'},selectionWindow:{start:'2026-08-01T00:00:00',end:'2026-09-30T23:59:59',open:true},nav:[{id:'dashboard',label:'Dashboard'},{id:'supervisor',label:'Pembimbing'},{id:'guidance',label:'Bimbingan'},{id:'documents',label:'Dokumen'},{id:'proposal_seminar',label:'Seminar Proposal'},{id:'thesis_exam',label:'Ujian Skripsi'},{id:'letters',label:'Surat Riset'},{id:'internship',label:'Magang'},{id:'profile',label:'Profil Saya'},{id:'admin',label:'Administrasi'}]};
  if(req.action==='auth.login'){if(req.identifier!=='admin'||req.password!=='admin123')return{ok:false,message:'Username atau password salah.'};return{ok:true,token:'demo',boot}}
  if(req.action==='auth.resume')return req.token?{ok:true,token:req.token,boot}:{ok:false,message:'Sesi habis'};
  if(req.action==='auth.requestReset')return{ok:true,destination:'a***@example.ac.id'};if(req.action==='auth.resetPassword')return{ok:true,message:'Password berhasil direset.'};if(req.action==='auth.logout')return{ok:true};
