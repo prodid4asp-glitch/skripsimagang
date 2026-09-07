@@ -20,6 +20,7 @@
 .schedule-download,.download-link{white-space:nowrap;display:inline-flex;align-items:center;gap:5px;font-weight:700}.resource-links{display:grid;gap:5px}.admin-tabs{gap:4px}.admin-tabs .tab{border-radius:4px;padding:9px 13px}.readonly-detail{border:1px solid var(--line);background:#f8fafc;padding:14px;margin-bottom:16px}.readonly-detail h4{margin:0 0 11px;color:var(--brand)}.detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;border-top:1px solid var(--line);border-left:1px solid var(--line)}.detail-item{padding:10px 11px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);min-width:0}.detail-item.span2{grid-column:span 2}.detail-item small{display:block;color:var(--muted);margin-bottom:4px}.detail-item div{white-space:pre-wrap;overflow-wrap:anywhere}.review-note{white-space:pre-wrap;min-width:230px}.review-feedback{white-space:pre-wrap;min-width:210px}.review-context{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}.review-context>div{padding:9px 10px;background:#f8fafc;border:1px solid var(--line)}
 body{font-size:13px;line-height:1.45}.login-visual h2{font-size:32px}.auth h2{font-size:24px}.top h2{font-size:18px}.hero h3{font-size:17px}.sectionhead h3,.modalhead h3,.card h3{font-size:16px}.stat b{font-size:21px}.field label{font-size:12.5px}.field input,.field select,.field textarea,.btn{font-size:13px}.table th,.table td{font-size:12.5px}.subtlebox,.period-note,.profile-row,.readonly-detail-item div{font-size:12.5px}
 .filterbar{display:grid;grid-template-columns:minmax(230px,2fr) repeat(2,minmax(150px,1fr)) auto;gap:10px;align-items:end;padding:12px;margin:12px 0;background:#f8fafc;border:1px solid var(--line);border-radius:6px}.filterbar .field{margin:0}.filterbar .toolbar{align-items:center}.filter-count{display:inline-flex;align-items:center;min-height:36px;color:var(--muted);font-size:12px;font-weight:700}.recommend-grid{grid-template-columns:repeat(2,minmax(280px,1fr))}
+.live-sync{display:inline-flex;align-items:center;gap:6px;margin-top:6px;color:#52717a;font-size:11.5px;font-weight:700}.live-sync::before{content:'';width:7px;height:7px;border-radius:50%;background:#24a174;box-shadow:0 0 0 3px rgba(36,161,116,.12)}.live-sync.syncing::before{background:#d4931b;box-shadow:0 0 0 3px rgba(212,147,27,.12)}.live-sync.error{color:#9d2f28}.live-sync.error::before{background:#b4362c;box-shadow:0 0 0 3px rgba(180,54,44,.12)}
 @media(max-width:1050px){.stats{grid-template-columns:repeat(2,1fr)}.content{padding:18px}.top{padding:0 16px}}@media(max-width:900px){.letter-layout{grid-template-columns:1fr}.top h2{font-size:17px}.avatar{display:none}}@media(max-width:760px){.repeat-row[data-intern-member-row]{grid-template-columns:34px minmax(0,1fr) 38px}.repeat-row[data-intern-member-row] input{grid-column:2 / 3}.login{grid-template-columns:1fr}.login-visual{display:none}.app,.app.collapsed{display:block}.sidebar{position:fixed;left:-270px;width:250px;z-index:20;transition:left .18s}.sidebar.mobile-open{left:0}.content{padding:12px}.top{min-height:68px;height:auto;padding:9px 10px;gap:8px}.top>div:first-child{min-width:0}.top h2{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.topactions{gap:5px}.user{padding-left:0}.user .txt{display:flex;max-width:44vw;overflow:hidden}.userline b,.userline span{overflow:hidden;text-overflow:ellipsis}.userline{gap:5px;font-size:11px}.topactions .btn{padding:7px 9px}.formgrid,.stats,.checkgrid,.readonly-detail-grid{grid-template-columns:1fr}.checkhead,.sectionhead{align-items:flex-start}.sectionhead{flex-direction:column}.selection-count{flex:0 0 auto}.span2{grid-column:span 1}.desktop-collapse{display:none}.modalback{padding:8px}.modalbody,.modalhead,.modalfoot{padding:13px}.card{padding:13px}.table{min-width:760px}.tabs{flex-wrap:nowrap;overflow:auto;padding-bottom:4px}.tab{white-space:nowrap}}@media(max-width:440px){.academic-meta{display:none}.user .txt{max-width:48vw}.content{padding:9px}.side-toggle{width:34px;height:34px}.topactions .btn{font-size:11px}.hero{padding:16px}.stats{gap:9px}}
 @media(max-width:760px){.detail-grid,.review-context,.filterbar,.recommend-grid{grid-template-columns:1fr}.detail-item.span2{grid-column:span 1}}
 </style>
@@ -32,9 +33,9 @@ body{font-size:13px;line-height:1.45}.login-visual h2{font-size:32px}.auth h2{fo
  * CSV_URL sudah diisi dengan sumber CSV publik yang diberikan.
  */
 window.PORTAL_CONFIG=Object.freeze({
-  API_URL:'https://script.google.com/macros/s/AKfycbxm6wM_bQl01piZ5RpWSAzRc17EYyg8igPMYYHkGCf7PwkdmLJAUE1ygp8iZ6bqw8j7/exec',
+  API_URL:'https://script.google.com/macros/s/AKfycbzVngD_vuHJzqbfPk_xXDvO-YnPZDtIA2e5oIz3gVU-z0r9psUBHzSU_jL5GTXAPG55/exec',
   CSV_URL:'https://docs.google.com/spreadsheets/d/e/2PACX-1vQsDcY7dlj3xzz7LdCeCkfIO6GxHls5TtdKB6u-p8vtKM69SINdz_e2URadoJR3d5_ChAtFr7RV5rPT/pub?output=csv',
-  VERSION:'6.19.0'
+  VERSION:'6.20.0'
 });
 
 (function(){
@@ -144,7 +145,7 @@ window.PORTAL_CONFIG=Object.freeze({
           <button type="button" class="btn primary full" data-action="reset-password">Reset password</button>
         </div>
       </details>
-      <div class="hint" style="margin-top:16px">Versi 6.19.0</div>
+      <div class="hint" style="margin-top:16px">Versi 6.20.0</div>
     </div>
   </div>
   <div class="login-visual"><div><small>PORTAL AKADEMIK</small><h2>Skripsi dan pengajuan magang dalam satu portal, satu akun, dan satu database terintegrasi.</h2></div></div>
@@ -193,7 +194,7 @@ window.PORTAL_CONFIG=Object.freeze({
       setText('brandTitle',(boot.config&&boot.config.APP_TITLE)||(boot.app&&boot.app.name)||'Skripsi & Magang');
       setText('brandOrg',(boot.config&&boot.config.INSTITUTION_NAME)||'');
       setText('academicYear','Tahun akademik '+((boot.config&&boot.config.ACADEMIC_YEAR)||'2026/2027'));
-      setText('version','v'+((boot.app&&boot.app.version)||'6.19.0'));
+      setText('version','v'+((boot.app&&boot.app.version)||'6.20.0'));
       setText('userName',user.name||user.username||'Pengguna');
       var roles={admin:'Admin / Prodi',lecturer:'Dosen',student:'Mahasiswa',monitor:'Monitor / Rekap'};
       setText('userRole',roles[user.role_id]||user.role_id||'');
@@ -500,7 +501,7 @@ if(window.__pendingPortalLoginV52){
   setTimeout(()=>window.__portalAcceptLoginV52(pending),0);
 }
 function isPageAllowed(p){return p==='dashboard'||(p!=='reviews'&&!!S.boot?.nav?.some(x=>x.id===p))}
-function renderShell(){const b=S.boot,u=b.user;document.body.querySelector('#app').classList.toggle('collapsed',S.collapsed);$('brandTitle').textContent='Skripsi & Magang';$('brandOrg').textContent=b.config?.INSTITUTION_NAME||'';$('academicYear').textContent='Tahun akademik '+(b.config?.ACADEMIC_YEAR||'2026/2027');$('version').textContent='v'+(b.app?.version||'6.19.0');$('userName').textContent=u.name||u.username;$('userRole').textContent=ROLE[u.role_id]||u.role_id;$('avatar').textContent=(u.name||u.username||'U')[0].toUpperCase();const nav=(S.boot.nav||[]).filter(n=>n.id!=='reviews');$('nav').innerHTML=nav.map(n=>`<button type="button" data-page="${attr(n.id)}"><span class="ico">${ICO[n.id]||'•'}</span><span class="navlabel">${esc(n.label)}</span></button>`).join('');if(window.__bindPortalDomV52)window.__bindPortalDomV52($('nav'));const tg=$('sideToggle');if(tg){tg.textContent=S.collapsed?'☰':'☰';tg.title=S.collapsed?'Perbesar sidebar':'Minimize sidebar'}markNav()}
+function renderShell(){const b=S.boot,u=b.user;document.body.querySelector('#app').classList.toggle('collapsed',S.collapsed);$('brandTitle').textContent='Skripsi & Magang';$('brandOrg').textContent=b.config?.INSTITUTION_NAME||'';$('academicYear').textContent='Tahun akademik '+(b.config?.ACADEMIC_YEAR||'2026/2027');$('version').textContent='v'+(b.app?.version||'6.20.0');$('userName').textContent=u.name||u.username;$('userRole').textContent=ROLE[u.role_id]||u.role_id;$('avatar').textContent=(u.name||u.username||'U')[0].toUpperCase();const nav=(S.boot.nav||[]).filter(n=>n.id!=='reviews');$('nav').innerHTML=nav.map(n=>`<button type="button" data-page="${attr(n.id)}"><span class="ico">${ICO[n.id]||'•'}</span><span class="navlabel">${esc(n.label)}</span></button>`).join('');if(window.__bindPortalDomV52)window.__bindPortalDomV52($('nav'));const tg=$('sideToggle');if(tg){tg.textContent=S.collapsed?'☰':'☰';tg.title=S.collapsed?'Perbesar sidebar':'Minimize sidebar'}markNav()}
 function markNav(){document.querySelectorAll('#nav [data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===S.page));$('pageTitle').textContent=LABEL[S.page]||'Portal'}
 async function login(e){
   // v4.7: satu-satunya jalur login adalah bootstrap kecil di atas.
@@ -539,7 +540,7 @@ async function resume(){
 }
 function forceLoginVisible(message){try{busy(false);$('app')?.classList.add('hidden');$('loginPage')?.classList.remove('hidden');finishStartupV62();if(message)notice(message,'error')}catch(_){}}
 async function safeStartV52(){try{await restoreDurableSessionV61();await resume();}catch(e){console.error('Portal startup failed',e);if(!S.token){clearSession();forceLoginVisible('Portal dipulihkan ke halaman login karena terjadi kesalahan saat memuat sesi. Silakan login kembali.')}else finishStartupV62();}}
-async function logout(){const t=S.token;S.prefetchGeneration=(S.prefetchGeneration||0)+1;clearSession();showLogin('Anda telah keluar.','success');try{await rpc({action:'auth.logout',token:t},5000)}catch(e){}}
+async function logout(){const t=S.token;S.prefetchGeneration=(S.prefetchGeneration||0)+1;stopDocumentsRealtimeV620();clearSession();showLogin('Anda telah keluar.','success');try{await rpc({action:'auth.logout',token:t},5000)}catch(e){}}
 async function refreshPageV52(page,showError=true){
   try{
     const bundle=await fetchPageV52(page,true);
@@ -550,7 +551,7 @@ async function refreshPageV52(page,showError=true){
   }catch(e){if(showError)toast('Pembaruan '+(LABEL[page]||page)+' gagal: '+e.message,true);throw e}
 }
 async function loadPage(page,force=false){
-  page=isPageAllowed(page)?page:'dashboard';const previousPage=S.page;if(previousPage!==page)resetPageComposerV64(page);S.page=page;save();markNav();$('sidebar').classList.remove('mobile-open');
+  page=isPageAllowed(page)?page:'dashboard';const previousPage=S.page;if(previousPage!==page)resetPageComposerV64(page);if(page!=='documents')stopDocumentsRealtimeV620();S.page=page;save();markNav();$('sidebar').classList.remove('mobile-open');
   if(page==='admin'){
     renderAdminShell();
     const cachedTab=S.workspace.adminTabs?.[S.adminTab];
@@ -866,8 +867,44 @@ function openGuidanceFeedback(id){const r=(S.cache.guidance||[]).find(x=>String(
 async function saveGuidanceFeedback(id,studentId){const feedback=val('gfText');if(!feedback)return toast('Masukan dosen wajib diisi.',true);busy(true);try{await api('saveGuidance',{guidance_id:id,student_id:studentId,lecturer_feedback:feedback});closeModal();toast('Masukan dosen tersimpan.');await loadPage('guidance',true)}catch(e){toast(e.message,true)}finally{busy(false)}}
 
 const DOCUMENT_LABEL={PROPOSAL:'Proposal Skripsi',GUIDANCE_PROOF:'Bukti Bimbingan',EXAM_THESIS:'Skripsi untuk Ujian Skripsi',FINAL_THESIS:'Skripsi Akhir',OTHER:'Lampiran'};
+const DOCUMENT_REALTIME_INTERVAL_V620=4000;
 function periodNoteHtml(period){if(!period)return'';const range=[period.start?date(period.start):'',period.end?date(period.end):''].filter(Boolean).join(' – ');return `<div class="period-note"><b>${esc(period.label||'Periode')}</b>: ${range||'tidak dibatasi'} · <span class="badge ${period.open?'ACTIVE':'REJECTED'}">${period.open?'Dibuka':'Ditutup'}</span>${period.message?`<br>${esc(period.message)}`:''}</div>`}
-function renderDocuments(b){const rows=(b.documents||[]).slice().sort((a,z)=>String(z.uploaded_at||'').localeCompare(String(a.uploaded_at||''))).map(r=>Object.assign({},r,{document_label:DOCUMENT_LABEL[String(r.document_type||'').toUpperCase()]||r.document_type})),th=b.theses||[],role=S.boot.user.role_id,canAdd=['student','admin'].includes(role)&&th.length;let h=`<section class="section"><div class="sectionhead"><div><h3>Riwayat Upload Dokumen</h3><p>Dokumen terbaru beserta timestamp upload ditampilkan paling atas. Upload hanya tersedia untuk mahasiswa dan Admin.</p></div>${canAdd?'<button class="btn primary" data-action="show-document-form">+ Upload Dokumen</button>':''}</div>${table(rows,[['document_label','Jenis'],['student_name','Mahasiswa'],['file_name','File'],['version','Versi'],['uploaded_at','Waktu Upload',dt],['uploaded_by','Pengunggah'],['file_url','Tautan',(v)=>v?`<a href="${attr(v)}" target="_blank" rel="noopener">Buka</a>`:'-']])}</section>`;if(canAdd){const periods=(b.periods||[]).filter(p=>['GUIDANCE','PROPOSAL_SUBMISSION','THESIS_SUBMISSION','FINAL_THESIS_SUBMISSION'].includes(p.key));h+=`<div id="documentNewForm" class="card" style="${S.cache.documentFormOpen?'display:block':'display:none'};margin-top:18px"><div class="sectionhead"><div><h3>Upload Dokumen</h3><p>${role==='admin'?'Admin dapat memilih mahasiswa yang dokumennya akan disimpan.':'Dokumen akan disimpan untuk data mahasiswa Anda.'}</p></div><button class="btn ghost" data-action="hide-inline-form" data-target="documentNewForm">Tutup Form</button></div>${periods.map(periodNoteHtml).join('')}<div class="formgrid"><div class="field"><label>Mahasiswa</label><select id="dStudent">${th.map(x=>`<option value="${attr(x.student_id)}">${esc(x.student_name||x.student_id)}</option>`).join('')}</select></div><div class="field"><label>Jenis dokumen</label><select id="dType"><option value="PROPOSAL">Proposal Skripsi</option><option value="GUIDANCE_PROOF">Bukti Bimbingan</option><option value="EXAM_THESIS">Skripsi untuk Ujian Skripsi</option><option value="FINAL_THESIS">Skripsi Akhir</option><option value="OTHER">Lampiran</option></select></div><div class="field span2"><label>File</label><input id="dFile" type="file"></div></div><button class="btn primary" data-action="upload-document">Upload Dokumen</button></div>`}$('content').innerHTML=h}
+function renderDocuments(b){
+ b=b||{};S.cache.documentBundleV620=b;if(b.document_revision)S.cache.documentRevisionV620=String(b.document_revision);
+ const rows=(b.documents||[]).slice().sort((a,z)=>String(z.uploaded_at||'').localeCompare(String(a.uploaded_at||''))).map(r=>Object.assign({},r,{document_label:DOCUMENT_LABEL[String(r.document_type||'').toUpperCase()]||r.document_type})),th=b.theses||[],role=S.boot.user.role_id,canAdd=['student','admin'].includes(role)&&th.length;
+ let h=`<section class="section"><div class="sectionhead"><div><h3>Riwayat Upload Dokumen</h3><p>Dokumen terbaru beserta timestamp upload ditampilkan paling atas. Upload hanya tersedia untuk mahasiswa dan Admin.</p><span id="documentLiveStatus" class="live-sync">Sinkron otomatis setiap 4 detik</span></div>${canAdd?'<button class="btn primary" data-action="show-document-form">+ Upload Dokumen</button>':''}</div>${table(rows,[['document_label','Jenis'],['student_name','Mahasiswa'],['file_name','File'],['version','Versi'],['uploaded_at','Waktu Upload',dt],['uploaded_by','Pengunggah'],['file_url','Tautan',(v)=>v?`<a href="${attr(v)}" target="_blank" rel="noopener">Buka</a>`:'-']])}</section>`;
+ if(canAdd){const periods=(b.periods||[]).filter(p=>['GUIDANCE','PROPOSAL_SUBMISSION','THESIS_SUBMISSION','FINAL_THESIS_SUBMISSION'].includes(p.key));h+=`<div id="documentNewForm" class="card" style="${S.cache.documentFormOpen?'display:block':'display:none'};margin-top:18px"><div class="sectionhead"><div><h3>Upload Dokumen</h3><p>${role==='admin'?'Admin dapat memilih mahasiswa yang dokumennya akan disimpan.':'Dokumen akan disimpan untuk data mahasiswa Anda.'}</p></div><button class="btn ghost" data-action="hide-inline-form" data-target="documentNewForm">Tutup Form</button></div>${periods.map(periodNoteHtml).join('')}<div class="formgrid"><div class="field"><label>Mahasiswa</label><select id="dStudent">${th.map(x=>`<option value="${attr(x.student_id)}">${esc(x.student_name||x.student_id)}</option>`).join('')}</select></div><div class="field"><label>Jenis dokumen</label><select id="dType"><option value="PROPOSAL">Proposal Skripsi</option><option value="GUIDANCE_PROOF">Bukti Bimbingan</option><option value="EXAM_THESIS">Skripsi untuk Ujian Skripsi</option><option value="FINAL_THESIS">Skripsi Akhir</option><option value="OTHER">Lampiran</option></select></div><div class="field span2"><label>File</label><input id="dFile" type="file"></div></div><button class="btn primary" data-action="upload-document">Upload Dokumen</button></div>`}
+ $('content').innerHTML=h;startDocumentsRealtimeV620();
+}
+function documentComposerBusyV620(){return !!S.cache.documentFormOpen||!!$('dFile')?.files?.length}
+function setDocumentLiveStatusV620(message,state=''){
+ const el=$('documentLiveStatus');if(!el)return;el.textContent=message;el.className='live-sync'+(state?' '+state:'');
+}
+function stopDocumentsRealtimeV620(){clearTimeout(startDocumentsRealtimeV620._timer);startDocumentsRealtimeV620._timer=0}
+function startDocumentsRealtimeV620(delay=DOCUMENT_REALTIME_INTERVAL_V620){
+ stopDocumentsRealtimeV620();if(!S.token||S.page!=='documents')return;
+ startDocumentsRealtimeV620._timer=setTimeout(pollDocumentsRealtimeV620,Math.max(150,Number(delay)||DOCUMENT_REALTIME_INTERVAL_V620));
+}
+async function pollDocumentsRealtimeV620(){
+ startDocumentsRealtimeV620._timer=0;
+ if(!S.token||S.page!=='documents')return;
+ if(document.hidden||documentComposerBusyV620()||pollDocumentsRealtimeV620._busy){startDocumentsRealtimeV620();return;}
+ pollDocumentsRealtimeV620._busy=true;setDocumentLiveStatusV620('Memeriksa dokumen terbaru…','syncing');
+ try{
+   const result=await api('getDocumentsRealtime',S.cache.documentRevisionV620||'');
+   if(!S.token||S.page!=='documents')return;
+   if(result?.revision)S.cache.documentRevisionV620=String(result.revision);
+   if(result?.changed&&Array.isArray(result.documents)){
+     const base=S.cache.documentBundleV620||S.workspace.pages?.documents||{};
+     const next=Object.assign({},base,{documents:result.documents,document_revision:result.revision||''});
+     S.workspace.pages=S.workspace.pages||{};S.workspace.pageSynced=S.workspace.pageSynced||{};S.workspace.pages.documents=next;S.workspace.pageSynced.documents=Date.now();S.cache.documentBundleV620=next;scheduleDurableSaveV61();
+     if(!documentComposerBusyV620()){renderDocuments(next);rememberViewV52('documents',next);}
+   }
+   const checked=result?.checked_at?dt(result.checked_at):new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+   setDocumentLiveStatusV620('Tersinkron · '+checked);
+ }catch(e){console.warn('Sinkron dokumen:',e?.message||e);setDocumentLiveStatusV620('Sinkron otomatis akan mencoba lagi','error');}
+ finally{pollDocumentsRealtimeV620._busy=false;startDocumentsRealtimeV620();}
+}
 function fileData(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(f)})}
 async function uploadDocument(){const f=$('dFile')?.files?.[0];if(!f)return toast('Pilih file.',true);busy(true);try{const data=await fileData(f);await api('uploadDocument',{student_id:val('dStudent'),document_type:val('dType'),file_name:f.name},data);S.cache.documentFormOpen=false;toast('Dokumen berhasil diupload.');await loadPage('documents',true)}catch(e){toast(e.message,true)}finally{busy(false)}}
 
@@ -1083,15 +1120,19 @@ if(window.__pendingPortalAdminTabV52){const t=window.__pendingPortalAdminTabV52;
 $('modalBack').addEventListener('click',e=>{if(e.target===$('modalBack'))closeModal()});
 document.addEventListener('change',e=>{if(e.target&&e.target.id==='svField')syncSupervisorCourse();if(['recMatch'].includes(e.target?.id))applySupervisorRecommendationFiltersV617();if(['smStatus','smProgram'].includes(e.target?.id))applySupervisorApplicationFiltersV617();if(['adminUserRole','adminUserActive'].includes(e.target?.id))applyAdminUserFiltersV617();if(e.target&&e.target.id==='scStudent')scheduleStudentSync();if(e.target&&e.target.id==='lType')updateLetterTemplatePreview();if(e.target&&e.target.id==='imKind')internshipSyncKind();if(e.target?.matches?.('[data-intern-e1]'))internshipApplyUnitFilters();if(e.target?.matches?.('[data-profile-specialization]'))profileSpecializationCountV616();if(e.target&&e.target.id==='imPic'){const s=internshipStudents().find(x=>String(x.student_id)===String(e.target.value));if(s){if($('imPicEmail')&&!val('imPicEmail'))$('imPicEmail').value=s.email||'';if($('imPicProgram')&&!val('imPicProgram'))$('imPicProgram').value=s.program_name||''}}});
 document.addEventListener('input',e=>{if(e.target?.id==='recSearch')applySupervisorRecommendationFiltersV617();if(e.target?.id==='smSearch')applySupervisorApplicationFiltersV617();if(e.target?.id==='adminUserSearch')applyAdminUserFiltersV617()});
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&S.token&&S.boot&&Date.now()-(S.cache.lastFocusRefresh||0)>60000){S.cache.lastFocusRefresh=Date.now();refreshCurrentV52().catch(e=>toast('Pembaruan data gagal: '+e.message,true))}});
-window.addEventListener('beforeunload',()=>{if(S.token)save()});
+document.addEventListener('visibilitychange',()=>{
+ if(document.hidden||!S.token||!S.boot)return;
+ if(S.page==='documents')startDocumentsRealtimeV620(200);
+ if(Date.now()-(S.cache.lastFocusRefresh||0)>60000){S.cache.lastFocusRefresh=Date.now();refreshCurrentV52().catch(e=>toast('Pembaruan data gagal: '+e.message,true));}
+});
+window.addEventListener('beforeunload',()=>{stopDocumentsRealtimeV620();if(S.token)save()});
 window.addEventListener('portal:csv',()=>{if(S.token&&S.page==='dashboard'&&S.workspace.pages?.dashboard?.dashboard)renderDashboard(S.workspace.pages.dashboard.dashboard)});
 window.addEventListener('error',e=>{console.error(e.error||e.message);try{if($('loginPage')?.classList.contains('hidden')&&$('app')?.classList.contains('hidden'))forceLoginVisible('Terjadi kesalahan tampilan. Portal dikembalikan ke halaman login.');else toast('Terjadi kesalahan tampilan: '+(e.message||'unknown'),true)}catch(_){}});
 window.addEventListener('unhandledrejection',e=>{console.error(e.reason);try{if($('loginPage')?.classList.contains('hidden')&&$('app')?.classList.contains('hidden'))forceLoginVisible('Koneksi portal gagal dipulihkan. Silakan login kembali.')}catch(_){}});
 if(!window.__portalLoginBootstrapReadyV52){forceLoginVisible('Mesin Fast Login v4.7 belum terpasang lengkap.');} safeStartV52();
 
 function mockRpc(req){
- const boot={app:{name:'Skripsi & Magang',version:'6.19.0-preview'},user:{name:'Preview Admin',username:'admin',role_id:'admin',email:'admin@example.ac.id'},config:{APP_TITLE:'Skripsi & Magang',INSTITUTION_NAME:'Preview Prodi',ACADEMIC_YEAR:'2026/2027'},selectionWindow:{start:'2026-08-01',end:'2026-09-30',open:true},nav:[{id:'dashboard',label:'Dashboard'},{id:'supervisor',label:'Pembimbing'},{id:'guidance',label:'Bimbingan'},{id:'documents',label:'Dokumen'},{id:'proposal_seminar',label:'Seminar Proposal'},{id:'thesis_exam',label:'Ujian Skripsi'},{id:'letters',label:'Surat Riset'},{id:'internship',label:'Magang'},{id:'profile',label:'Profil Saya'},{id:'admin',label:'Administrasi'}]};
+ const boot={app:{name:'Skripsi & Magang',version:'6.20.0-preview'},user:{name:'Preview Admin',username:'admin',role_id:'admin',email:'admin@example.ac.id'},config:{APP_TITLE:'Skripsi & Magang',INSTITUTION_NAME:'Preview Prodi',ACADEMIC_YEAR:'2026/2027'},selectionWindow:{start:'2026-08-01',end:'2026-09-30',open:true},nav:[{id:'dashboard',label:'Dashboard'},{id:'supervisor',label:'Pembimbing'},{id:'guidance',label:'Bimbingan'},{id:'documents',label:'Dokumen'},{id:'proposal_seminar',label:'Seminar Proposal'},{id:'thesis_exam',label:'Ujian Skripsi'},{id:'letters',label:'Surat Riset'},{id:'internship',label:'Magang'},{id:'profile',label:'Profil Saya'},{id:'admin',label:'Administrasi'}]};
  if(req.action==='auth.login'){if(req.identifier!=='admin'||req.password!=='admin123')return{ok:false,message:'Username atau password salah.'};return{ok:true,token:'demo',boot}}
  if(req.action==='auth.resume')return req.token?{ok:true,token:req.token,boot}:{ok:false,message:'Sesi habis'};
  if(req.action==='auth.requestReset')return{ok:true,destination:'a***@example.ac.id'};if(req.action==='auth.resetPassword')return{ok:true,message:'Password berhasil direset.'};if(req.action==='auth.logout')return{ok:true};
