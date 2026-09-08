@@ -43,7 +43,7 @@ body{font-size:13px;line-height:1.45}.login-visual h2{font-size:32px}.auth h2{fo
  * CSV_URL sudah diisi dengan sumber CSV publik yang diberikan.
  */
 window.PORTAL_CONFIG=Object.freeze({
-  API_URL:'https://script.google.com/macros/s/AKfycbxCNrk0KxkpVKrt3MqzMc_yPsJf68OndQUUF-pL2oiBRYfMVAJHq1HeeVTwHPh1NnQw/exec',
+  API_URL:'https://script.google.com/macros/s/AKfycbzq5z0CCUIFLjZPbs2mBCoegkKVMyYcr7DHoBCu3EyTJ8yQ7VN2eDjA1gmDKodkWe6K/exec',
   CSV_URL:'https://docs.google.com/spreadsheets/d/e/2PACX-1vQsDcY7dlj3xzz7LdCeCkfIO6GxHls5TtdKB6u-p8vtKM69SINdz_e2URadoJR3d5_ChAtFr7RV5rPT/pub?output=csv',
   VERSION:'6.30.0'
 });
@@ -382,7 +382,7 @@ function date(v){if(!v)return'-';let d=new Date(String(v).length===10?v+'T00:00:
 function guidanceDateV630(v){if(!v)return'-';const raw=String(v),d=new Date(raw.length===10?raw+'T00:00:00':raw);return isNaN(d)?esc(v):d.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})}
 function dt(v){if(!v)return'-';let d=new Date(v);return isNaN(d)?esc(v):d.toLocaleString('id-ID',{dateStyle:'medium',timeStyle:'short'})}
 const STATUS_ID={PENDING:'Menunggu',ACCEPTED:'Diterima',REJECTED:'Ditolak',APPROVED:'Disetujui',SUBMITTED:'Diajukan',PROCESS:'Diproses',ASSIGNED:'Sudah Memiliki Pembimbing',NO_REQUEST:'Belum Mengajukan',ACTIVE:'Aktif',COMPLETED:'Selesai',CLOSED:'Ditutup',RECORDED:'Tercatat',FEEDBACK_GIVEN:'Sudah Diberi Masukan',UPLOADED:'Sudah Diunggah',DELETED:'Dihapus',DRAFT:'Draf',FULL:'Penuh',EMPTY:'Belum Ada Mahasiswa Bimbingan',AVAILABLE:'Belum Penuh',TERSEDIA:'Belum Penuh'};
-function statusLabel(v){const raw=String(v??'').trim();return STATUS_ID[raw.toUpperCase()]||raw||'-'}
+function statusLabel(v){const raw=String(v??'').trim();if(raw.toLowerCase()==='cancel')return 'Dibatalkan';return STATUS_ID[raw.toUpperCase()]||raw||'-'}
 function statusBadge(v){const raw=String(v??'').trim();return `<span class="badge ${attr(raw.toUpperCase())}">${esc(statusLabel(raw))}</span>`}
 function stageLabel(v){return ({PROPOSAL:'Seminar Proposal',FINAL:'Ujian Skripsi'}[String(v||'').toUpperCase()]||statusLabel(v))}
 function letterTypeLabel(v){return ({INTERNAL:'Internal Kemenkeu',EXTERNAL:'Eksternal Kemenkeu',DJP:'DJP'}[String(v||'').toUpperCase()]||String(v||'-'))}
@@ -592,7 +592,7 @@ function resetPageComposerV64(page){
 }
 function newestPageBundleV64(page,fallback){return S.workspace.pages?.[page]||fallback||{}}
 
-function internshipStatus(v){const s=String(v||'Menunggu');const cls=s==='Ditolak'?'danger':(s==='Diterima'||s.startsWith('Diterima Pilihan'))?'success':'';return `<span class="badge ${cls}">${esc(s)}</span>`}
+function internshipStatus(v){const s=String(v||'Menunggu');const cls=s==='Ditolak'?'danger':(s==='Diterima'||s.startsWith('Diterima Pilihan'))?'success':'';return `<span class="badge ${cls}">${esc(s.toLowerCase()==='cancel'?'Dibatalkan':s)}</span>`}
 function internshipAppType(a){return a?.type==='kemenkeu'?'Kemenkeu':'Non-Kemenkeu'}
 function internshipUnits(){return S.cache.internship?.reference?.units||[]}
 function internshipStudents(){return S.cache.internship?.reference?.students||[]}
@@ -603,7 +603,7 @@ function renderInternship(b){b=b||{};S.cache.internship=b;if(b.internship_revisi
 function internshipStudentHistoryRows(b){return (b.applications||[]).slice().sort((a,b)=>String(b.submitted_at||'').localeCompare(String(a.submitted_at||'')))}
 function renderInternshipStudent(b){
  const st=b.student||{},e=b.eligibility||{},rows=internshipStudentHistoryRows(b),own=b.ownApplications||[],form=S.cache.internshipForm;
- const active=own.filter(a=>String(a.status||'')!=='Ditolak');
+ const active=own.filter(a=>!['Ditolak','cancel'].includes(String(a.status||'')));
  let h=`<section class="hero"><h3>Pengajuan Magang</h3><p>Ajukan magang Kemenkeu atau Non-Kemenkeu, pantau proses surat, dan konfirmasi hasil penempatan dari satu halaman.</p></section>`;
  h+=cards([{label:'Total riwayat',value:rows.length},{label:'Kemenkeu siklus ini',value:`${e.kemenkeu?.count||0}/1`},{label:'Non-Kemenkeu siklus ini',value:`${e.nonKemenkeu?.count||0}/3`},{label:'Siklus',value:e.cycle_no||1}]);
  h+=`<section class="section"><div class="sectionhead"><div><h3>Riwayat Pengajuan Magang</h3><p>Pengajuan berstatus Menunggu dapat diedit atau dibatalkan. Setelah Surat Siap, file TTE dapat dibuka dari tabel.</p><span id="internshipLiveStatus" class="live-sync">Sinkron hemat kuota aktif</span></div><button class="btn primary" data-action="intern-open" ${e.hasAccepted?'disabled title="Pengajuan baru dinonaktifkan karena status magang sudah Diterima"':''}>+ Tambah Pengajuan Magang</button></div>${internshipStudentTable(rows,st)}</section>`;
@@ -639,7 +639,7 @@ function internshipDelete(id){
  if(String(a.status||'')!=='Menunggu')return toast('Pengajuan hanya dapat dibatalkan saat status masih Menunggu.',true);
  S.cache.pendingInternshipCancelV630={id:String(id)};
  const tujuan=a.type==='kemenkeu'?(a.preferences||[]).map(x=>x.office_name).filter(Boolean).join(' · '):(a.office_name||'-');
- const body=`<div class="alert error"><b>Pastikan pengajuan ini benar-benar ingin dibatalkan.</b><br>Data pengajuan akan dihapus dari proses aktif dan Anda dapat membuat pengajuan magang kembali.</div><div class="detail-grid" style="margin-top:14px"><div class="detail-item"><small>Jenis Pengajuan</small><div><b>${esc(internshipAppType(a))}</b></div></div><div class="detail-item"><small>Status</small><div>${internshipStatus(a.status)}</div></div><div class="detail-item span2"><small>Tujuan</small><div>${esc(tujuan||'-')}</div></div><div class="detail-item span2"><small>Tanggal Pengajuan</small><div>${a.submitted_at?dt(a.submitted_at):'-'}</div></div></div>`;
+ const body=`<div class="alert error"><b>Pastikan pengajuan ini benar-benar ingin dibatalkan.</b><br>Pengajuan akan berstatus Dibatalkan dan tetap tersimpan dalam riwayat Anda. Anda dapat membuat pengajuan magang kembali.</div><div class="detail-grid" style="margin-top:14px"><div class="detail-item"><small>Jenis Pengajuan</small><div><b>${esc(internshipAppType(a))}</b></div></div><div class="detail-item"><small>Status</small><div>${internshipStatus(a.status)}</div></div><div class="detail-item span2"><small>Tujuan</small><div>${esc(tujuan||'-')}</div></div><div class="detail-item span2"><small>Tanggal Pengajuan</small><div>${a.submitted_at?dt(a.submitted_at):'-'}</div></div></div>`;
  openModal('Konfirmasi Pembatalan Pengajuan Magang','Periksa kembali sebelum membatalkan pengajuan.',body,`<span></span><div class="actions"><button class="btn ghost" data-action="close-modal">Kembali</button><button class="btn danger" data-action="confirm-cancel-internship">Ya, Batalkan Pengajuan</button></div>`);
 }
 async function confirmInternshipCancelV630(){const pending=S.cache.pendingInternshipCancelV630;if(!pending?.id)return toast('Data pembatalan tidak ditemukan. Buka kembali pengajuan.',true);busy(true);try{const result=await api('deleteInternshipApplication',pending.id);S.cache.pendingInternshipCancelV630=null;closeModal();S.cache.internshipForm=null;S.cache.internshipComposerOpen=false;applyInternshipBundleV622(result.bundle,result.internship_revision);toast('Pengajuan magang berhasil dibatalkan. Anda dapat mengajukan kembali.')}catch(e){toast(e.message,true)}finally{busy(false)}}
@@ -975,7 +975,7 @@ async function deleteSupervisorRequestV622(id){
  const request=(S.cache.supervisor?.requests||[]).find(r=>String(r.request_id)===String(id));
  if(!request)return toast('Pengajuan pembimbing tidak ditemukan.',true);if(String(request.status||'').toUpperCase()!=='PENDING')return toast('Pengajuan hanya dapat dibatalkan saat status masih Menunggu.',true);
  S.cache.pendingSupervisorCancelV630={id:String(id)};
- const body=`<div class="alert error"><b>Pastikan pengajuan ini benar-benar ingin dibatalkan.</b><br>Pengajuan akan dihapus dari antrean dan tampilan dosen. Setelah itu Anda dapat mengajukan dosen pembimbing kembali.</div><div class="detail-grid" style="margin-top:14px"><div class="detail-item"><small>Dosen Pembimbing</small><div><b>${esc(request.lecturer_name||'-')}</b></div></div><div class="detail-item"><small>Status</small><div>${statusBadge(request.status)}</div></div><div class="detail-item"><small>Bidang</small><div>${esc(request.field_name||'-')}</div></div><div class="detail-item"><small>Mata Kuliah</small><div>${esc(request.course_name||'-')}</div></div><div class="detail-item span2"><small>Rencana Judul</small><div>${esc(request.title||'-')}</div></div></div>`;
+ const body=`<div class="alert error"><b>Pastikan pengajuan ini benar-benar ingin dibatalkan.</b><br>Pengajuan tetap tercatat dalam riwayat Anda dengan status Dibatalkan, serta tidak ditampilkan kepada dosen. Anda dapat mengajukan dosen pembimbing kembali.</div><div class="detail-grid" style="margin-top:14px"><div class="detail-item"><small>Dosen Pembimbing</small><div><b>${esc(request.lecturer_name||'-')}</b></div></div><div class="detail-item"><small>Status</small><div>${statusBadge(request.status)}</div></div><div class="detail-item"><small>Bidang</small><div>${esc(request.field_name||'-')}</div></div><div class="detail-item"><small>Mata Kuliah</small><div>${esc(request.course_name||'-')}</div></div><div class="detail-item span2"><small>Rencana Judul</small><div>${esc(request.title||'-')}</div></div></div>`;
  openModal('Konfirmasi Pembatalan Pengajuan Pembimbing','Periksa kembali sebelum membatalkan pengajuan.',body,`<span></span><div class="actions"><button class="btn ghost" data-action="close-modal">Kembali</button><button class="btn danger" data-action="confirm-cancel-supervisor">Ya, Batalkan Pengajuan</button></div>`);
 }
 async function confirmSupervisorCancelV630(){const pending=S.cache.pendingSupervisorCancelV630;if(!pending?.id)return toast('Data pembatalan tidak ditemukan. Buka kembali pengajuan.',true);busy(true);try{const result=await api('deleteSupervisorRequest',pending.id);S.cache.pendingSupervisorCancelV630=null;closeModal();applySupervisorMutationV622(result);toast('Pengajuan dosen pembimbing berhasil dibatalkan. Anda dapat mengajukan kembali.')}catch(e){toast(e.message,true)}finally{busy(false)}}
@@ -984,7 +984,7 @@ function supervisorRequestDetail(id){
  const r=(S.cache.supervisor?.requests||[]).find(x=>String(x.request_id)===String(id))||{};
  const role=S.boot?.user?.role_id||'',status=String(r.status||'').toUpperCase(),pending=status==='PENDING',canDecide=role==='lecturer'&&pending;
  const submitted=r.submitted_at?dt(r.submitted_at):'-',responded=r.response_at?dt(r.response_at):'-';
- const finalMessage=status==='ACCEPTED'?`Pengajuan diterima oleh ${esc(r.lecturer_name||'dosen yang dipilih')}.`:status==='REJECTED'?`Pengajuan ditolak oleh ${esc(r.lecturer_name||'dosen yang dipilih')}.`:'Pengajuan masih menunggu keputusan dosen.';
+ const finalMessage=status==='CANCEL'?'Pengajuan ini telah dibatalkan oleh mahasiswa. Anda dapat mengajukan kembali.':status==='ACCEPTED'?`Pengajuan diterima oleh ${esc(r.lecturer_name||'dosen yang dipilih')}.`:status==='REJECTED'?`Pengajuan ditolak oleh ${esc(r.lecturer_name||'dosen yang dipilih')}.`:'Pengajuan masih menunggu keputusan dosen.';
  const feedbackLabel=status==='REJECTED'?'Alasan / Catatan Penolakan':'Catatan Dosen';
  const feedbackText=String(r.feedback||'').trim()||'Tidak ada catatan tambahan dari dosen.';
  const pendingDecision=S.cache.pendingSupervisorDecisionV630;
