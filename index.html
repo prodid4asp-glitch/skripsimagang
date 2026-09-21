@@ -355,7 +355,7 @@ body{font-size:13px;line-height:1.45}.login-visual h2{font-size:32px}.auth h2{fo
 .letter-table-v714 td:last-child,.letter-table-v714 th:last-child{text-align:center}
 @media(max-width:760px){.letter-filter-v714{grid-template-columns:1fr 1fr}.letter-filter-v714>.field:first-child{grid-column:1/-1}}
 
-/* v6.72.10: sidebar benar-benar tetap pada viewport; hanya isi utama yang bergulir. */
+/* v6.73.0: sidebar benar-benar tetap pada viewport; hanya isi utama yang bergulir. */
 @media(min-width:761px){
   .app,.app.collapsed{display:block}
   .sidebar{position:fixed!important;top:0;left:0;bottom:0;width:260px;height:100dvh;overflow-y:auto;overscroll-behavior:contain;z-index:20}
@@ -368,7 +368,7 @@ body{font-size:13px;line-height:1.45}.login-visual h2{font-size:32px}.auth h2{fo
   body.mobile-sidebar-open{overflow:hidden;touch-action:none}
   body.mobile-sidebar-open .sidebar{touch-action:auto}
 }
-/* v6.72.10: portal memakai scroll internal agar sidebar tidak ikut terdorong ketika di-embed di Google Sites. */
+/* v6.73.0: portal memakai scroll internal agar sidebar tidak ikut terdorong ketika di-embed di Google Sites. */
 html:has(#app:not(.hidden)),body:has(#app:not(.hidden)){height:100%;overflow:hidden!important}
 #app.app:not(.hidden),#app.app.collapsed:not(.hidden){height:100dvh;min-height:0;overflow:hidden!important}
 #app.app:not(.hidden) .main{height:100dvh;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scroll-behavior:smooth}
@@ -390,7 +390,7 @@ window.PORTAL_CONFIG=Object.freeze({
   SUPABASE_URL:'https://qhjgezhrhlkhbnvqjqkp.supabase.co',
   SUPABASE_ANON_KEY:'sb_publishable_bk3wDu5HgzSpH1FtY_TrEQ_GVsgkAlY',
   CSV_URL:'https://docs.google.com/spreadsheets/d/e/2PACX-1vQsDcY7dlj3xzz7LdCeCkfIO6GxHls5TtdKB6u-p8vtKM69SINdz_e2URadoJR3d5_ChAtFr7RV5rPT/pub?output=csv',
-  VERSION:'6.72.10'
+  VERSION:'6.73.0'
 });
 
 (function(){
@@ -504,7 +504,7 @@ window.PORTAL_CONFIG=Object.freeze({
           <button type="button" class="btn primary full" data-action="reset-password">Reset password</button>
         </div>
       </details>
-      <div id="loginVersion" class="hint" style="margin-top:16px">Versi 6.72.10</div>
+      <div id="loginVersion" class="hint" style="margin-top:16px">Versi 6.73.0</div>
     </div>
   </div>
   <div class="login-visual"><div><small>AYO SEMANGAT</small><h2>Skripsi yang baik adalah skripsi yang selesai.</h2></div></div>
@@ -688,7 +688,7 @@ window.PORTAL_CONFIG=Object.freeze({
   <aside id="sidebar" class="sidebar">
     <div class="sidebrand"><div class="mark">TA</div><div class="brandtext"><b id="brandTitle">Skripsi & Magang</b><small id="brandOrg"></small></div></div>
     <nav id="nav" class="nav"></nav>
-    <div class="sidefoot"><span id="version">Versi 6.72.10</span></div>
+    <div class="sidefoot"><span id="version">Versi 6.73.0</span></div>
   </aside>
   <main class="main">
     <header class="top">
@@ -803,7 +803,8 @@ async function fetchPageV52(page,fresh=false){
   if(S.fetchingPages[page])return S.fetchingPages[page];
   const tokenAtStart=S.token,userAtStart=S.boot?.user?.email||'';
   S.fetchingPages[page]=(async()=>{
-    const r=await rpc({action:'page.load',page,token:tokenAtStart,fresh:!!fresh},30000);
+    const pageTimeout=page==='dashboard'?16000:25000;
+    const r=await rpc({action:'page.load',page,token:tokenAtStart,fresh:!!fresh},pageTimeout);
     if(userAtStart!==(S.boot?.user?.email||''))throw new Error('Sesi berubah.');
     if(!r?.ok){if(r?.code==='SESSION_EXPIRED')return sessionExpired();throw new Error(errorTextV635(r?.message,'Data halaman gagal dimuat.'))}
     S.workspace.pages=S.workspace.pages||{};S.workspace.pageSynced=S.workspace.pageSynced||{};
@@ -887,9 +888,9 @@ async function resume(){
     if(!restored?.ok){if(restored?.code==='SESSION_EXPIRED')return showLogin('Sesi 24 jam telah berakhir. Silakan masuk kembali.');throw new Error(restored?.message||'Sesi tidak dapat dipulihkan.');}
     S.token=restored.token||S.token;S.refreshToken=restored.refreshToken||S.refreshToken;S.boot=restored.boot||S.boot;S.expiresAt=Number(restored.sessionExpiresAt)||S.expiresAt||Date.now()+SESSION_TTL_MS;save();
     renderShell();$('app').classList.remove('hidden');$('loginPage').classList.add('hidden');markNav();
-    // Halaman terakhir selalu dibaca ulang agar F5 menampilkan data Google Sheets terbaru.
-    if(S.page==='admin')await loadAdminTab(S.adminTab,true);else await loadPage(S.page,true);
-    refreshBootV52();
+    // v6.73.0: cache-first saat F5/resume. Tampilan terakhir muncul seketika;
+    // data yang sudah usang disegarkan di belakang layar tanpa memblokir pengguna.
+    if(S.page==='admin')await loadAdminTab(S.adminTab,!hadCache);else await loadPage(S.page,!hadCache);
     schedulePrefetchV52();
   }catch(e){
     console.error('Session restore failed',e);
@@ -2107,7 +2108,17 @@ function ensureSupabaseRealtimeV630(){
   .on('postgres_changes',{event:'*',schema:'public',table:'portal_desk_reviews'},scheduleSupabaseRefreshV632)
   .on('postgres_changes',{event:'*',schema:'public',table:'portal_config'},scheduleSupabaseRefreshV632).subscribe();
 }
-function scheduleSupabaseRefreshV632(){clearTimeout(supabaseRealtimeTimerV630);supabaseRealtimeTimerV630=setTimeout(()=>refreshCurrentV52().catch(()=>{}),280)}
+function scheduleSupabaseRefreshV632(payload){
+ const table=String(payload?.table||'');
+ const page=S.page;
+ const relevant=!table||
+  (table==='portal_academic_schedules'&&['dashboard','proposal_seminar','thesis_exam'].includes(page))||
+  (table==='portal_desk_reviews'&&['proposal_seminar','thesis_exam'].includes(page))||
+  (table==='portal_config'&&['dashboard','supervisor','guidance','documents','proposal_seminar','thesis_exam','admin'].includes(page))||
+  (table==='portal_records'&&['profile','internship','letters'].includes(page));
+ if(!relevant)return;
+ clearTimeout(supabaseRealtimeTimerV630);supabaseRealtimeTimerV630=setTimeout(()=>refreshCurrentV52().catch(()=>{}),1200);
+}
 ensureSupabaseRealtimeV630();setInterval(ensureSupabaseRealtimeV630,5000);
 window.addEventListener('portal:csv',()=>{if(S.token&&S.page==='dashboard'&&S.workspace.pages?.dashboard?.dashboard)renderDashboard(S.workspace.pages.dashboard.dashboard)});
 window.addEventListener('error',e=>{console.error(e.error||e.message);try{if($('loginPage')?.classList.contains('hidden')&&$('app')?.classList.contains('hidden'))forceLoginVisible('Terjadi kesalahan tampilan. Portal dikembalikan ke halaman login.');else toast('Terjadi kesalahan tampilan: '+(e.message||'unknown'),true)}catch(_){}});
